@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 346839632}
   - component: {fileID: 346839631}
   - component: {fileID: 346839635}
+  - component: {fileID: 346839636}
   m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
@@ -169,7 +170,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -280,7 +281,7 @@ Transform:
   m_GameObject: {fileID: 346839630}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 0, z: 0}
+  m_LocalPosition: {x: 5, y: -1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -299,6 +300,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHP: 3
+--- !u!114 &346839636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 346839630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b17d913c1ccadc4094b8615b65077e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
+  damage: 1
 --- !u!1 &348565269
 GameObject:
   m_ObjectHideFlags: 0
@@ -702,9 +716,10 @@ GameObject:
   - component: {fileID: 690408515}
   - component: {fileID: 690408514}
   - component: {fileID: 690408516}
+  - component: {fileID: 690408517}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -875,6 +890,19 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   attackGizmoDuration: 0.2
+--- !u!114 &690408517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690408511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 100ae3cd451bfd94a8966cae9eea05f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  maxHP: 5
 --- !u!1 &852517905
 GameObject:
   m_ObjectHideFlags: 0
