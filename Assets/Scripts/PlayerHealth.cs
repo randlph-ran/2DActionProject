@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
@@ -33,6 +34,10 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField]
     private float blinkInterval = 0.05f;
 
+    // HP表示テキスト
+    [SerializeField]
+    private TMP_Text hpText;
+
     // ゲーム開始時に呼ばれる
     private void Start()
     {
@@ -46,6 +51,9 @@ public class PlayerHealth : MonoBehaviour
 
         // SpriteRenderer取得　Playerの見た目にしているSpriteを取得
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // HP表示更新
+        UpdateHPUI();
     }
 
     // ダメージを受ける処理
@@ -60,6 +68,9 @@ public class PlayerHealth : MonoBehaviour
         }
         // HPをダメージで減少させる
         currentHP -= damage;
+
+        // HP表示更新
+        UpdateHPUI();
 
         Debug.Log("Playerは" + damage + " のダメージを受けた");
         Debug.Log("現在HP: " + currentHP);
@@ -135,5 +146,12 @@ public class PlayerHealth : MonoBehaviour
         IsKnockback = false;
 
         Debug.Log("無敵終了");
+    }
+
+    // HP表示更新
+    private void UpdateHPUI()
+    {
+        // HPテキスト更新
+        hpText.text = "HP : " + currentHP;
     }
 }
