@@ -63,7 +63,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float attackGizmoDuration = 0.2f;
 
-
     // ゲーム開始時に最初に呼ばれる
     private void Awake()
     {
@@ -81,7 +80,7 @@ public class PlayerController : MonoBehaviour
         // 左右入力 いったん旧入力システムで
         moveInput = Input.GetAxisRaw("Horizontal");
 
-        // ノックバック中は操作禁止
+        // ノックバック中はジャンプ操作禁止
         if (playerHealth.IsKnockback)
         {
             return;

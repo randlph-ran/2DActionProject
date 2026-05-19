@@ -26,6 +26,13 @@ public class PlayerHealth : MonoBehaviour
     // ノックバック中
     public bool IsKnockback { get; private set; }
 
+    // SpriteRenderer
+    private SpriteRenderer spriteRenderer;
+
+    // 点滅間隔
+    [SerializeField]
+    private float blinkInterval = 0.05f;
+
     // ゲーム開始時に呼ばれる
     private void Start()
     {
@@ -36,6 +43,9 @@ public class PlayerHealth : MonoBehaviour
 
         // Rigidbody2D取得
         rb = GetComponent<Rigidbody2D>();
+
+        // SpriteRenderer取得　Playerの見た目にしているSpriteを取得
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // ダメージを受ける処理
@@ -90,15 +100,40 @@ public class PlayerHealth : MonoBehaviour
 
         Debug.Log("無敵開始");
 
-        // 指定秒待機
-        yield return new WaitForSeconds(invincibleTime);
+        // ノックバック開始
+        IsKnockback = true;
+
+        // 経過時間
+        float timer = 0f;
+
+        // 無敵時間終わるまで点滅表示をループ
+        while (timer < invincibleTime)
+        {
+            // 表示OFF
+            spriteRenderer.enabled = false;
+
+            // 点滅待機
+            yield return new WaitForSeconds(blinkInterval);
+
+            // 表示ON
+            spriteRenderer.enabled = true;
+
+            // 点滅待機
+            yield return new WaitForSeconds(blinkInterval);
+
+            // timerを加算して、条件(timer<invincibleTime)を満たすまでループさせる
+            timer += blinkInterval * 2;
+        }
+
+        // 表示戻す
+        spriteRenderer.enabled = true;
 
         // 無敵OFF
         isInvincible = false;
 
-        Debug.Log("無敵時間終了");
-
-        // ノックバック状態をfalseに
+        // ノックバック終了
         IsKnockback = false;
+
+        Debug.Log("無敵終了");
     }
 }
