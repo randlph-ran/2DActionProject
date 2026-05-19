@@ -82,9 +82,9 @@ public class PlayerController : MonoBehaviour
         Flip();
 
         // ジャンプ入力
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log(jumpCount);
+            Debug.Log(jumpCount + "回目");
             // 最大回数未満ならジャンプ可能
             if (jumpCount < maxJumpCount)
             {
