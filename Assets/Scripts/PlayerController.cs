@@ -95,6 +95,7 @@ public class PlayerController : MonoBehaviour
         // 攻撃入力
         if (Input.GetKeyDown(KeyCode.Z))
         {
+            Debug.Log("攻撃開始");
             Attack();
         }
     }
@@ -179,7 +180,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Scene上でGroundCheck確認用
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         // GroundCheck未設定なら終了
         if (groundCheck == null || attackPoint == null)
@@ -213,6 +214,7 @@ public class PlayerController : MonoBehaviour
     // 攻撃処理    
     private void Attack()
     {
+        Debug.Log("アタック！");
         // 攻撃Gizmo表示開始
         StartCoroutine(ShowAttackGizmo());
 
