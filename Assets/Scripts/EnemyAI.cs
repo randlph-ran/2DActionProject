@@ -12,20 +12,48 @@ public class EnemyAI : MonoBehaviour
     // Rigidbody2D
     private Rigidbody2D rb;
 
+    // Player位置
+    private Transform playerTransform;
+
+    // 追尾開始距離　指定距離以内なら追尾
+    [SerializeField]
+    private float chaseDistance = 5f;
+
     // 初期化
     private void Awake()
     {
         // Rigidbody2D取得
         rb = GetComponent<Rigidbody2D>();
+
+        //Scene内のTagがPlayerのものを探して入れる
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     // 物理更新
     private void FixedUpdate()
     {
-        // 移動方向を取得　右なら正、左なら負
-        float moveDirection = isFacingRight ? 1f : -1f;
+        // Playerとの距離 Enemyの位置とPlayerの位置を測って入れる
+        float distance = Vector2.Distance(transform.position, playerTransform.position);
 
-        // 左右移動 　今の移動速度を正負(左右)方向へmoveSpeedの速度で進行させる。(linearVelocity.yは今の重力のままにするという宣言)
+        // 移動方向
+        float moveDirection;
+
+        // Playerが近いなら追尾
+        if (distance <= chaseDistance)
+        {
+            // Playerが右にいるか
+            moveDirection = playerTransform.position.x > transform.position.x ? 1f : -1f;
+
+            // Playerに合わせて向きを更新
+            isFacingRight = moveDirection > 0;
+        }
+        else
+        {
+            // 通常巡回　向きに合わせて巡回
+            moveDirection = isFacingRight ? 1f : -1f;
+        }
+
+        // 移動
         rb.linearVelocity = new Vector2(moveDirection * moveSpeed, rb.linearVelocity.y);
     }
 
