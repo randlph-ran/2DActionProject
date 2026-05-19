@@ -5,6 +5,9 @@ public class PlayerController : MonoBehaviour
     // Rigidbody2D
     private Rigidbody2D rb;
 
+    // PlayerHealth
+    private PlayerHealth playerHealth;
+
     // 左右入力
     private float moveInput;
 
@@ -66,6 +69,9 @@ public class PlayerController : MonoBehaviour
     {
         // Rigidbody2D取得
         rb = GetComponent<Rigidbody2D>();
+
+        // PlayerHealth取得
+        playerHealth = GetComponent<PlayerHealth>();
     }
 
     // 毎フレーム実行
@@ -74,6 +80,12 @@ public class PlayerController : MonoBehaviour
     {
         // 左右入力 いったん旧入力システムで
         moveInput = Input.GetAxisRaw("Horizontal");
+
+        // ノックバック中は操作禁止
+        if (playerHealth.IsKnockback)
+        {
+            return;
+        }
 
         // 接地判定
         CheckGround();
@@ -103,6 +115,12 @@ public class PlayerController : MonoBehaviour
     // 物理演算用
     private void FixedUpdate()
     {
+        // ノックバック中は移動停止
+        if (playerHealth.IsKnockback)
+        {
+            return;
+        }
+
         // 左右移動
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
     }

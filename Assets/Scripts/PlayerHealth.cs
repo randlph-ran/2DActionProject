@@ -16,6 +16,16 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField]
     private float invincibleTime = 1.0f;
 
+    // Rigidbody2D
+    private Rigidbody2D rb;
+
+    // ノックバック力
+    [SerializeField]
+    private float knockbackPower = 15f;
+
+    // ノックバック中
+    public bool IsKnockback { get; private set; }
+
     // ゲーム開始時に呼ばれる
     private void Start()
     {
@@ -23,10 +33,13 @@ public class PlayerHealth : MonoBehaviour
         currentHP = maxHP;
 
         Debug.Log("Player HPを最大HPで初期化しました: " + currentHP);
+
+        // Rigidbody2D取得
+        rb = GetComponent<Rigidbody2D>();
     }
 
     // ダメージを受ける処理
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, Vector2 enemyPosition)
     {
         // 無敵中ならダメージ無効
         if (isInvincible)
@@ -40,6 +53,16 @@ public class PlayerHealth : MonoBehaviour
 
         Debug.Log("Playerは" + damage + " のダメージを受けた");
         Debug.Log("現在HP: " + currentHP);
+
+        // ノックバック方向計算
+        //normalizedすると 長さ1 になる＝方向の+-が定まる
+        Vector2 knockbackDirection = (transform.position - (Vector3)enemyPosition).normalized;
+
+        // ノックバック状態に切替
+        IsKnockback = true;
+
+        // 力を加える　ForceMode2D.Impulse＝瞬間的に強く押す
+        rb.AddForce(knockbackDirection * knockbackPower, ForceMode2D.Impulse);
 
         StartCoroutine(InvincibleCoroutine());
 
@@ -74,5 +97,8 @@ public class PlayerHealth : MonoBehaviour
         isInvincible = false;
 
         Debug.Log("無敵時間終了");
+
+        // ノックバック状態をfalseに
+        IsKnockback = false;
     }
 }
