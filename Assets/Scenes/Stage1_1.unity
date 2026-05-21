@@ -968,6 +968,7 @@ MonoBehaviour:
     m_Bits: 8
   attackPoint: {fileID: 852517906}
   attackRadius: 1
+  attackDM: 1
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -1346,6 +1347,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2438158073428606219, guid: 756643c45d1f55e4ea014019657868d9, type: 3}
+      propertyPath: maxHP
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506972699479269963, guid: 756643c45d1f55e4ea014019657868d9, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506972699479269963, guid: 756643c45d1f55e4ea014019657868d9, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506972699479269963, guid: 756643c45d1f55e4ea014019657868d9, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7320070065001925756, guid: 756643c45d1f55e4ea014019657868d9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5

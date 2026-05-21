@@ -52,6 +52,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float attackRadius = 1f;
 
+    [SerializeField]
+    private int attackDM = 1;
+
     // 敵Layer
     [SerializeField]
     private LayerMask enemyLayer;
@@ -252,7 +255,7 @@ public class PlayerController : MonoBehaviour
             if (enemyHealth != null)
             {
                 // ダメージを与える
-                enemyHealth.TakeDamage(1);
+                enemyHealth.TakeDamage(attackDM);
             }
         }
     }

@@ -144,6 +144,7 @@ GameObject:
   - component: {fileID: 4701486086130809918}
   - component: {fileID: 4317507079065615273}
   - component: {fileID: 843218940873367340}
+  - component: {fileID: 8969577355850776011}
   m_Layer: 6
   m_Name: HPBar_Fill
   m_TagString: Untagged
@@ -198,16 +199,29 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 7482667652216324306, guid: 42fe769c596d9aa4f8152dfba3940dc3, type: 3}
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8969577355850776011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2644165554830623350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c51941df45128a4fa8071f02067bffe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHPBar
+  hpFillImage: {fileID: 843218940873367340}
 --- !u!1 &5184231348188405549
 GameObject:
   m_ObjectHideFlags: 0
