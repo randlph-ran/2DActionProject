@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -128,6 +128,7 @@ public class PlayerController : MonoBehaviour
             //コンボ段階管理　アニメ再生メソッドを呼ぶ
             HandleAttackInput();
             Debug.Log("攻撃開始");
+            Debug.Log("現在コンボ段数：" + comboStep);
             Attack();
         }
     }
