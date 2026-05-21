@@ -265,70 +265,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2438158073428606219, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: maxHP
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 2438158073428606219, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: knockbackForce
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4393994746481855891, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4393994746481855891, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 4435916279548751840, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: moveSpeed
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4435916279548751840, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: attackRadius
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701486086130809918, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701486086130809918, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 4962634619626771592, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4962634619626771592, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 4962634619626771592, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -10
-      objectReference: {fileID: 0}
-    - target: {fileID: 5506972699479269963, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: m_Color.b
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5506972699479269963, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: m_Color.g
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5506972699479269963, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: m_Color.r
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7320070065001925756, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7320070065001925756, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 7320070065001925756, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
       propertyPath: m_LocalPosition.x
       value: -6
@@ -368,18 +304,6 @@ PrefabInstance:
     - target: {fileID: 7320070065001925756, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8977949324638530059, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8977949324638530059, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 1.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8977949324638530059, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.1
       objectReference: {fileID: 0}
     - target: {fileID: 9127730819503663577, guid: 7d83ebd285bc63d418f24ba8050d56e4, type: 3}
       propertyPath: m_Name
@@ -1480,54 +1404,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2438158073428606219, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: maxHP
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4393994746481855891, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4435916279548751840, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: moveSpeed
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701486086130809918, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701486086130809918, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4962634619626771592, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4962634619626771592, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 5506972699479269963, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: m_Color.b
-      value: 0.015686275
-      objectReference: {fileID: 0}
-    - target: {fileID: 5506972699479269963, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: m_Color.g
-      value: 0.92156863
-      objectReference: {fileID: 0}
-    - target: {fileID: 5506972699479269963, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7320070065001925756, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7320070065001925756, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.7
-      objectReference: {fileID: 0}
     - target: {fileID: 7320070065001925756, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_LocalPosition.x
       value: 6
@@ -1568,10 +1444,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8977949324638530059, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 9127730819503663577, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_Name
       value: FastEnemy
@@ -1589,26 +1461,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2438158073428606219, guid: 756643c45d1f55e4ea014019657868d9, type: 3}
-      propertyPath: maxHP
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4393994746481855891, guid: 756643c45d1f55e4ea014019657868d9, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701486086130809918, guid: 756643c45d1f55e4ea014019657868d9, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4962634619626771592, guid: 756643c45d1f55e4ea014019657868d9, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 7320070065001925756, guid: 756643c45d1f55e4ea014019657868d9, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.2
-      objectReference: {fileID: 0}
     - target: {fileID: 7320070065001925756, guid: 756643c45d1f55e4ea014019657868d9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3
