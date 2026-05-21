@@ -2,6 +2,19 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    // Animator
+    private Animator animator;
+
+    // 現在のコンボ段階（1〜3）
+    private int comboStep = 0;
+
+    // 最後に攻撃した時間
+    private float lastAttackTime;
+
+    // コンボ受付時間
+    [SerializeField]
+    private float comboResetTime = 0.8f;
+
     // Rigidbody2D
     private Rigidbody2D rb;
 
@@ -74,6 +87,9 @@ public class PlayerController : MonoBehaviour
 
         // PlayerHealth取得
         playerHealth = GetComponent<PlayerHealth>();
+
+        //Animator取得
+        animator = GetComponent<Animator>();
     }
 
     // 毎フレーム実行
@@ -109,6 +125,8 @@ public class PlayerController : MonoBehaviour
         // 攻撃入力
         if (Input.GetKeyDown(KeyCode.Z))
         {
+            //コンボ段階管理　アニメ再生メソッドを呼ぶ
+            HandleAttackInput();
             Debug.Log("攻撃開始");
             Attack();
         }
@@ -271,5 +289,36 @@ public class PlayerController : MonoBehaviour
 
         // 表示OFF
         isAttackGizmoVisible = false;
+    }
+
+    /// <summary>
+    /// コンボ段階管理    アニメ再生
+    /// </summary>
+    private void HandleAttackInput()
+    {
+        // 最後の攻撃から一定時間経ってたらリセット
+        if (Time.time - lastAttackTime > comboResetTime)
+        {
+            comboStep = 0;
+        }
+
+        // コンボ進行
+        comboStep++;
+
+        // 3段目以上は1に戻す（ループ）
+        if (comboStep > 3)
+        {
+            comboStep = 1;
+        }
+
+        // 時間更新
+        lastAttackTime = Time.time;
+
+        // Animatorへ反映
+        animator.SetInteger("ComboStep", comboStep);
+        animator.SetTrigger("Attack");
+
+        // 実際の攻撃判定はここで呼ぶ（今までの処理流用）
+        Attack();
     }
 }
