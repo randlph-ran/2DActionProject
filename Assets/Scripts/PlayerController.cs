@@ -255,7 +255,7 @@ public class PlayerController : MonoBehaviour
             if (enemyHealth != null)
             {
                 // ダメージを与える
-                enemyHealth.TakeDamage(attackDM);
+                enemyHealth.TakeDamage(attackDM, transform);
             }
         }
     }

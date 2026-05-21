@@ -1351,6 +1351,10 @@ PrefabInstance:
       propertyPath: maxHP
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 2438158073428606219, guid: 756643c45d1f55e4ea014019657868d9, type: 3}
+      propertyPath: knockbackForce
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 5506972699479269963, guid: 756643c45d1f55e4ea014019657868d9, type: 3}
       propertyPath: m_Color.b
       value: 0

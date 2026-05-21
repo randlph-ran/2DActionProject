@@ -12,6 +12,9 @@ public class EnemyAI : MonoBehaviour
     // Rigidbody2D
     private Rigidbody2D rb;
 
+    // EnemyHealth参照
+    private EnemyHealth enemyHealth;
+
     // Player位置
     private Transform playerTransform;
 
@@ -46,7 +49,6 @@ public class EnemyAI : MonoBehaviour
     [SerializeField]
     private int attackDamage = 1;
 
-
     // 初期化
     private void Awake()
     {
@@ -55,11 +57,20 @@ public class EnemyAI : MonoBehaviour
 
         //Scene内のTagがPlayerのものを探して入れる
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+
+        // EnemyHealth取得
+        enemyHealth = GetComponent<EnemyHealth>();
     }
 
     // 物理更新
     private void FixedUpdate()
     {
+        // ノックバック中は移動停止
+        if (enemyHealth.IsKnockback)
+        {
+            return;
+        }
+
         // Playerとの距離 Enemyの位置とPlayerの位置を測って入れる
         float distance = Vector2.Distance(transform.position, playerTransform.position);
 
@@ -136,9 +147,6 @@ public class EnemyAI : MonoBehaviour
     // 攻撃処理
     private void Attack()
     {
-
-
-
         // 攻撃範囲内Player取得 円範囲内のCollider全部取得
         Collider2D[] hitPlayers = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, playerLayer);
 
