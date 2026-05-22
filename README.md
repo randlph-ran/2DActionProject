@@ -134,6 +134,7 @@
 |------|-----------|----------|----------|------|
 | 5/21 | Asset 'PlayerAnimator': Transition 'Player_Attack1 -> Play_Idle' in state 'Player_Attack1' doesn't have an Exit Time or any condition, transition will be ignored UnityEditor.EditorApplication:Internal_RestoreLastOpenedScenes () | Animator | Attack1からIdleに戻る場合の条件指定ミスだったのでHasExitTimeの設定削除 | |
 | 5/21| Player' AnimationEvent has no function name specified!| Animator | Timelineに余計なAnimationEventの指定が入っていたので削除した||
+| 5/22| MissingReferenceException | TilePalleteへ画像を追加したり削除などをしていたらエラーが出るようになっていたので、古いParetteとLibralyの削除から再起動で修正||
 | ... | ... | ... | ... | ... |
 
 > ※ エラーが出たら記録してください。暫定対応と「後で見直す点」も書いて OK です。
