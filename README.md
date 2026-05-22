@@ -26,7 +26,7 @@
 |------|------|
 | **制作者名** | 近藤博士 |
 | **リポジトリ名** |`2DActionProject` |
-| **GitHub URL** | 例：`https://github.com/HiroshiKondo2026/2DActionProject` |
+| **GitHub URL** | `https://github.com/HiroshiKondo2026/2DActionProject` |
 | **作成日** | 2026/05/18 |
 | **Unity バージョン** | 例：Unity 6（URP） |
 
