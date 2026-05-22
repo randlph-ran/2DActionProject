@@ -132,7 +132,8 @@
 
 | 日付 | エラー内容 | 発生箇所 | 解決方法 | 備考 |
 |------|-----------|----------|----------|------|
-| 5/19 | 例：NullReferenceException | PlayerController.cs | 例：GetComponent の null チェック追加 | |
+| 5/21 | Asset 'PlayerAnimator': Transition 'Player_Attack1 -> Play_Idle' in state 'Player_Attack1' doesn't have an Exit Time or any condition, transition will be ignored UnityEditor.EditorApplication:Internal_RestoreLastOpenedScenes () | Animator | Attack1からIdleに戻る場合の条件指定ミスだったのでHasExitTimeの設定削除 | |
+| 5/21| Player' AnimationEvent has no function name specified!| Animator | Timelineに余計なAnimationEventの指定が入っていたので削除した||
 | ... | ... | ... | ... | ... |
 
 > ※ エラーが出たら記録してください。暫定対応と「後で見直す点」も書いて OK です。
