@@ -1,5 +1,7 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -42,6 +44,15 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField]
     private TMP_Text hpText;
 
+    // 死亡済み判定
+    private bool isDead = false;
+
+    // Animator参照
+    private Animator animator;
+
+    // Player制御スクリプト参照
+    private PlayerController playerController;
+
     // ゲーム開始時に呼ばれる
     private void Start()
     {
@@ -58,11 +69,22 @@ public class PlayerHealth : MonoBehaviour
 
         // HP表示更新
         UpdateHPUI();
+
+        // Animator取得
+        animator = GetComponent<Animator>();
+
+        // PlayerController取得
+        playerController = GetComponent<PlayerController>();
     }
 
     // ダメージを受ける処理
     public void TakeDamage(int damage, Vector2 enemyPosition)
     {
+        // 死亡済みなら処理しない
+        if (isDead)
+        {
+            return;
+        }
         // 無敵中ならダメージ無効
         if (isInvincible)
         {
@@ -108,8 +130,47 @@ public class PlayerHealth : MonoBehaviour
     {
         Debug.Log("Playerは死んでしまった");
 
-        // 仮で非表示
-        gameObject.SetActive(false);
+
+        // 死亡済みにする
+        isDead = true;
+
+        // 実行中Coroutine停止
+        StopAllCoroutines();
+
+        // 死亡アニメ再生
+        animator.SetTrigger("Die");
+
+        // Player操作停止
+        DisablePlayer();
+
+        // GameOverSceneへ移動するCoroutine開始
+        StartCoroutine(LoadGameOver());
+    }
+
+    // Playerの操作停止
+    private void DisablePlayer()
+    {
+        // 移動スクリプト停止
+        playerController.enabled = false;
+
+        // Rigidbody取得
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+
+        // 完全停止
+        rb.linearVelocity = Vector2.zero;
+
+        // 動かないようにする
+        rb.bodyType = RigidbodyType2D.Static;
+    }
+
+    // 数秒待ってGameOverSceneへ移動
+    private IEnumerator LoadGameOver()
+    {
+        // 2秒待機
+        yield return new WaitForSeconds(2f);
+
+        // GameOverSceneへ移動
+        SceneManager.LoadScene("GameOver");
     }
 
     // 一定時間無敵状態にする
