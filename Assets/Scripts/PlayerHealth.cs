@@ -24,7 +24,7 @@ public class PlayerHealth : MonoBehaviour
 
     // ノックバック力
     [SerializeField]
-    private float knockbackPower = 1f;
+    private float knockbackPower = 5f;
 
     // ノックバック中
     public bool IsKnockback { get; private set; }
@@ -40,6 +40,10 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField]
     private float blinkInterval = 0.05f;
 
+    // このY座標より下に落ちたら死亡
+    [SerializeField]
+    private float fallDeathY = -10f;
+
     // HP表示テキスト
     [SerializeField]
     private TMP_Text hpText;
@@ -52,6 +56,14 @@ public class PlayerHealth : MonoBehaviour
 
     // Player制御スクリプト参照
     private PlayerController playerController;
+
+    // 死亡時吹っ飛び力
+    [SerializeField]
+    private float deathKnockbackPower = 8f;
+
+    // 死亡時上方向力
+    [SerializeField]
+    private float deathUpPower = 3f;
 
     // ゲーム開始時に呼ばれる
     private void Start()
@@ -75,6 +87,13 @@ public class PlayerHealth : MonoBehaviour
 
         // PlayerController取得
         playerController = GetComponent<PlayerController>();
+    }
+
+    // 毎フレーム実行
+    private void Update()
+    {
+        // 落下死亡チェック
+        CheckFallDeath();
     }
 
     // ダメージを受ける処理
@@ -121,12 +140,16 @@ public class PlayerHealth : MonoBehaviour
         // HP0以下なら死亡
         if (currentHP <= 0)
         {
-            Die();
+            // Enemy方向へ向き直る
+            playerController.FaceEnemy(enemyPosition);
+
+            // 死亡処理
+            Die(enemyPosition);
         }
     }
 
     // HP0時処理
-    private void Die()
+    private void Die(Vector2 enemyPosition)
     {
         Debug.Log("Playerは死んでしまった");
 
@@ -136,6 +159,16 @@ public class PlayerHealth : MonoBehaviour
 
         // 実行中Coroutine停止
         StopAllCoroutines();
+
+        // 点滅中に死亡した場合、
+        // Spriteが非表示状態で止まることがあるため強制表示
+        spriteRenderer.enabled = true;
+
+        // 死亡吹っ飛び実行
+        DeathKnockback(enemyPosition);
+
+        // 空気抵抗を増やして減速
+        rb.linearDamping = 3f;
 
         // 死亡アニメ再生
         animator.SetTrigger("Die");
@@ -153,14 +186,14 @@ public class PlayerHealth : MonoBehaviour
         // 移動スクリプト停止
         playerController.enabled = false;
 
-        // Rigidbody取得
-        Rigidbody2D rb = GetComponent<Rigidbody2D>();
-
-        // 完全停止
+        /*// 完全停止
         rb.linearVelocity = Vector2.zero;
 
-        // 動かないようにする
-        rb.bodyType = RigidbodyType2D.Static;
+        // 重力停止
+        rb.gravityScale = 0f;*/
+
+        // 当たり判定停止
+        //GetComponent<Collider2D>().enabled = false;
     }
 
     // 数秒待ってGameOverSceneへ移動
@@ -238,5 +271,40 @@ public class PlayerHealth : MonoBehaviour
 
         // ノックバック終了
         IsKnockback = false;
+    }
+
+    // 死亡時の大きな吹っ飛び処理
+    private void DeathKnockback(Vector2 enemyPosition)
+    {
+        // 敵の位置から吹っ飛ぶ方向を決める
+        float direction = Mathf.Sign(transform.position.x - enemyPosition.x);
+
+        // 吹っ飛び方向作成
+        Vector2 force = new Vector2(direction * deathKnockbackPower, deathUpPower);
+
+        // 一度速度リセット
+        rb.linearVelocity = Vector2.zero;
+
+        // 強い力を加える
+        rb.AddForce(force, ForceMode2D.Impulse);
+    }
+
+    // 落下死亡判定
+    private void CheckFallDeath()
+    {
+        // すでに死亡済みなら処理しない
+        if (isDead)
+        {
+            return;
+        }
+
+        // 一定Y座標より下へ落ちたら死亡
+        if (transform.position.y < fallDeathY)
+        {
+            Debug.Log("落下死亡");
+
+            // 落下死実行
+            Die(transform.position);
+        }
     }
 }

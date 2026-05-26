@@ -28,6 +28,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float moveSpeed = 5f;
 
+    // 攻撃中判定
+    private bool isAttacking = false;
+
+    // 攻撃継続時間
+    [SerializeField]
+    private float attackDuration = 0.3f;
+
     // ジャンプ力
     [SerializeField]
     private float jumpPower = 12f;
@@ -142,6 +149,14 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        // 攻撃中は横移動停止
+        if (isAttacking)
+        {
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+
+            return;
+        }
+
         // 左右移動
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
     }
@@ -216,6 +231,25 @@ public class PlayerController : MonoBehaviour
 
         // Scale適用
         transform.localScale = scale;
+    }
+
+    // Enemy方向へ向き直る
+    public void FaceEnemy(Vector2 enemyPosition)
+    {
+        // Enemyが右側にいるか
+        bool enemyIsRight = enemyPosition.x > transform.position.x;
+
+        // Enemyが右にいて、現在左向きなら反転
+        if (enemyIsRight && !isFacingRight)
+        {
+            Turn();
+        }
+
+        // Enemyが左にいて、現在右向きなら反転
+        else if (!enemyIsRight && isFacingRight)
+        {
+            Turn();
+        }
     }
 
     // Scene上でGroundCheck確認用
@@ -319,7 +353,23 @@ public class PlayerController : MonoBehaviour
         animator.SetInteger("ComboStep", comboStep);
         animator.SetTrigger("Attack");
 
+        // 攻撃状態ON
+        isAttacking = true;
+
+        // 一定時間後に解除
+        StartCoroutine(AttackCoroutine());
+
         // 実際の攻撃判定はここで呼ぶ（今までの処理流用）
         Attack();
+    }
+
+    // 攻撃状態を一定時間だけ維持
+    private System.Collections.IEnumerator AttackCoroutine()
+    {
+        // 攻撃時間待機
+        yield return new WaitForSeconds(attackDuration);
+
+        // 攻撃状態OFF
+        isAttacking = false;
     }
 }
