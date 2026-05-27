@@ -22,7 +22,7 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: -4100670489248597864, guid: a130906767f09f743acb880ec8d3ae7b, type: 3}
-    - time: 0.083333336
+    - time: 0.016666668
       value: {fileID: -7632052863443882810, guid: 64b048f35ab0ea24eb077ee6e5de35cf, type: 3}
     - time: 0.2
       value: {fileID: -7143845978204538668, guid: fe65cf38e00e0b7468b762df81cb10a5, type: 3}
@@ -86,8 +86,15 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.33333334
+  - time: 0.2
     functionName: EnableNextCombo
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.48333332
+    functionName: EndAttack
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

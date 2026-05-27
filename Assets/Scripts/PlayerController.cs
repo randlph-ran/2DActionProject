@@ -35,8 +35,8 @@ public class PlayerController : MonoBehaviour
     private bool canNextCombo = false;
 
     // 攻撃継続時間
-    [SerializeField]
-    private float attackDuration = 0.3f;
+    //[SerializeField]
+    //private float attackDuration = 0.3f;
 
     // ジャンプ力
     [SerializeField]
@@ -67,13 +67,63 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private LayerMask groundLayer;
 
+
+    // =========================
+    // Attack1設定
+    // =========================
+
+    // Attack1の攻撃位置オフセット
+    [SerializeField]
+    private Vector2 attack1Offset;
+
+    // Attack1の攻撃範囲
+    [SerializeField]
+    private float attack1Radius = 1.0f;
+
+
+    // =========================
+    // Attack2設定
+    // =========================
+
+    // Attack2の攻撃位置オフセット
+    [SerializeField]
+    private Vector2 attack2Offset;
+
+    // Attack2の攻撃範囲
+    [SerializeField]
+    private float attack2Radius = 1.2f;
+
+
+    // =========================
+    // Attack3設定
+    // =========================
+
+    // Attack3の攻撃位置オフセット
+    [SerializeField]
+    private Vector2 attack3Offset;
+
+    // Attack3の攻撃範囲
+    [SerializeField]
+    private float attack3Radius = 1.5f;
+
+
+    // =========================
+    // 現在使用中の攻撃情報
+    // =========================
+
+    // 現在の攻撃位置
+    private Vector2 currentAttackOffset;
+
+    // 現在の攻撃範囲
+    private float currentAttackRadius;
+    /*
     // 攻撃判定位置
     [SerializeField]
     private Transform attackPoint;
 
     // 攻撃範囲
     [SerializeField]
-    private float attackRadius = 5f;
+    private float attackRadius = 5f;*/
 
     [SerializeField]
     private int attackDM = 1;
@@ -84,6 +134,10 @@ public class PlayerController : MonoBehaviour
 
     // デバッグ用攻撃Gizmo表示フラグ
     private bool isAttackGizmoVisible = false;
+
+    // 攻撃範囲を常時表示するか
+    [SerializeField]
+    private bool alwaysShowAttackGizmo = true;
 
     // Gizmo表示時間
     [SerializeField]
@@ -118,8 +172,11 @@ public class PlayerController : MonoBehaviour
         // 接地判定
         CheckGround();
 
-        // 向き変更
-        Flip();
+        // 攻撃中は向き固定
+        if (!isAttacking)
+        {
+            Flip();
+        }
 
         // ジャンプ入力
         if (Input.GetKeyDown(KeyCode.Space))
@@ -146,8 +203,6 @@ public class PlayerController : MonoBehaviour
             {
                 HandleAttackInput();
 
-                // 連続入力防止
-                canNextCombo = false;
             }
 
             Debug.Log("攻撃開始");
@@ -271,7 +326,7 @@ public class PlayerController : MonoBehaviour
     private void OnDrawGizmos()
     {
         // GroundCheck未設定なら終了
-        if (groundCheck == null || attackPoint == null)
+        if (groundCheck == null)
         {
             return;
         }
@@ -279,22 +334,22 @@ public class PlayerController : MonoBehaviour
         // Gizmo色
         Gizmos.color = Color.red;
 
-        // 円表示
-        Gizmos.DrawWireSphere(
-            groundCheck.position,
-            groundCheckRadius
-        );
+        // 向きによって攻撃位置反転
+        Vector2 gizmoPosition = (Vector2)transform.position + new Vector2(currentAttackOffset.x * (isFacingRight ? 1 : -1), currentAttackOffset.y);
 
-        // 攻撃Gizmo表示中のみ
-        if (isAttackGizmoVisible)
+        // 攻撃範囲表示
+        Gizmos.DrawWireSphere(gizmoPosition, currentAttackRadius);
+
+        // 攻撃中 or 常時表示
+        if (isAttackGizmoVisible || alwaysShowAttackGizmo)
         {
             // 攻撃範囲色
             Gizmos.color = Color.blue;
 
             // 攻撃範囲表示
             Gizmos.DrawWireSphere(
-                attackPoint.position,
-                attackRadius
+                gizmoPosition,
+                currentAttackRadius
             );
         }
     }
@@ -306,10 +361,13 @@ public class PlayerController : MonoBehaviour
         // 攻撃Gizmo表示開始
         StartCoroutine(ShowAttackGizmo());
 
+        // 向きによって攻撃位置反転
+        Vector2 attackPosition = (Vector2)transform.position + new Vector2(currentAttackOffset.x * (isFacingRight ? 1 : -1), currentAttackOffset.y);
+
         // 攻撃範囲内のEnemy取得
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(
-            attackPoint.position,
-            attackRadius,
+            attackPosition,
+            currentAttackRadius,
             enemyLayer
         );
 
@@ -346,45 +404,53 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void HandleAttackInput()
     {
-        // 最後の攻撃から一定時間経ってたらリセット
-        if (Time.time - lastAttackTime > comboResetTime)
-        {
-            comboStep = 0;
-        }
 
-        // コンボ進行
+        canNextCombo = false;
+
         comboStep++;
 
-        // 3段目以上は1に戻す（ループ）
         if (comboStep > 3)
         {
             comboStep = 1;
         }
 
-        // 時間更新
-        lastAttackTime = Time.time;
+        // コンボ段階ごとの攻撃設定切替
+        switch (comboStep)
+        {
+            // Attack1
+            case 1:
+                currentAttackOffset = attack1Offset;
+                currentAttackRadius = attack1Radius;
+                Debug.Log(currentAttackOffset);
+                Debug.Log(currentAttackRadius);
+                break;
 
-        // Animatorへ反映
+            // Attack2
+            case 2:
+                currentAttackOffset = attack2Offset;
+                currentAttackRadius = attack2Radius;
+                Debug.Log(currentAttackOffset);
+                Debug.Log(currentAttackRadius);
+                break;
+
+            // Attack3
+            case 3:
+                currentAttackOffset = attack3Offset;
+                currentAttackRadius = attack3Radius;
+                Debug.Log(currentAttackOffset);
+                Debug.Log(currentAttackRadius);
+                break;
+        }
+
         animator.SetInteger("ComboStep", comboStep);
-        animator.SetTrigger("Attack");
 
-        // 攻撃状態ON
+        if (comboStep == 1)
+        {
+            animator.SetTrigger("Attack");
+        }
+
         isAttacking = true;
-
-        // 一定時間後に解除
-        StartCoroutine(AttackCoroutine());
     }
-
-    // 攻撃状態を一定時間だけ維持
-    private System.Collections.IEnumerator AttackCoroutine()
-    {
-        // 攻撃時間待機
-        yield return new WaitForSeconds(attackDuration);
-
-        // 攻撃状態OFF
-        isAttacking = false;
-    }
-
     // 次コンボ入力を許可する
     // Animation Event から呼ばれる
     public void EnableNextCombo()
@@ -393,4 +459,27 @@ public class PlayerController : MonoBehaviour
 
         Debug.Log("次コンボ受付開始");
     }
+    public void EndAttack()
+    {
+        Debug.Log("EndAttack呼ばれた");
+
+        // 遷移中なら終了処理しない
+        if (animator.IsInTransition(0))
+        {
+            Debug.Log("遷移中なので終了スキップ");
+            return;
+        }
+
+        isAttacking = false;
+
+        canNextCombo = false;
+
+        comboStep = 0;
+
+        animator.SetInteger("ComboStep", 0);
+
+        Debug.Log("受付終了");
+        Debug.Log("Attack終了");
+    }
+
 }
