@@ -1556,7 +1556,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   comboResetTime: 0.8
   moveSpeed: 5
-  attackDuration: 0.3
   jumpPower: 20
   maxJumpCount: 2
   groundCheck: {fileID: 419735588}
@@ -1564,12 +1563,17 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 264
-  attackPoint: {fileID: 852517906}
-  attackRadius: 0.4
+  attack1Offset: {x: 0, y: 0}
+  attack1Radius: 1
+  attack2Offset: {x: 0, y: 0}
+  attack2Radius: 1.2
+  attack3Offset: {x: 0, y: 0}
+  attack3Radius: 1.5
   attackDM: 1
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
+  alwaysShowAttackGizmo: 1
   attackGizmoDuration: 0.2
 --- !u!114 &690408517
 MonoBehaviour:
