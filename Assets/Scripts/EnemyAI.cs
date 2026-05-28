@@ -12,6 +12,9 @@ public class EnemyAI : MonoBehaviour
     // Rigidbody2D
     private Rigidbody2D rb;
 
+    // Animator参照
+    private Animator animator;
+
     // EnemyHealth参照
     private EnemyHealth enemyHealth;
 
@@ -80,6 +83,11 @@ public class EnemyAI : MonoBehaviour
 
         // EnemyHealth取得
         enemyHealth = GetComponent<EnemyHealth>();
+
+        // Animator取得
+        animator = GetComponent<Animator>();
+
+        Debug.Log(animator.runtimeAnimatorController.name);
     }
 
     // 物理更新
@@ -131,13 +139,20 @@ public class EnemyAI : MonoBehaviour
         {
             // 通常巡回　向きに合わせて巡回
             moveDirection = isFacingRight ? 1f : -1f;
-        }
 
-        // 壁と崖を確認
-        CheckWallAndGround();
+            // ■ Playerを追っていない時だけ
+            // 壁と崖を確認する
+            CheckWallAndGround();
+        }
 
         // 移動
         rb.linearVelocity = new Vector2(moveDirection * moveSpeed, rb.linearVelocity.y);
+
+        // 横方向へ少しでも移動しているならtrue
+        bool isMoving = Mathf.Abs(rb.linearVelocity.x) > 0.1f;
+
+        // Animatorへ移動状態を送る
+        animator.SetBool("isMoving", isMoving);
 
     }
 

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b458e9f95e34cf548ae3daf75f3139ee
+guid: 899b33197282e3d40b1c9d2d53ec7647
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8596640243658272642
-    second: Enemy_0
+      213: 1123320119098608615
+    second: s_crouch_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Enemy_0
+      name: s_crouch_0
       rect:
         serializedVersion: 2
-        x: 5
+        x: 0
         y: 0
-        width: 25
-        height: 23
-      alignment: 9
-      pivot: {x: 0.50763756, y: 1.3509647}
+        width: 1280
+        height: 720
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 28f241131c66d4770800000000000000
-      internalID: 8596640243658272642
+      spriteID: 7eb0ceb52b5d69f00800000000000000
+      internalID: 1123320119098608615
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 3b5dd8dd5999b964697420e2a1dff870
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Enemy_0: 8596640243658272642
+      s_crouch_0: 1123320119098608615
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

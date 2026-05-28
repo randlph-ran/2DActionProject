@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: b458e9f95e34cf548ae3daf75f3139ee
+guid: 9867ecae277ae484c8abba25b1da8a38
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8596640243658272642
-    second: Enemy_0
+      213: -5387896753986628666
+    second: s_Idle_0
+  - first:
+      213: -8972443925712145602
+    second: s_Idle_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +103,45 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Enemy_0
+      name: s_Idle_0
       rect:
         serializedVersion: 2
-        x: 5
+        x: 0
         y: 0
-        width: 25
-        height: 23
+        width: 100
+        height: 58
       alignment: 9
-      pivot: {x: 0.50763756, y: 1.3509647}
+      pivot: {x: 0.49815434, y: 0.5318226}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 28f241131c66d4770800000000000000
-      internalID: 8596640243658272642
+      spriteID: 6c39524d2785a35b0800000000000000
+      internalID: -5387896753986628666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: s_Idle_1
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 99
+        width: 1
+        height: 1
+      alignment: 9
+      pivot: {x: 0.5147185, y: 0.7010611}
+      border: {x: 0, y: 0, z: 4, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e33f0d0a9c97b7380800000000000000
+      internalID: -8972443925712145602
       vertices: []
       indices: 
       edges: []
@@ -125,7 +150,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 3b5dd8dd5999b964697420e2a1dff870
+    spriteID: 930cf849bd1afde459e5927605cff6fa
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +160,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Enemy_0: 8596640243658272642
+      s_Idle_0: -5387896753986628666
+      s_Idle_1: -8972443925712145602
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
