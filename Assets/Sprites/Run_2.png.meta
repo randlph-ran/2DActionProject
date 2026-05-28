@@ -103,12 +103,12 @@ TextureImporter:
       name: Run_2_0
       rect:
         serializedVersion: 2
-        x: 17
+        x: 9
         y: 0
-        width: 65
+        width: 82
         height: 100
       alignment: 9
-      pivot: {x: 0.4497505, y: 0.48278862}
+      pivot: {x: 0.5015202, y: 0.56215376}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []

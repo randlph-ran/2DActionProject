@@ -45,6 +45,26 @@ public class EnemyAI : MonoBehaviour
     [SerializeField]
     private LayerMask playerLayer;
 
+    // 壁確認位置
+    // 前方の壁を調べるRayの開始地点
+    [SerializeField]
+    private Transform wallCheck;
+
+    // 地面確認位置
+    // 前方の足元を調べるRayの開始地点
+    [SerializeField]
+    private Transform groundCheck;
+
+    // Rayの長さ
+    // 数値を大きくすると遠くまで検知する
+    [SerializeField]
+    private float checkDistance = 0.3f;
+
+    // 地面用Layer
+    // GroundLayerだけを検知する
+    [SerializeField]
+    private LayerMask groundLayer;
+
     // 攻撃力
     [SerializeField]
     private int attackDamage = 1;
@@ -113,17 +133,45 @@ public class EnemyAI : MonoBehaviour
             moveDirection = isFacingRight ? 1f : -1f;
         }
 
+        // 壁と崖を確認
+        CheckWallAndGround();
+
         // 移動
         rb.linearVelocity = new Vector2(moveDirection * moveSpeed, rb.linearVelocity.y);
+
     }
 
-    // OnCollisionEnter2D:
-    // 衝突時処理
-    private void OnCollisionEnter2D(Collision2D collision)
+    // 壁と地面を確認する処理
+    private void CheckWallAndGround()
     {
-        // Groundと衝突したら反転
-        if (collision.gameObject.CompareTag("Wall"))
+        // 現在向いている方向を決める
+        // 右向きなら右、左向きなら左
+        Vector2 direction = isFacingRight ? Vector2.right : Vector2.left;
+
+        // 前方向へRayを飛ばして壁確認
+        RaycastHit2D wallHit = Physics2D.Raycast(
+            wallCheck.position, // Ray開始位置
+            direction,          // Ray方向
+            checkDistance,      // Ray長さ
+            groundLayer);         // 検知するLayer
+
+        // 足元から下方向へRayを飛ばして地面確認
+        RaycastHit2D groundHit = Physics2D.Raycast(
+            groundCheck.position, // Ray開始位置
+            Vector2.down,         // 下方向
+            checkDistance,        // Ray長さ
+            groundLayer);         // 検知するLayer
+
+        // 壁に当たった場合
+        bool hitWall = wallHit.collider != null;
+
+        // 地面が無い場合
+        bool noGround = groundHit.collider == null;
+
+        // 壁がある または 地面が無いなら反転
+        if (hitWall || noGround)
         {
+            Debug.Log(hitWall + " 壁があったよ" + noGround + "もしくは地面がないよ");
             Flip();
         }
     }
