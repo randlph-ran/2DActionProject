@@ -400,55 +400,97 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// コンボ段階管理    アニメ再生
+    /// 攻撃入力時の処理
+    /// ・コンボ段階を進める
+    /// ・現在の攻撃範囲を設定する
+    /// ・Animatorへ現在コンボを送る
+    /// ・攻撃状態を開始する
     /// </summary>
     private void HandleAttackInput()
     {
-
+        // 次コンボ受付を一旦OFF
+        // AnimationEventで再度ONにする=Eventで呼ばれるまでボタン連打でのコンボ暴発防止策
         canNextCombo = false;
 
+        // コンボ段階を進める
         comboStep++;
 
+        // 3段目を超えたら1へ戻す
         if (comboStep > 3)
         {
             comboStep = 1;
         }
 
-        // コンボ段階ごとの攻撃設定切替
+        // 現在のコンボ段階に応じて
+        // 攻撃範囲設定を切り替える
         switch (comboStep)
         {
-            // Attack1
+            // =========================
+            // Attack1の時の情報
+            // =========================
             case 1:
+
+                // Attack1用の攻撃位置を設定
                 currentAttackOffset = attack1Offset;
+
+                // Attack1用の攻撃範囲を設定
                 currentAttackRadius = attack1Radius;
+
+                // 確認用ログ
                 Debug.Log(currentAttackOffset);
                 Debug.Log(currentAttackRadius);
+
                 break;
 
-            // Attack2
+            // =========================
+            // Attack2の時の情報
+            // =========================
             case 2:
+
+                // Attack2用の攻撃位置を設定
                 currentAttackOffset = attack2Offset;
+
+                // Attack2用の攻撃範囲を設定
                 currentAttackRadius = attack2Radius;
+
+                // 確認用ログ
                 Debug.Log(currentAttackOffset);
                 Debug.Log(currentAttackRadius);
+
                 break;
 
-            // Attack3
+            // =========================
+            // Attack3の時の情報
+            // =========================
             case 3:
+
+                // Attack3用の攻撃位置を設定
                 currentAttackOffset = attack3Offset;
+
+                // Attack3用の攻撃範囲を設定
                 currentAttackRadius = attack3Radius;
+
+                // 確認用ログ
                 Debug.Log(currentAttackOffset);
                 Debug.Log(currentAttackRadius);
+
                 break;
         }
 
+        // Animatorへ現在のコンボ段階を送る
+        // これによってAttack1～3を切り替える
         animator.SetInteger("ComboStep", comboStep);
 
+        // Attack開始Trigger
+        // Attack1開始時のみTriggerを送る
+        // Attack2以降はAnimator側の遷移で継続する
         if (comboStep == 1)
         {
             animator.SetTrigger("Attack");
         }
 
+        // 攻撃中状態ON
+        // 移動停止や向き固定に使用
         isAttacking = true;
     }
     // 次コンボ入力を許可する

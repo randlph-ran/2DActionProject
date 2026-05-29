@@ -210,25 +210,8 @@ public class EnemyAI : MonoBehaviour
     // 攻撃処理
     private void Attack()
     {
-        // 攻撃範囲内Player取得 円範囲内のCollider全部取得
-        Collider2D[] hitPlayers = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, playerLayer);
-
-        Debug.Log("Hitのカウント距離 : " + hitPlayers.Length);
-        Debug.Log("Enemy Attack!");
-
-        // 全Playerへ処理
-        foreach (Collider2D player in hitPlayers)
-        {
-            // PlayerHealth取得
-            PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
-
-            // PlayerHealthあるなら
-            if (playerHealth != null)
-            {
-                // ダメージ
-                playerHealth.TakeDamage(attackDamage, transform.position);
-            }
-        }
+        // Attackアニメ開始
+        animator.SetTrigger("Attack");
 
         // 次回攻撃時間
         nextAttackTime = Time.time + attackCooldown;
@@ -245,5 +228,29 @@ public class EnemyAI : MonoBehaviour
 
         // 攻撃範囲表示
         Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
+    }
+
+    // 実際にダメージを与える処理
+    // Animation Eventから呼ばれる
+    public void DealDamage()
+    {
+        // 攻撃範囲内のPlayer取得
+        Collider2D[] hitPlayers = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, playerLayer);
+
+        Debug.Log("Hitのカウント距離 : " + hitPlayers.Length);
+
+        // 範囲内Player全員へ処理
+        foreach (Collider2D player in hitPlayers)
+        {
+            // PlayerHealth取得
+            PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+
+            // PlayerHealthが存在するなら
+            if (playerHealth != null)
+            {
+                // ダメージ処理
+                playerHealth.TakeDamage(attackDamage, transform.position);
+            }
+        }
     }
 }
