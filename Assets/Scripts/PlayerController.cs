@@ -61,7 +61,7 @@ public class PlayerController : MonoBehaviour
 
     // Ground判定半径
     [SerializeField]
-    private float groundCheckRadius = 0.35f;
+    private float groundCheckRadius = 0.1f;
 
     // GroundLayer
     [SerializeField]
@@ -168,6 +168,12 @@ public class PlayerController : MonoBehaviour
 
         // Animatorへ移動状態を送る
         animator.SetBool("isRunning", isRunning);
+
+        // 接地状態をAnimatorへ送る
+        animator.SetBool("isGrounded", isGrounded);
+
+        // 縦速度をAnimatorへ送る
+        animator.SetFloat("verticalSpeed", rb.linearVelocity.y);
 
         // ノックバック中はジャンプ操作禁止
         if (playerHealth.IsKnockback)
