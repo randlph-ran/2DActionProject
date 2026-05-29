@@ -163,6 +163,12 @@ public class PlayerController : MonoBehaviour
         // 左右入力 いったん旧入力システムで
         moveInput = Input.GetAxisRaw("Horizontal");
 
+        // 横入力があるか
+        bool isRunning = Mathf.Abs(moveInput) > 0.1f;
+
+        // Animatorへ移動状態を送る
+        animator.SetBool("isRunning", isRunning);
+
         // ノックバック中はジャンプ操作禁止
         if (playerHealth.IsKnockback)
         {

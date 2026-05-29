@@ -36,6 +36,9 @@ public class EnemyAI : MonoBehaviour
     // 次攻撃可能時間
     private float nextAttackTime;
 
+    // 攻撃中判定
+    private bool isAttacking = false;
+
     // 攻撃判定位置
     [SerializeField]
     private Transform attackPoint;
@@ -72,6 +75,11 @@ public class EnemyAI : MonoBehaviour
     [SerializeField]
     private int attackDamage = 1;
 
+    // ノックバック力
+    // Enemyごとに吹き飛ばし強さを変更できる
+    [SerializeField]
+    private float knockbackForce = 5f;
+
     // 初期化
     private void Awake()
     {
@@ -96,6 +104,15 @@ public class EnemyAI : MonoBehaviour
         // ノックバック中は移動停止
         if (enemyHealth.IsKnockback)
         {
+            return;
+        }
+
+        // 攻撃中は移動停止
+        if (isAttacking)
+        {
+            // 横移動停止
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+
             return;
         }
 
@@ -210,6 +227,9 @@ public class EnemyAI : MonoBehaviour
     // 攻撃処理
     private void Attack()
     {
+        // 攻撃中ON
+        isAttacking = true;
+
         // Attackアニメ開始
         animator.SetTrigger("Attack");
 
@@ -249,8 +269,16 @@ public class EnemyAI : MonoBehaviour
             if (playerHealth != null)
             {
                 // ダメージ処理
-                playerHealth.TakeDamage(attackDamage, transform.position);
+                playerHealth.TakeDamage(attackDamage, transform.position, knockbackForce);
             }
         }
+    }
+
+    // 攻撃終了
+    // Animation Eventから呼ばれる
+    public void EndAttack()
+    {
+        // 攻撃中OFF
+        isAttacking = false;
     }
 }

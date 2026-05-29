@@ -97,7 +97,7 @@ public class PlayerHealth : MonoBehaviour
     }
 
     // ダメージを受ける処理
-    public void TakeDamage(int damage, Vector2 enemyPosition)
+    public void TakeDamage(int damage, Vector2 enemyPosition, float knockbackForce)
     {
         // 死亡済みなら処理しない
         if (isDead)
@@ -132,7 +132,7 @@ public class PlayerHealth : MonoBehaviour
         IsKnockback = true;
 
         //固定ノックバック
-        StartCoroutine(KnockbackCoroutine(knockbackDirection));
+        StartCoroutine(KnockbackCoroutine(knockbackDirection, knockbackForce));
 
 
         StartCoroutine(InvincibleCoroutine());
@@ -255,13 +255,13 @@ public class PlayerHealth : MonoBehaviour
         hpText.text = "HP : " + currentHP;
     }
 
-    private System.Collections.IEnumerator KnockbackCoroutine(Vector2 direction)
+    private IEnumerator KnockbackCoroutine(Vector2 direction, float knockbackForce)
     {
         // ノックバック開始
         IsKnockback = true;
 
         // ノックバック速度
-        rb.linearVelocity = direction * knockbackPower;
+        rb.linearVelocity = direction * knockbackForce;
 
         // 少しだけ吹っ飛ぶ
         yield return new WaitForSeconds(knockbackDuration);

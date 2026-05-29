@@ -6,6 +6,10 @@ public class EnemyAttack : MonoBehaviour
     [SerializeField]
     private int damage = 1;
 
+    // ノックバック力
+    [SerializeField]
+    private float knockbackForce = 5f;
+
     // Collider接触時に呼ばれる
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -21,7 +25,7 @@ public class EnemyAttack : MonoBehaviour
             if (playerHealth != null)
             {
                 // ダメージ処理
-                playerHealth.TakeDamage(damage, transform.position);
+                playerHealth.TakeDamage(damage, transform.position, knockbackForce);
             }
         }
     }
