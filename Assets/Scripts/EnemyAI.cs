@@ -114,14 +114,6 @@ public class EnemyAI : MonoBehaviour
     // 外部取得用
     public int WeightLevel => weightLevel;
 
-    // 重さ
-    // 0 = 軽い
-    // 1 = 拮抗
-    // 2 = 重い(Boss用)
-    [SerializeField]
-    private int enemyWeight = 0;
-
-
     // ProjectilePrefab
     [SerializeField]
     private BossProjectile projectilePrefab;
@@ -470,11 +462,11 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        // Weight2ならPlayerを止める
-        if (enemyWeight >= 2)
+        if (weightLevel >= 2)
         {
             playerController.SetBlocked(true);
         }
+    
     }
 
     // 接触終了
