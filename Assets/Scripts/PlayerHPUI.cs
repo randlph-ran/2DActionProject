@@ -16,8 +16,9 @@ public class PlayerHPUI : MonoBehaviour
     /// </summary>
     public void SetHP(int currentHP, int maxHP)
     {
-        // 0〜1の割合に変換してバーに反映
-        hpSlider.value = (float)currentHP / maxHP;
+        // HPバーの最大値と現在値を設定
+        hpSlider.maxValue = maxHP;
+        hpSlider.value = currentHP;
     }
     private void Start()
     {
