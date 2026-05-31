@@ -285,7 +285,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.14820755, y: -0.057637513}
+  m_Offset: {x: -0.11010575, y: -0.057637513}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5270262, y: 0.5679455}
@@ -295,7 +295,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.8737133, y: 1.4725686}
+  m_Size: {x: 2.2146235, y: 1.4725686}
   m_EdgeRadius: 0
 --- !u!114 &2438158073428606219
 MonoBehaviour:
@@ -345,6 +345,8 @@ MonoBehaviour:
   weightLevel: 2
   projectilePrefab: {fileID: -5110534461669590181, guid: 2caac582ad8794d42a32f53bc18eca73, type: 3}
   firePoint: {fileID: 1587529983598547597}
+  retreatDuration: 1.5
+  retreatSpeed: 3
 --- !u!95 &5000552218476298777
 Animator:
   serializedVersion: 7

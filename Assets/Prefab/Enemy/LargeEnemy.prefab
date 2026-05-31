@@ -497,7 +497,7 @@ MonoBehaviour:
   moveSpeed: 0.8
   chaseDistance: 5
   meleeAttackDistance: 1.5
-  rangedAttackDistance: 6
+  rangedAttackDistance: 0
   rangedAttackCooldown: 3
   attackCooldown: 2
   attackPoint: {fileID: 8977949324638530059}
@@ -516,3 +516,5 @@ MonoBehaviour:
   weightLevel: 0
   projectilePrefab: {fileID: 0}
   firePoint: {fileID: 0}
+  retreatDuration: 1.5
+  retreatSpeed: 3

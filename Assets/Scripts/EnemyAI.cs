@@ -39,7 +39,7 @@ public class EnemyAI : MonoBehaviour
 
     // 飛び道具攻撃距離
     [SerializeField]
-    private float rangedAttackDistance = 6f;
+    private float rangedAttackDistance = 0;
 
     // 飛び道具攻撃間隔
     [SerializeField]
@@ -47,8 +47,6 @@ public class EnemyAI : MonoBehaviour
 
     // 次回飛び道具攻撃可能時間
     private float nextRangedAttackTime;
-
-
 
     // 次攻撃までの間隔
     [SerializeField]
@@ -122,6 +120,24 @@ public class EnemyAI : MonoBehaviour
     [SerializeField]
     private Transform firePoint;
 
+    // =========================
+    // 後退行動設定
+    // =========================
+
+    // 後退中判定
+    private bool isRetreating = false;
+
+    // 後退終了時間
+    private float retreatEndTime;
+
+    // 後退時間
+    [SerializeField]
+    private float retreatDuration = 1.5f;
+
+    // 後退速度
+    [SerializeField]
+    private float retreatSpeed = 3f;
+
     // 初期化
     private void Awake()
     {
@@ -177,6 +193,36 @@ public class EnemyAI : MonoBehaviour
         float distance = Vector2.Distance(transform.position, playerTransform.position);
 
         Debug.Log("距離 : " + distance);
+        Debug.Log( gameObject.name + " isRetreating = " + isRetreating);
+
+        // 後退中はPlayerと逆方向へ移動し、Player方向は向き続ける
+        if (isRetreating)
+        {
+            // Playerと逆方向へ移動
+            float retreatDirection = playerTransform.position.x > transform.position.x ? -1f : 1f;
+
+            // 移動
+            rb.linearVelocity =new Vector2(retreatDirection * retreatSpeed,rb.linearVelocity.y);
+
+            // Player方向は向き続ける
+            float targetDirection = playerTransform.position.x > transform.position.x ? 1f : -1f;
+
+            // 向き違うなら反転
+            if ((targetDirection > 0 && !isFacingRight) || (targetDirection < 0 && isFacingRight))
+            {
+                Flip();
+            }
+
+            // 時間終了 
+            if (Time.time >= retreatEndTime)
+            {
+                isRetreating = false;
+
+                rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            }
+            // 後退中は他の行動しない
+            return;
+        }
 
         // 移動方向
         float moveDirection;
@@ -190,6 +236,7 @@ public class EnemyAI : MonoBehaviour
             // 攻撃可能なら攻撃
             if (Time.time >= nextAttackTime) Attack();
 
+            // 近接攻撃中は他の行動しない
             return;
         }
 
@@ -197,21 +244,19 @@ public class EnemyAI : MonoBehaviour
         // 飛び道具攻撃距離
         // =========================
 
+        // 飛び道具攻撃距離内なら停止して攻撃
         if (distance <= rangedAttackDistance)
         {
             // 移動停止
-            rb.linearVelocity =
-                new Vector2(0, rb.linearVelocity.y);
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
 
             // Player方向確認
-            float targetDirection =
-                playerTransform.position.x >
-                transform.position.x ? 1f : -1f;
+            float targetDirection = playerTransform.position.x > transform.position.x ? 1f : -1f;
 
             // 向き違うなら反転
-            if ((targetDirection > 0 && !isFacingRight)
-                || (targetDirection < 0 && isFacingRight))
+            if ((targetDirection > 0 && !isFacingRight) || (targetDirection < 0 && isFacingRight))
             {
+                // 向き反転
                 Flip();
             }
 
@@ -228,7 +273,7 @@ public class EnemyAI : MonoBehaviour
                 nextRangedAttackTime =
                     Time.time + rangedAttackCooldown;
             }
-
+            // 飛び道具攻撃中は他の行動しない
             return;
         }
 
@@ -244,6 +289,7 @@ public class EnemyAI : MonoBehaviour
             // 向き違うなら反転
             if ((targetDirection > 0 && !isFacingRight) || (targetDirection < 0 && isFacingRight))
             {
+                // 向き反転
                 Flip();
             }
 
@@ -268,12 +314,6 @@ public class EnemyAI : MonoBehaviour
 
         // Animatorへ移動状態を送る
         animator.SetBool("isMoving", isMoving);
-        //仮処置テスト用
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            FireProjectile();
-        }
-
     }
 
     // 壁と地面を確認する処理
@@ -357,28 +397,21 @@ public class EnemyAI : MonoBehaviour
         // wallCheck確認
         if (wallCheck != null)
         {
+            // 表示色は青
             Gizmos.color = Color.blue;
-
-            Vector2 direction =
-                isFacingRight ? Vector2.right : Vector2.left;
-
-            Gizmos.DrawLine(
-                wallCheck.position,
-                (Vector2)wallCheck.position +
-                direction * checkDistance
-            );
+            // 現在向いている方向を決める
+            Vector2 direction = isFacingRight ? Vector2.right : Vector2.left;
+            // Rayを表示
+            Gizmos.DrawLine( wallCheck.position, (Vector2)wallCheck.position + direction * checkDistance);
         }
 
         // groundCheck確認
         if (groundCheck != null)
         {
+            // 表示色は緑
             Gizmos.color = Color.green;
-
-            Gizmos.DrawLine(
-                groundCheck.position,
-                (Vector2)groundCheck.position +
-                Vector2.down * checkDistance
-            );
+            // Rayを表示
+            Gizmos.DrawLine( groundCheck.position, (Vector2)groundCheck.position + Vector2.down * checkDistance);
         }
     }
 
@@ -409,11 +442,17 @@ public class EnemyAI : MonoBehaviour
     // Animation Eventから呼ばれる
     public void EndAttack()
     {
-        // 攻撃中OFF
+        // 攻撃中終了
         isAttacking = false;
+
+        // 後退開始
+        isRetreating = true;
+
+        // 後退終了時刻 = 現在時刻 + 後退時間
+        retreatEndTime = Time.time + retreatDuration;
     }
 
-     // Projectile発射
+    // Projectile発射
     public void FireProjectile()
     {
         Debug.Log(gameObject.name);
@@ -421,8 +460,7 @@ public class EnemyAI : MonoBehaviour
         // FirePoint未設定なら終了
         if (firePoint == null)
         {
-            Debug.LogError("firePointが未設定");
-
+            Debug.LogError("firePointが未設定");            
             return;
         }
 
@@ -430,27 +468,20 @@ public class EnemyAI : MonoBehaviour
         if (projectilePrefab == null)
         {
             Debug.LogError("projectilePrefabが未設定");
-
             return;
         }
 
         // 向き方向
-        Vector2 direction =
-            isFacingRight ? Vector2.right : Vector2.left;
+        Vector2 direction = isFacingRight ? Vector2.right : Vector2.left;
 
         // Projectile生成
-        BossProjectile projectile =
-            Instantiate(
-                projectilePrefab,
-                firePoint.position,
-                Quaternion.identity);
+        BossProjectile projectile = Instantiate(projectilePrefab,firePoint.position, Quaternion.identity);
 
         // 発射方向設定
         projectile.SetDirection(direction);
     }
 
     // Enemyと接触中
-    // 接触中
     private void OnCollisionStay2D(Collision2D collision)
     {
         // Player以外なら終了
@@ -460,20 +491,19 @@ public class EnemyAI : MonoBehaviour
         }
 
         // PlayerController取得
-        PlayerController playerController =
-            collision.gameObject.GetComponent<PlayerController>();
+        PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
 
         // PlayerController無ければ終了
         if (playerController == null)
         {
             return;
         }
-
+        // 重量級ならPlayerを停止させる
         if (weightLevel >= 2)
         {
+            // Player停止
             playerController.SetBlocked(true);
-        }
-    
+        }    
     }
 
     // 接触終了
@@ -486,8 +516,7 @@ public class EnemyAI : MonoBehaviour
         }
 
         // PlayerController取得
-        PlayerController playerController =
-            collision.gameObject.GetComponent<PlayerController>();
+        PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
 
         // 無ければ終了
         if (playerController == null)
