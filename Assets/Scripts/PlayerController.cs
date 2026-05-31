@@ -163,6 +163,14 @@ public class PlayerController : MonoBehaviour
     // 入力取得を行う
     private void Update()
     {
+        // ★まず完全ガード
+        if (!GameManager.IsGameStarted)
+        {
+            // ゲーム開始前は移動停止
+            animator.SetBool("isRunning", false);
+            return;
+        }
+        
         // 左右入力 いったん旧入力システムで
         moveInput = Input.GetAxisRaw("Horizontal");
 
@@ -230,6 +238,15 @@ public class PlayerController : MonoBehaviour
     // 物理演算用
     private void FixedUpdate()
     {
+        // ゲーム開始前は移動停止
+        if (!GameManager.IsGameStarted)
+        {
+            // 完全に停止させるために速度もゼロにする
+            rb.linearVelocity = Vector2.zero;
+            // Animatorへ移動状態を送る
+            return;
+        }
+
         // ノックバック中は移動停止
         if (playerHealth.IsKnockback)
         {
@@ -239,6 +256,7 @@ public class PlayerController : MonoBehaviour
         // 攻撃中は横移動停止
         if (isAttacking)
         {
+            // 横移動停止
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
 
             return;
@@ -247,8 +265,8 @@ public class PlayerController : MonoBehaviour
         //Weight負け中は移動停止
         if (isBlocked)
         {
-            rb.linearVelocity =
-                new Vector2(0, rb.linearVelocity.y);
+            // 横移動停止
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
 
             return;
         }
@@ -271,6 +289,7 @@ public class PlayerController : MonoBehaviour
         // ジャンプ回数加算
         jumpCount++;
     }
+    // 接地判定
     private void CheckGround()
     {
         // 接地判定
@@ -527,6 +546,8 @@ public class PlayerController : MonoBehaviour
 
         Debug.Log("次コンボ受付開始");
     }
+    // 攻撃終了処理
+    // Animation Event から呼ばれる
     public void EndAttack()
     {
         Debug.Log("EndAttack呼ばれた");
@@ -602,8 +623,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Enemyとの接触終了
     public void SetBlocked(bool blocked)
     {
+        // 重量1のEnemyと接触終了したら、移動停止解除
         isBlocked = blocked;
     }
 }

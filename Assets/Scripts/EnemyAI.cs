@@ -37,6 +37,10 @@ public class EnemyAI : MonoBehaviour
     // 遠距離攻撃設定
     // =========================
 
+    // 飛び道具攻撃するかどうか
+    [SerializeField]
+    private bool canShoot = false;
+
     // 飛び道具攻撃距離
     [SerializeField]
     private float rangedAttackDistance = 0;
@@ -155,25 +159,20 @@ public class EnemyAI : MonoBehaviour
 
         Debug.Log(animator.runtimeAnimatorController.name);
 
-        // FirePoint未設定なら自動取得
-        if (firePoint == null)
-        {
-            firePoint =
-                transform.Find("FirePoint");
-        }
-
-        // 見つからなければ警告
-        if (firePoint == null)
-        {
-            Debug.LogError(
-                gameObject.name +
-                " FirePointが見つからない");
-        }
     }
+
 
     // 物理更新
     private void FixedUpdate()
     {
+        // ★ゲーム開始前は何もしない
+        if (!GameManager.IsGameStarted)
+        {
+            // 横移動停止
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            return;
+        }
+
         // ノックバック中は移動停止
         if (enemyHealth.IsKnockback)
         {
@@ -455,29 +454,18 @@ public class EnemyAI : MonoBehaviour
     // Projectile発射
     public void FireProjectile()
     {
-        Debug.Log(gameObject.name);
+        // そもそも遠距離タイプじゃないなら何もしない
+        if (!canShoot) return;
 
-        // FirePoint未設定なら終了
-        if (firePoint == null)
-        {
-            Debug.LogError("firePointが未設定");            
+        // FirePointとProjectilePrefabが設定されていないなら終了
+        if (firePoint == null || projectilePrefab == null)
             return;
-        }
-
-        // ProjectilePrefab未設定なら終了
-        if (projectilePrefab == null)
-        {
-            Debug.LogError("projectilePrefabが未設定");
-            return;
-        }
-
-        // 向き方向
+        // 現在向いている方向を決める
         Vector2 direction = isFacingRight ? Vector2.right : Vector2.left;
-
         // Projectile生成
-        BossProjectile projectile = Instantiate(projectilePrefab,firePoint.position, Quaternion.identity);
-
-        // 発射方向設定
+        BossProjectile projectile =
+            Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
+        // Projectileに方向をセット
         projectile.SetDirection(direction);
     }
 

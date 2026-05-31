@@ -65,6 +65,10 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField]
     private float deathUpPower = 3f;
 
+    // HPUI参照
+    [SerializeField]
+    private PlayerHPUI hpUI;
+
     // ゲーム開始時に呼ばれる
     private void Start()
     {
@@ -251,8 +255,21 @@ public class PlayerHealth : MonoBehaviour
     // HP表示更新
     private void UpdateHPUI()
     {
-        // HPテキスト更新
+        // =========================
+        // ① テキスト表示（既存維持）
+        // =========================
+        // hpTextがアタッチされている場合のみテキスト更新
         hpText.text = "HP : " + currentHP;
+
+        // =========================
+        // ② HPバー更新（追加）
+        // =========================
+        // hpUIがアタッチされている場合のみHPバー更新
+        if (hpUI != null)
+        {
+            // HPバー更新
+            hpUI.SetHP(currentHP, maxHP);
+        }
     }
 
     private IEnumerator KnockbackCoroutine(Vector2 direction, float knockbackForce)
