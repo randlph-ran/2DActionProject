@@ -512,6 +512,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3049815959547460108, guid: fe450906db8ab5f4e8f3c0ef03e19e18, type: 3}
+      propertyPath: bossHealth
+      value: 
+      objectReference: {fileID: 1886004903}
     - target: {fileID: 7864671843842501752, guid: fe450906db8ab5f4e8f3c0ef03e19e18, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -5647,6 +5651,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c6c1d34df1a02bf4eac009980d77300e, type: 3}
+--- !u!114 &1886004903 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2438158073428606219, guid: aa3248978536a2248a9234b7016c0a24, type: 3}
+  m_PrefabInstance: {fileID: 166023488}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72e7dde973ce39949add6cf0c888ae3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
