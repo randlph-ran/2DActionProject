@@ -146,9 +146,16 @@ public class PlayerController : MonoBehaviour
     //Weight負け中移動停止フラグ
     private bool isBlocked;
 
+    private void Start()
+    {
+        Debug.Log("Player Start : " + gameObject.name);
+    }
+
     // ゲーム開始時に最初に呼ばれる
     private void Awake()
     {
+        Debug.Log("Player Awake : " + gameObject.name);
+
         // Rigidbody2D取得
         rb = GetComponent<Rigidbody2D>();
 
@@ -163,6 +170,13 @@ public class PlayerController : MonoBehaviour
     // 入力取得を行う
     private void Update()
     {
+        Debug.Log("Player Update");
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            Debug.Log("IsGameStarted = " + GameManager.IsGameStarted);
+        }
+
+
         // ★まず完全ガード
         if (!GameManager.IsGameStarted)
         {
@@ -170,7 +184,7 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("isRunning", false);
             return;
         }
-        
+
         // 左右入力 いったん旧入力システムで
         moveInput = Input.GetAxisRaw("Horizontal");
 

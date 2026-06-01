@@ -180,6 +180,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
+--- !u!4 &69007885 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3456931493024808848, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
+  m_PrefabInstance: {fileID: 69007884}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &130882372
 GameObject:
   m_ObjectHideFlags: 0
@@ -1352,7 +1357,7 @@ MonoBehaviour:
   m_StreamingVersion: 20241001
   m_LegacyPriority: 0
   Target:
-    TrackingTarget: {fileID: 0}
+    TrackingTarget: {fileID: 69007885}
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
@@ -1384,7 +1389,7 @@ Transform:
   m_GameObject: {fileID: 628412502}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.3, y: -0.94999975, z: -10}
+  m_LocalPosition: {x: -7.130909, y: -1.0942942, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

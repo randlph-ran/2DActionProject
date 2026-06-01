@@ -8,13 +8,26 @@ public class GameManager : MonoBehaviour
     // ゲーム開始前の初期化
     private void Awake()
     {
-        // ゲーム開始前はフラグをfalseに設定
+        Debug.Log("GameManager Awake");
+        Debug.Log($"{gameObject.scene.name} の GameManager Awake");
+
         IsGameStarted = false;
     }
 
+
+
     public static void StartGame()
     {
+        //ログ
+        Debug.Log("StartGame 実行");
+
         // ゲーム開始フラグをtrueに設定
         IsGameStarted = true;
+    }
+
+    // ゲーム開始状態をリセット
+    public static void ResetGameState()
+    {
+        IsGameStarted = false;
     }
 }

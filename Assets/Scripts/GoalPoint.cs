@@ -14,8 +14,12 @@ public class GoalPoint : MonoBehaviour
         // 接触相手がPlayerなら
         if (other.CompareTag("Player"))
         {
-            // 次Sceneを読み込む
+            // 次シーン開始時はフェード待ち状態に戻す
+            GameManager.ResetGameState();
+
+            // シーン切替
             SceneManager.LoadScene(nextSceneName);
+
         }
     }
 }
