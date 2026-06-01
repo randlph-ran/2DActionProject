@@ -162,9 +162,22 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float maxFallSpeed = 12f;
 
+    // 最初の向き右フラグ
+    [SerializeField]
+    private bool startFacingRight = true;
+
     private void Start()
     {
         Debug.Log("Player Start : " + gameObject.name);
+        // Rigidbody2D取得
+        rb = GetComponent<Rigidbody2D>();
+        // PlayerHealth取得
+        playerHealth = GetComponent<PlayerHealth>();
+        // Animator取得
+        animator = GetComponent<Animator>();
+
+        // 初期向き設定
+        InitFacingDirection();
     }
 
     // ゲーム開始時に最初に呼ばれる
@@ -696,5 +709,29 @@ public class PlayerController : MonoBehaviour
     {
         // 重量1のEnemyと接触終了したら、移動停止解除
         isBlocked = blocked;
+    }
+
+    // シーンごとの初期向きを設定する
+    private void InitFacingDirection()
+    {
+        // 最初の向き設定
+        isFacingRight = startFacingRight;
+        // 現在のScale取得
+        Vector3 scale = transform.localScale;
+
+        // 右向きスタート
+        if (startFacingRight)
+        {
+            // ScaleのXを正にする
+            scale.x = Mathf.Abs(scale.x);
+        }
+        // 左向きスタート
+        else
+        {
+            // ScaleのXを負にする
+            scale.x = -Mathf.Abs(scale.x);
+        }
+        // Scale適用
+        transform.localScale = scale;
     }
 }

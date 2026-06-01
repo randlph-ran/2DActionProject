@@ -33,9 +33,9 @@ public class FadeController : MonoBehaviour
         // 現在の色を取得
         Color color = fadeImage.color;
 
-        // 経過時間
+        // タイマー初期化
         float timer = 0f;
-
+        // フェード時間までループ
         while (timer < fadeDuration)
         {
             // 経過時間を加算
@@ -46,7 +46,7 @@ public class FadeController : MonoBehaviour
 
             // Imageへ反映
             fadeImage.color = color;
-
+            // 次のフレームまで待機
             yield return null;
         }
 
