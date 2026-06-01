@@ -146,6 +146,10 @@ public class PlayerController : MonoBehaviour
     //Weight負け中移動停止フラグ
     private bool isBlocked;
 
+    // 落下速度上限
+    [SerializeField]
+    private float maxFallSpeed = 12f;
+
     private void Start()
     {
         Debug.Log("Player Start : " + gameObject.name);
@@ -287,6 +291,14 @@ public class PlayerController : MonoBehaviour
 
         // 左右移動
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
+
+
+        // 落下速度制限
+        if (rb.linearVelocity.y < -maxFallSpeed)
+        {
+            rb.linearVelocity =
+                new Vector2(rb.linearVelocity.x, -maxFallSpeed);
+        }
     }
 
     // ジャンプ処理    
