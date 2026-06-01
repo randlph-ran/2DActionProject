@@ -101,7 +101,7 @@
 |11日目|5月28日（木）|	アニメーション、エフェクト調整	必要な素材を入れ込んで表示させる|  EnemyのAI、攻撃実装中  | Variant化対応中   |
 |12日目|5月29日（金)	| その他調整予備日|　Playerのジャンプと落下、Bossのアニメーション作成、被ダメージでのノックバックを処理できるように	|微妙に動くところと動かないところの対応に時間取られ中|
 |13日目||5月30日（土）|	休み|遅れてる場合は完成に向けた再調整	| |
-|14日目||5月31日（日）|	休み|遅れてる場合は完成に向けた再調整	| |
+|14日目||5月31日（日）|	休み|遅れてる場合は完成に向けた再調整	|　Bossの挙動設定、BossとPlayerのHPゲージの作成 |
 |15日目||6月01日（月）|	その他調整予備日|遅れてる場合は完成に向けた再調整	||
 |16日目||6月02日（火）|	発表準備	| | |
 |17日目||6月03日（水）|	発表| | |
@@ -125,6 +125,7 @@
 | 5/27 | PCの三簾攻撃正式実装 | 予想以上に苦戦してバッファ尽きた |6h|
 | 5/28 | EnemyのAI、攻撃実装中, Variant化対応中 | | 6H |
 | 5/29 | Playerのジャンプと落下、Bossのアニメーション作成、被ダメージでのノックバックを処理できるように |6h|
+| 5/31 | Bossの挙動調整、Enemyの重さ設定、PlayerとBossのHPゲージUI作成 |3h|
 | ... | ... | ... | ... |
 
 > ※ **毎日、最低1行は更新**してください。  
@@ -139,6 +140,7 @@
 | 5/21 | Asset 'PlayerAnimator': Transition 'Player_Attack1 -> Play_Idle' in state 'Player_Attack1' doesn't have an Exit Time or any condition, transition will be ignored UnityEditor.EditorApplication:Internal_RestoreLastOpenedScenes () | Animator | Attack1からIdleに戻る場合の条件指定ミスだったのでHasExitTimeの設定削除 | |
 | 5/21| Player' AnimationEvent has no function name specified!| Animator | Timelineに余計なAnimationEventの指定が入っていたので削除した||
 | 5/22| MissingReferenceException | TilePalleteへ画像を追加したり削除などをしていたらエラーが出るようになっていたので、古いParetteとLibralyの削除から再起動で修正||
+| 5/22| NullReferenceException: Object reference not set to an instance of an object BossHPUI.Update () (at Assets/Scripts/BossHPUI.cs:30)|Boss用のUIを作成したものの、Prefab化の際にオブジェクトの参照が外れていたため、再度設定して修正。同様にPrefab化の際に参照が外れてエラー出ることが多いので注意する|
 | ... | ... | ... | ... | ... |
 
 > ※ エラーが出たら記録してください。暫定対応と「後で見直す点」も書いて OK です。
