@@ -7917,6 +7917,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8052797485688926327, guid: c6c1d34df1a02bf4eac009980d77300e, type: 3}
+      propertyPath: m_text
+      value: "Stage 1-1\n\u300C\u5F85\u3061\u53D7\u3051\u308B\u3082\u306E\u306F\u300D"
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
