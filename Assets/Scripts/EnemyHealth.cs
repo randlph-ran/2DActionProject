@@ -142,7 +142,7 @@ public class EnemyHealth : MonoBehaviour
     private IEnumerator KnockbackCoroutine()
     {
         // 少し待機
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.4f);
 
         // ノックバック終了
         IsKnockback = false;

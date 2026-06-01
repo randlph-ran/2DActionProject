@@ -124,6 +124,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7320070065001925756}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &9086023751660112129
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8538087602332882741}
+  m_Layer: 6
+  m_Name: RetreatGroundCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8538087602332882741
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9086023751660112129}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.7, y: -0.7, z: 0}
+  m_LocalScale: {x: 0.24, y: 0.24, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7320070065001925756}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9127730819503663577
 GameObject:
   m_ObjectHideFlags: 0
@@ -163,6 +194,7 @@ Transform:
   - {fileID: 1587529983598547597}
   - {fileID: 1499674319430875639}
   - {fileID: 7851631338989123890}
+  - {fileID: 8538087602332882741}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5506972699479269963
@@ -326,6 +358,7 @@ MonoBehaviour:
   moveSpeed: 1
   chaseDistance: 5
   meleeAttackDistance: 6
+  canShoot: 1
   rangedAttackDistance: 12
   rangedAttackCooldown: 2.5
   attackCooldown: 2
@@ -347,6 +380,7 @@ MonoBehaviour:
   firePoint: {fileID: 1587529983598547597}
   retreatDuration: 1.5
   retreatSpeed: 3
+  retreatGroundCheck: {fileID: 0}
 --- !u!95 &5000552218476298777
 Animator:
   serializedVersion: 7
