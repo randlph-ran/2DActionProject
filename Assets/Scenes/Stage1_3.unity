@@ -455,6 +455,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4435916279548751840, guid: aa3248978536a2248a9234b7016c0a24, type: 3}
+      propertyPath: retreatGroundCheck
+      value: 
+      objectReference: {fileID: 249656764}
     - target: {fileID: 7320070065001925756, guid: aa3248978536a2248a9234b7016c0a24, type: 3}
       propertyPath: m_LocalPosition.x
       value: 19.952995
@@ -504,6 +508,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa3248978536a2248a9234b7016c0a24, type: 3}
+--- !u!4 &249656764 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8538087602332882741, guid: aa3248978536a2248a9234b7016c0a24, type: 3}
+  m_PrefabInstance: {fileID: 166023488}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &316269116
 PrefabInstance:
   m_ObjectHideFlags: 0

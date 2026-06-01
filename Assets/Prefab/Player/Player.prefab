@@ -763,7 +763,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 100ae3cd451bfd94a8966cae9eea05f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  maxHP: 5
+  maxHP: 100
   invincibleTime: 1
   knockbackPower: 15
   knockbackDuration: 0.15

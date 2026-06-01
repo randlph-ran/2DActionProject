@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f3bcf1077b0e3be45b0558f17bfec3a8
+guid: 67fd18e3319328446be298ad8d88a122
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5439330934524657353
-    second: EnemyFast0_walk1_0
+      213: 1691724081973633254
+    second: EnemyFast0_a03_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: EnemyFast0_walk1_0
+      name: EnemyFast0_a03_0
       rect:
         serializedVersion: 2
-        x: 71
-        y: 0
-        width: 66
-        height: 33
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 54
+        y: 7
+        width: 73
+        height: 77
+      alignment: 9
+      pivot: {x: 0.290677, y: 0.31257537}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7314dd7755d9384b0800000000000000
-      internalID: -5439330934524657353
+      spriteID: 6e02304e6163a7710800000000000000
+      internalID: 1691724081973633254
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 79b0da989444a8843928d9f5e9d661b2
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      EnemyFast0_walk1_0: -5439330934524657353
+      EnemyFast0_a03_0: 1691724081973633254
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
