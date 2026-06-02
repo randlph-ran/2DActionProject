@@ -8,13 +8,6 @@ public class PlayerController : MonoBehaviour
     // 現在のコンボ段階（1〜3）
     private int comboStep = 0;
 
-    // 最後に攻撃した時間
-    private float lastAttackTime;
-
-    // コンボ受付時間
-    [SerializeField]
-    private float comboResetTime = 0.8f;
-
     // Rigidbody2D
     private Rigidbody2D rb;
 
@@ -199,7 +192,6 @@ public class PlayerController : MonoBehaviour
     // 入力取得を行う
     private void Update()
     {
-        Debug.Log("Player Update");
         if (Input.GetKeyDown(KeyCode.P))
         {
             Debug.Log("IsGameStarted = " + GameManager.IsGameStarted);
