@@ -29,7 +29,8 @@
 | **GitHub URL** | `https://github.com/HiroshiKondo2026/2DActionProject` |
 | **作成日** | 2026/05/18 |
 | **Unity バージョン** | 例：Unity 6（URP） |
-
+| **プレゼンテーション** | https://1drv.ms/p/c/d9d112398efc3fc8/IQCOsYJdyBBtToEDROVBPRd-AYECvFawsTSa7sXpYR45hic?e=3HVYOq |
+| **仕様まとめ** | https://github.com/HiroshiKondo2026/2DActionProject/blob/main/%E4%BB%95%E6%A7%98/2DAction_Alpha_Spec.md |
 ---
 
 ## プロジェクト概要 <a id="project-overview"></a>
@@ -45,7 +46,7 @@
 | **勝利条件** | 例：ボス撃破 |
 | **失敗条件** | 例：HPが0になる |
 | **特徴・工夫点** | 画面のスクロール、障害物や敵を避けつつ倒しつつ進むアクション性 |
-| **プレゼンテーション** | https://1drv.ms/p/c/d9d112398efc3fc8/IQCOsYJdyBBtToEDROVBPRd-AYECvFawsTSa7sXpYR45hic?e=3HVYOq |
+
 
 ---
 
