@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -27,8 +28,8 @@ public class GameQuitManager : MonoBehaviour
 
     private void Update()
     {
-        // Escキー押下
-        if (Input.GetKeyDown(KeyCode.Escape))
+        // Escapeキーが押されたらゲーム終了
+        if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             QuitGame();
         }

@@ -1,7 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    // PlayerInputReader
+    private PlayerInputReader inputReader;
+
     // Animator
     private Animator animator;
 
@@ -186,13 +190,16 @@ public class PlayerController : MonoBehaviour
 
         //Animator取得
         animator = GetComponent<Animator>();
+
+        // PlayerInputReader取得
+        inputReader = GetComponent<PlayerInputReader>();
     }
 
     // 毎フレーム実行
     // 入力取得を行う
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Keyboard.current.pKey.wasPressedThisFrame)
         {
             Debug.Log("IsGameStarted = " + GameManager.IsGameStarted);
         }
@@ -217,7 +224,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // 左右入力 いったん旧入力システムで
-        moveInput = Input.GetAxisRaw("Horizontal");
+        moveInput = inputReader.MoveInput.x;
 
         // 横入力があるか
         bool isRunning = Mathf.Abs(moveInput) > 0.1f;
@@ -247,7 +254,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // ジャンプ入力
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (inputReader.JumpPressed)
         {
             Debug.Log(jumpCount + "回目");
             // 最大回数未満ならジャンプ可能
@@ -258,7 +265,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // 攻撃入力
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (inputReader.AttackPressed)
         {
             // 攻撃中でないならAttack1開始
             if (!isAttacking)

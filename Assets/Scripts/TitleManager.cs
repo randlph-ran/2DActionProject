@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 // Scene切替用
 using UnityEngine.SceneManagement;
@@ -13,13 +14,16 @@ public class TitleManager : MonoBehaviour
     // 毎フレーム処理
     private void Update()
     {
-        // Enterキー押下
-        if (Input.GetKeyDown(KeyCode.Return))
+        // Enterキーまたは左クリックでScene遷移
+        bool startPressed = Keyboard.current.enterKey.wasPressedThisFrame
+            || Mouse.current.leftButton.wasPressedThisFrame
+            || (Gamepad.current != null &&
+            Gamepad.current.buttonSouth.wasPressedThisFrame);
+        // 遷移条件を満たしたらScene遷移
+        if (startPressed)
         {
-            Debug.Log("Enterキー押された");
-            // Scene切替
+            // Scene遷移
             SceneManager.LoadScene(nextSceneName);
-            Debug.Log("LoadSceneに進む");
         }
     }
 }
