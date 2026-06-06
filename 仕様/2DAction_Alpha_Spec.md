@@ -4,7 +4,7 @@
 ## 目次
 - [概要](#info)
 - [操作方法](#Playinfo)
-- [プレイヤー仕様](#Player)
+- [プレイヤー仕様](#project-overview)
 - [戦闘仕様](#Battle)
 - [Enemy仕様](#Enemy)
 - [Boss仕様](#Boss)
