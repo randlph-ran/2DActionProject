@@ -56,6 +56,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Transform groundCheck;
 
+    // 攻撃中の移動用GroundCheck距離
+    [SerializeField]
+    private float attackMoveGroundCheckDistance = 0.6f;
+
     // Ground判定半径
     [SerializeField]
     private float groundCheckRadius = 0.1f;
@@ -162,6 +166,14 @@ public class PlayerController : MonoBehaviour
     // 最初の向き右フラグ
     [SerializeField]
     private bool startFacingRight = true;
+
+    // 攻撃中の移動距離(Attack1は多め、Attack2以降は少なめ)
+    [SerializeField] private float attack1MoveDistance = 0.55f;
+    [SerializeField] private float attack2MoveDistance = 0.275f;
+    [SerializeField] private float attack3MoveDistance = 0.275f;
+
+    // 攻撃中の移動速度
+    private float attackMoveSpeed;
 
     private void Start()
     {
@@ -284,7 +296,10 @@ public class PlayerController : MonoBehaviour
             Debug.Log("現在コンボ段数：" + comboStep);
         }
 
-
+        // 攻撃中の移動処理
+        float direction = isFacingRight ? 1f : -1f;
+        // 攻撃中の移動速度を設定
+        rb.linearVelocity = new Vector2(direction * attackMoveSpeed, rb.linearVelocity.y);
     }
 
     // 物理演算用
@@ -456,6 +471,17 @@ public class PlayerController : MonoBehaviour
                 gizmoPosition,
                 currentAttackRadius
             );
+        }
+        // GroundCheck位置に円を描く
+        if (groundCheck != null)
+        {
+            // GroundCheck黄色
+            Gizmos.color = Color.yellow;
+
+            // GroundCheck位置から、向きに応じた距離だけ先の位置を計算する
+            Vector2 checkPos = (Vector2)groundCheck.position + Vector2.right * (isFacingRight ? 1 : -1) * attackMoveGroundCheckDistance;
+            // GroundCheck位置に円を描く
+            Gizmos.DrawWireSphere(checkPos, groundCheckRadius);
         }
     }
 
@@ -731,5 +757,69 @@ public class PlayerController : MonoBehaviour
         }
         // Scale適用
         transform.localScale = scale;
+    }
+
+    // 攻撃中の移動を開始する
+    private void StartAttackMove(float distance, float duration)
+    {
+        StartCoroutine(AttackMoveCoroutine(distance, duration));
+    }
+
+    // 攻撃中の移動をコルーチンで処理する
+    private System.Collections.IEnumerator AttackMoveCoroutine(float distance, float duration)
+    {
+        // 移動速度を計算する
+        float moved = 0f;
+        // 向きに応じた移動方向を設定する
+        float direction = isFacingRight ? 1f : -1f;
+        // 攻撃中の移動速度を設定する
+        while (moved < distance)
+        {
+            // Groundがないなら移動終了
+            if (!HasGroundAhead(direction))
+            {
+                yield break;
+            }
+            // 1フレームで移動する距離を計算する
+            float move = (distance / duration) * Time.deltaTime;
+            // Playerを移動させる
+            transform.position += new Vector3(direction * move, 0, 0);
+            // 移動距離を加算する
+            moved += move;
+            // 次のフレームまで待つ
+            yield return null;
+        }
+    }
+
+    // 各攻撃開始時に呼ばれるAnimation Event用のメソッド
+    public void Attack1MoveStart()
+    {
+        StartAttackMove(
+            attack1MoveDistance,
+            0.19f);
+    }
+    // Attack2とAttack3は距離短め、時間も短めにして、素早く動いて攻撃する感じにする
+    public void Attack2MoveStart()
+    {
+        StartAttackMove(
+            attack2MoveDistance,
+            0.10f);
+    }
+    // Attack2とAttack3は距離短め、時間も短めにして、素早く動いて攻撃する感じにする
+    public void Attack3MoveStart()
+    {
+        StartAttackMove(
+            attack3MoveDistance,
+            0.10f);
+    }
+
+    // 攻撃中の移動開始前に、Groundがあるか確認する
+    private bool HasGroundAhead(float direction)
+    {
+        // GroundCheck位置から、向きに応じた距離だけ先の位置を計算する
+        Vector2 checkPosition = (Vector2)groundCheck.position + Vector2.right * direction * attackMoveGroundCheckDistance;
+
+        // その位置にGroundLayerがあるか確認する
+        return Physics2D.OverlapCircle(checkPosition, groundCheckRadius, groundLayer);
     }
 }
