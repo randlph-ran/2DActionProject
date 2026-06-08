@@ -146,6 +146,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField]
     private Transform retreatGroundCheck;
 
+
     // 初期化
     private void Awake()
     {
@@ -161,8 +162,6 @@ public class EnemyAI : MonoBehaviour
         // Animator取得
         animator = GetComponent<Animator>();
 
-        Debug.Log(animator.runtimeAnimatorController.name);
-
     }
 
 
@@ -177,12 +176,27 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
+        // 飛ばされ中は移動停止
+        if (enemyHealth.IsLaunched)
+        {
+            // 横移動停止
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+
+            return;
+        }
+
         // ノックバック中は移動停止
         if (enemyHealth.IsKnockback)
         {
             return;
         }
+        // 打ち上げ中はAI停止
+        if (enemyHealth.IsLaunched)
+        {
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
 
+            return;
+        }
         // 攻撃中は移動停止
         if (isAttacking)
         {
@@ -195,17 +209,12 @@ public class EnemyAI : MonoBehaviour
         // Playerとの距離 Enemyの位置とPlayerの位置を測って入れる
         float distance = Vector2.Distance(transform.position, playerTransform.position);
 
-        Debug.Log("距離 : " + distance);
-        Debug.Log(gameObject.name + " isRetreating = " + isRetreating);
-
         // 後退中はPlayerと逆方向へ移動し、Player方向は向き続ける
         if (isRetreating)
         {
             // 後退方向に壁や崖があれば後退終了
             if (CheckRetreatObstacle())
             {
-                Debug.Log(gameObject.name + " 後退終了");
-
                 isRetreating = false;
 
                 // 横移動停止
@@ -365,7 +374,6 @@ public class EnemyAI : MonoBehaviour
         // 壁がある または 地面が無いなら反転
         if (hitWall || noGround)
         {
-            Debug.Log(hitWall + " 壁があったよ" + noGround + "もしくは地面がないよ");
             Flip();
         }
     }

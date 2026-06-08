@@ -253,6 +253,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7320070065001925756}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4996279681993170784
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6265466934521111435}
+  m_Layer: 6
+  m_Name: LandingCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6265466934521111435
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4996279681993170784}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.274, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7320070065001925756}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5184231348188405549
 GameObject:
   m_ObjectHideFlags: 0
@@ -431,6 +462,7 @@ Transform:
   - {fileID: 135283353082105963}
   - {fileID: 2947749010080835493}
   - {fileID: 3225097791754489481}
+  - {fileID: 6265466934521111435}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5506972699479269963
@@ -577,8 +609,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e7dde973ce39949add6cf0c888ae3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  maxHP: 3
+  maxHP: 10
   knockbackForce: 8
+  weightLevel: 0
+  weight0Multiplier: 1
+  weight1Multiplier: 0.5
+  weight2Multiplier: 0
+  landingCheck: {fileID: 6265466934521111435}
+  landingCheckRadius: 0.15
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!114 &4435916279548751840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -597,7 +638,7 @@ MonoBehaviour:
   canShoot: 0
   rangedAttackDistance: 0
   rangedAttackCooldown: 3
-  attackCooldown: 2
+  attackCooldown: 2.5
   attackPoint: {fileID: 8977949324638530059}
   attackRadius: 0.5
   playerLayer:
@@ -610,12 +651,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   attackDamage: 1
-  knockbackForce: 30
+  knockbackForce: 5
   weightLevel: 0
   projectilePrefab: {fileID: -5110534461669590181, guid: 2caac582ad8794d42a32f53bc18eca73, type: 3}
   firePoint: {fileID: 0}
   retreatDuration: 1.5
-  retreatSpeed: 3
+  retreatSpeed: 2
   retreatGroundCheck: {fileID: 3225097791754489481}
 --- !u!95 &533160155566962923
 Animator:

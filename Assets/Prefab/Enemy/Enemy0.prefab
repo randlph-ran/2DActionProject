@@ -13,40 +13,44 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 9100000, guid: 0a6b3cc423e3efe4b8e0cbab173841da, type: 2}
     - target: {fileID: 2438158073428606219, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: maxHP
-      value: 5
+      propertyPath: weightLevel
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4435916279548751840, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: retreatSpeed
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4435916279548751840, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
-      propertyPath: attackCooldown
-      value: 2.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4435916279548751840, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
+    - target: {fileID: 2438158073428606219, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
+      propertyPath: landingCheck
+      value: 
+      objectReference: {fileID: 2633833787325662458}
+    - target: {fileID: 2438158073428606219, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: knockbackForce
-      value: 5
+      value: 7.38
+      objectReference: {fileID: 0}
+    - target: {fileID: 4435916279548751840, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
+      propertyPath: weightLevel
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5506972699479269963, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -5387896753986628666, guid: 9867ecae277ae484c8abba25b1da8a38, type: 3}
+      objectReference: {fileID: 5015832910802947808, guid: b19997861ca2b5d4584b28629b395a18, type: 3}
     - target: {fileID: 6043761974081675124, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
-      value: 0.49815434
+      value: 0.49054208
       objectReference: {fileID: 0}
     - target: {fileID: 6043761974081675124, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.y
-      value: 0.5318226
+      value: 0.65311044
       objectReference: {fileID: 0}
     - target: {fileID: 6043761974081675124, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 1
+      value: 0.66
       objectReference: {fileID: 0}
     - target: {fileID: 6043761974081675124, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 0.58
+      value: 0.53
+      objectReference: {fileID: 0}
+    - target: {fileID: 6265466934521111435, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.25
       objectReference: {fileID: 0}
     - target: {fileID: 7320070065001925756, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_LocalPosition.x
@@ -97,3 +101,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
+--- !u!4 &2633833787325662458 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6265466934521111435, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
+  m_PrefabInstance: {fileID: 8250076805522909041}
+  m_PrefabAsset: {fileID: 0}

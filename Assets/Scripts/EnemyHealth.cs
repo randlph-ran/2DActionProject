@@ -32,8 +32,41 @@ public class EnemyHealth : MonoBehaviour
     // ノックバック中か
     public bool IsKnockback { get; private set; }
 
+    // 打ち上げ中か
+    public bool IsLaunched { get; private set; }
+
     // 死亡中か
     private bool isDead;
+
+    // 重さレベル（0:軽い, 1:普通, 2:重い）
+    [SerializeField]
+    private int weightLevel = 0;
+
+    // 重さレベルに応じたノックバック倍率
+    [Header("Launch Multiplier")]
+
+    // 軽い敵はノックバックが大きく、重い敵は小さくなるように設定
+    [SerializeField]
+    private float weight0Multiplier = 1.0f;
+
+    // 普通の敵はノックバックが通常通り
+    [SerializeField]
+    private float weight1Multiplier = 0.5f;
+    // 重い敵はノックバックが小さくなるように設定
+    [SerializeField]
+    private float weight2Multiplier = 0.0f;
+
+    // 着地判定用
+    [SerializeField]
+    private Transform landingCheck;
+
+    // 着地判定半径
+    [SerializeField]
+    private float landingCheckRadius = 0.15f;
+
+    // GroundLayer
+    [SerializeField]
+    private LayerMask groundLayer;
 
     private void Awake()
     {
@@ -50,9 +83,16 @@ public class EnemyHealth : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
+    // 着地判定
+    private void Update()
+    {
+        CheckLanding();
+    }
+
+
     // ダメージ受信
 
-    public void TakeDamage(int damage, Transform attacker, float knockbackPower)
+    public void TakeDamage(int damage, Transform attacker, float knockbackPower, float launchPower)
     {
         // 死亡中なら処理しない
         if (isDead) return;
@@ -81,6 +121,42 @@ public class EnemyHealth : MonoBehaviour
             enemyHPBar.UpdateHPBar();
         }
 
+        // 重さレベルに応じたノックバック倍率を取得
+        float launchMultiplier = 1f;
+
+        switch (weightLevel)
+        {
+            // 軽い敵はノックバックが大きく、重い敵は小さくなるように設定
+            case 0:
+                launchMultiplier = weight0Multiplier;
+                break;
+            // 普通の敵はノックバックが通常通り
+            case 1:
+                launchMultiplier = weight1Multiplier;
+                break;
+            // 重い敵はノックバックが小さくなるように設定
+            case 2:
+                launchMultiplier = weight2Multiplier;
+                break;
+        }
+        // ノックバック力に重さレベルに応じた倍率を掛ける
+        float finalLaunchPower = launchPower * launchMultiplier;
+
+        // 打ち上げ攻撃なら打ち上げ状態にする
+        if (finalLaunchPower > 0f)
+        {
+            // 打ち上げ状態に切替
+            IsLaunched = true;
+            // 打ち上げ力を加える
+            rb.AddForce(Vector2.up * finalLaunchPower, ForceMode2D.Impulse);
+        }
+        // 浮かせ力を加える
+        if (finalLaunchPower > 0f)
+        {
+            rb.AddForce(Vector2.up * finalLaunchPower, ForceMode2D.Impulse);
+        }
+
+        Debug.Log(gameObject.name + " Weight=" + weightLevel + " Multiplier=" + launchMultiplier + " Launch=" + finalLaunchPower);
         // ダメージログ
         Debug.Log(gameObject.name + " に " + damage + " ダメージ");
         Debug.Log("Enemyの残HP : " + currentHP);
@@ -178,4 +254,27 @@ public class EnemyHealth : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    // 着地判定
+    private void CheckLanding()
+    {
+        // 打ち上げ中でないなら終了
+        if (!IsLaunched)
+        {
+            return;
+        }
+        // 着地判定
+        bool isGrounded =
+            Physics2D.OverlapCircle(
+                landingCheck.position,
+                landingCheckRadius,
+                groundLayer);
+
+        // 着地したら解除
+        if (isGrounded)
+        {
+            IsLaunched = false;
+        }
+    }
+
 }

@@ -736,6 +736,7 @@ MonoBehaviour:
   jumpPower: 20
   maxJumpCount: 2
   groundCheck: {fileID: 1004223190282293765}
+  attackMoveGroundCheckDistance: 0.6
   groundCheckRadius: 0.2
   groundLayer:
     serializedVersion: 2
@@ -743,13 +744,16 @@ MonoBehaviour:
   attack1Offset: {x: 0, y: 0}
   attack1Radius: 1.4
   attack2Offset: {x: 0, y: 0}
-  attack2Radius: 1.6
-  attack3Offset: {x: 0, y: 0}
+  attack2Radius: 2
+  attack3Offset: {x: 0.5, y: 0}
   attack3Radius: 1.6
+  attack1LaunchPower: 4
+  attack2LaunchPower: 3
+  attack3LaunchPower: 1
   attackDM: 1
-  attack1Knockback: 1.5
-  attack2Knockback: 2
-  attack3Knockback: 8
+  attack1Knockback: 1.1
+  attack2Knockback: 1.5
+  attack3Knockback: 2
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -757,6 +761,12 @@ MonoBehaviour:
   attackGizmoDuration: 0.2
   maxFallSpeed: 12
   startFacingRight: 1
+  attack1MoveDistance: 0.55
+  attack2MoveDistance: 0.55
+  attack3MoveDistance: 0.275
+  attack1EndLock: 0.25
+  attack2EndLock: 0.2
+  attack3EndLock: 0.2
 --- !u!114 &2237189157722497506
 MonoBehaviour:
   m_ObjectHideFlags: 0

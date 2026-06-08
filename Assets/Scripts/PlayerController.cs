@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
@@ -107,6 +108,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float attack3Radius = 1.5f;
 
+    // Attack1浮かせ力
+    [SerializeField]
+    private float attack1LaunchPower = 1.8f;
+
+    // Attack2浮かせ力
+    [SerializeField]
+    private float attack2LaunchPower = 0f;
+
+    // Attack3浮かせ力
+    [SerializeField]
+    private float attack3LaunchPower = 0f;
+
+    // 現在の浮かせ力
+    private float currentLaunchPower;
+
 
     // =========================
     // 現在使用中の攻撃情報
@@ -167,9 +183,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private bool startFacingRight = true;
 
-    // 攻撃中の移動距離(Attack1は多め、Attack2以降は少なめ)
+    // 攻撃中の移動距離(Attack1は多め、Attack3は少なめ)
     [SerializeField] private float attack1MoveDistance = 0.55f;
-    [SerializeField] private float attack2MoveDistance = 0.275f;
+    [SerializeField] private float attack2MoveDistance = 0.55f;
     [SerializeField] private float attack3MoveDistance = 0.275f;
 
     // 攻撃中の移動速度
@@ -178,9 +194,15 @@ public class PlayerController : MonoBehaviour
     // コンボ追尾対象 Attack1の攻撃開始時に設定され、Attack1～3の移動で追尾する
     private Transform comboTarget;
 
+    // 攻撃中の移動がGround切れで途中終了したときに、攻撃終了まで移動させないようにするフラグ
+    private bool isAttackLocked = false;
+    // 攻撃終了後の硬直時間（調整ポイント）
+    [SerializeField] private float attack1EndLock = 0.25f;
+    [SerializeField] private float attack2EndLock = 0.12f;
+    [SerializeField] private float attack3EndLock = 0.12f;
+
     private void Start()
     {
-        Debug.Log("Player Start : " + gameObject.name);
         // Rigidbody2D取得
         rb = GetComponent<Rigidbody2D>();
         // PlayerHealth取得
@@ -195,8 +217,6 @@ public class PlayerController : MonoBehaviour
     // ゲーム開始時に最初に呼ばれる
     private void Awake()
     {
-        Debug.Log("Player Awake : " + gameObject.name);
-
         // Rigidbody2D取得
         rb = GetComponent<Rigidbody2D>();
 
@@ -224,8 +244,6 @@ public class PlayerController : MonoBehaviour
         {
             // 接地判定だけ更新
             CheckGround();
-            Debug.Log("isGrounded = " + isGrounded);
-            Debug.Log("verticalSpeed = " + rb.linearVelocity.y);
 
             // 接地状態をAnimatorへ送る
             animator.SetBool("isGrounded", isGrounded);
@@ -282,19 +300,20 @@ public class PlayerController : MonoBehaviour
         // 攻撃入力
         if (inputReader.AttackPressed)
         {
-            // 攻撃中でないならAttack1開始
+            // 攻撃ロック中はAttackできない
+            if (isAttackLocked)
+            {
+                return;
+            }
+
             if (!isAttacking)
             {
                 HandleAttackInput();
             }
-
-            // 攻撃中なら、次段受付時のみ許可
             else if (canNextCombo)
             {
                 HandleAttackInput();
-
             }
-
             Debug.Log("攻撃開始");
             Debug.Log("現在コンボ段数：" + comboStep);
         }
@@ -508,19 +527,22 @@ public class PlayerController : MonoBehaviour
         // 現在のコンボ用ノックバック
         float currentKnockback = attack1Knockback;
 
-        // コンボごとのノックバック値を割り当て
+        // 現在のコンボ用のノックバックと浮かせ力
         switch (comboStep)
         {
             case 1:
                 currentKnockback = attack1Knockback;
+                currentLaunchPower = attack1LaunchPower;
                 break;
 
             case 2:
                 currentKnockback = attack2Knockback;
+                currentLaunchPower = attack2LaunchPower;
                 break;
 
             case 3:
                 currentKnockback = attack3Knockback;
+                currentLaunchPower = attack3LaunchPower;
                 break;
         }
 
@@ -534,7 +556,8 @@ public class PlayerController : MonoBehaviour
             if (enemyHealth != null)
             {
                 // ダメージを与える
-                enemyHealth.TakeDamage(attackDM, transform, currentKnockback);
+                enemyHealth.TakeDamage(attackDM, transform, currentKnockback, currentLaunchPower);
+                Debug.Log(comboStep + "段目の攻撃が敵にヒット！ダメージ：" + attackDM);
             }
         }
         // コンボ段階1の攻撃で、攻撃範囲内に敵がいるなら、コンボ追尾対象を更新する
@@ -665,26 +688,30 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("EndAttack呼ばれた");
 
-        // 遷移中なら終了処理しない
         if (animator.IsInTransition(0))
         {
             Debug.Log("遷移中なので終了スキップ");
             return;
         }
-        // 攻撃状態OFF
-        isAttacking = false;
-        // 次コンボ受付OFF
-        canNextCombo = false;
-        // コンボ段階リセット
-        comboStep = 0;
-        // Animatorのコンボ段階にも渡してリセット
-        animator.SetInteger("ComboStep", 0);
-        // コンボ追尾対象をリセット       
-        comboTarget = null;
 
-        Debug.Log("受付終了");
-        Debug.Log("Attack終了");
+        float lockTime = 0f;
+
+        switch (comboStep)
+        {
+            case 1:
+                lockTime = attack1EndLock;
+                break;
+            case 2:
+                lockTime = attack2EndLock;
+                break;
+            case 3:
+                lockTime = attack3EndLock;
+                break;
+        }
+
+        StartCoroutine(EndAttackRoutine(lockTime));
     }
+
     // Enemyと接触中
     private void OnCollisionStay2D(Collision2D collision)
     {
@@ -875,5 +902,29 @@ public class PlayerController : MonoBehaviour
         }
         // 追尾対象の位置に向き直る
         FaceEnemy(comboTarget.position);
+    }
+
+    // 攻撃終了後の硬直処理をコルーチンで行う
+    private IEnumerator AttackLockCoroutine()
+    {
+        isAttackLocked = true;
+
+        // ★ここが硬直時間（調整ポイント）
+        yield return new WaitForSeconds(0.4f);
+
+        isAttackLocked = false;
+    }
+    private IEnumerator EndAttackRoutine(float lockTime)
+    {
+        // ここで即解除しない
+        yield return new WaitForSeconds(lockTime);
+
+        isAttacking = false;
+        canNextCombo = false;
+
+        comboStep = 0;
+        animator.SetInteger("ComboStep", 0);
+
+        comboTarget = null;
     }
 }
