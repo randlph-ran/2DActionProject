@@ -175,6 +175,9 @@ public class PlayerController : MonoBehaviour
     // 攻撃中の移動速度
     private float attackMoveSpeed;
 
+    // コンボ追尾対象 Attack1の攻撃開始時に設定され、Attack1～3の移動で追尾する
+    private Transform comboTarget;
+
     private void Start()
     {
         Debug.Log("Player Start : " + gameObject.name);
@@ -534,6 +537,11 @@ public class PlayerController : MonoBehaviour
                 enemyHealth.TakeDamage(attackDM, transform, currentKnockback);
             }
         }
+        // コンボ段階1の攻撃で、攻撃範囲内に敵がいるなら、コンボ追尾対象を更新する
+        if (comboStep == 1)
+        {
+            UpdateComboTarget(hitEnemies);
+        }
     }
 
     // 一定時間だけ攻撃Gizmo表示
@@ -671,6 +679,8 @@ public class PlayerController : MonoBehaviour
         comboStep = 0;
 
         animator.SetInteger("ComboStep", 0);
+        // 攻撃中の移動速度リセット
+        comboTarget = null;
 
         Debug.Log("受付終了");
         Debug.Log("Attack終了");
@@ -821,5 +831,49 @@ public class PlayerController : MonoBehaviour
 
         // その位置にGroundLayerがあるか確認する
         return Physics2D.OverlapCircle(checkPosition, groundCheckRadius, groundLayer);
+    }
+
+    // コンボ追尾対象を更新する
+    private void UpdateComboTarget(Collider2D[] hitEnemies)
+    {
+        // 攻撃範囲内に敵がいないなら終了
+        if (hitEnemies.Length == 0)
+        {
+            return;
+        }
+
+        // 最も近い敵を探す
+        float nearestDistance = float.MaxValue;
+        // 最も近い敵のTransform
+        Transform nearestEnemy = null;
+
+        // 攻撃範囲内の敵全てを確認する
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            // 敵までの距離を計算してdistanceに代入
+            float distance = Mathf.Abs(enemy.transform.position.x - transform.position.x);
+
+            // 最も近い敵を更新する
+            if (distance < nearestDistance)
+            {
+                // 最も近い敵の距離を更新する
+                nearestDistance = distance;
+                // 最も近い敵のTransformを更新する
+                nearestEnemy = enemy.transform;
+            }
+        }
+        // 追尾対象を最も近い敵にする
+        comboTarget = nearestEnemy;
+    }
+    // コンボ追尾対象に向き直る
+    public void FaceComboTarget()
+    {
+        // 追尾対象がいないなら終了
+        if (comboTarget == null)
+        {
+            return;
+        }
+        // 追尾対象の位置に向き直る
+        FaceEnemy(comboTarget.position);
     }
 }
