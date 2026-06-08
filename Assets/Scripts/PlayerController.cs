@@ -671,15 +671,15 @@ public class PlayerController : MonoBehaviour
             Debug.Log("遷移中なので終了スキップ");
             return;
         }
-
+        // 攻撃状態OFF
         isAttacking = false;
-
+        // 次コンボ受付OFF
         canNextCombo = false;
-
+        // コンボ段階リセット
         comboStep = 0;
-
+        // Animatorのコンボ段階にも渡してリセット
         animator.SetInteger("ComboStep", 0);
-        // 攻撃中の移動速度リセット
+        // コンボ追尾対象をリセット       
         comboTarget = null;
 
         Debug.Log("受付終了");
