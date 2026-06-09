@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class PlayerHealth : MonoBehaviour
 {
     // 最大HP
+    [Tooltip("最大HP")]
     [SerializeField]
     private int maxHP = 5;
 
@@ -16,6 +17,7 @@ public class PlayerHealth : MonoBehaviour
     private bool isInvincible = false;
 
     // 無敵時間用変数
+    [Tooltip("無敵時間")]
     [SerializeField]
     private float invincibleTime = 1.0f;
 
@@ -23,6 +25,7 @@ public class PlayerHealth : MonoBehaviour
     private Rigidbody2D rb;
 
     // ノックバック力
+    [Tooltip("ノックバック力")]
     [SerializeField]
     private float knockbackPower = 5f;
 
@@ -30,6 +33,7 @@ public class PlayerHealth : MonoBehaviour
     public bool IsKnockback { get; private set; }
 
     //ノックバックを短時間だけ発生
+    [Tooltip("ノックバックを短時間だけ発生")]
     [SerializeField]
     private float knockbackDuration = 0.15f;
 
@@ -37,14 +41,17 @@ public class PlayerHealth : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
     // 点滅間隔
+    [Tooltip("点滅間隔")]
     [SerializeField]
     private float blinkInterval = 0.05f;
 
     // このY座標より下に落ちたら死亡
+    [Tooltip("このY座標より下に落ちたら死亡")]
     [SerializeField]
     private float fallDeathY = -10f;
 
     // HP表示テキスト
+    [Tooltip("HP表示テキスト")]
     [SerializeField]
     private TMP_Text hpText;
 
@@ -58,14 +65,17 @@ public class PlayerHealth : MonoBehaviour
     private PlayerController playerController;
 
     // 死亡時吹っ飛び力
+    [Tooltip("死亡時吹っ飛び力")]
     [SerializeField]
     private float deathKnockbackPower = 8f;
 
     // 死亡時上方向力
+    [Tooltip("死亡時上方向力")]
     [SerializeField]
     private float deathUpPower = 3f;
 
     // HPUI参照
+    [Tooltip("HPUI参照")]
     [SerializeField]
     private PlayerHPUI hpUI;
 

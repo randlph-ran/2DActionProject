@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     private float moveInput;
 
     // 移動速度
+    [Tooltip("移動速度")]
     [SerializeField]
     private float moveSpeed = 5f;
 
@@ -37,6 +38,7 @@ public class PlayerController : MonoBehaviour
     //private float attackDuration = 0.3f;
 
     // ジャンプ力
+    [Tooltip("ジャンプ力")]
     [SerializeField]
     private float jumpPower = 12f;
 
@@ -53,22 +55,27 @@ public class PlayerController : MonoBehaviour
     private int jumpCount = 0;
 
     // 最大ジャンプ回数
+    [Tooltip("最大ジャンプ回数")]
     [SerializeField]
     private int maxJumpCount = 2;
 
     // GroundCheck位置
+    [Tooltip("GroundCheck位置")]
     [SerializeField]
     private Transform groundCheck;
 
     // 攻撃中の移動用GroundCheck距離
+    [Tooltip("攻撃中の移動用GroundCheck距離")]
     [SerializeField]
     private float attackMoveGroundCheckDistance = 0.6f;
 
     // Ground判定半径
+    [Tooltip("Ground判定半径")]
     [SerializeField]
     private float groundCheckRadius = 0.1f;
 
     // GroundLayer
+    [Tooltip("GroundLayer")]
     [SerializeField]
     private LayerMask groundLayer;
 
@@ -78,10 +85,12 @@ public class PlayerController : MonoBehaviour
     // =========================
 
     // Attack1の攻撃位置オフセット
+    [Tooltip("Attack1の攻撃位置オフセット")]
     [SerializeField]
     private Vector2 attack1Offset;
 
     // Attack1の攻撃範囲
+    [Tooltip("Attack1の攻撃範囲")]
     [SerializeField]
     private float attack1Radius = 1.0f;
 
@@ -91,10 +100,12 @@ public class PlayerController : MonoBehaviour
     // =========================
 
     // Attack2の攻撃位置オフセット
+    [Tooltip("Attack2の攻撃位置オフセット")]
     [SerializeField]
     private Vector2 attack2Offset;
 
     // Attack2の攻撃範囲
+    [Tooltip("Attack2の攻撃範囲")]
     [SerializeField]
     private float attack2Radius = 1.2f;
 
@@ -104,22 +115,27 @@ public class PlayerController : MonoBehaviour
     // =========================
 
     // Attack3の攻撃位置オフセット
+    [Tooltip("Attack3の攻撃位置オフセット")]
     [SerializeField]
     private Vector2 attack3Offset;
 
     // Attack3の攻撃範囲
+    [Tooltip("Attack3の攻撃範囲")]
     [SerializeField]
     private float attack3Radius = 1.5f;
 
     // Attack1浮かせ力
+    [Tooltip("Attack1浮かせ力")]
     [SerializeField]
     private float attack1LaunchPower = 1.8f;
 
     // Attack2浮かせ力
+    [Tooltip("Attack2浮かせ力")]
     [SerializeField]
     private float attack2LaunchPower = 0f;
 
     // Attack3浮かせ力
+    [Tooltip("Attack3浮かせ力")]
     [SerializeField]
     private float attack3LaunchPower = 0f;
 
@@ -149,18 +165,22 @@ public class PlayerController : MonoBehaviour
     private int attackDM = 1;
 
     // Attack1用ノックバック
+    [Tooltip("Attack1用ノックバック")]
     [SerializeField]
     private float attack1Knockback = 2f;
 
     // Attack2用ノックバック
+    [Tooltip("Attack2用ノックバック")]
     [SerializeField]
     private float attack2Knockback = 3f;
 
     // Attack3用ノックバック
+    [Tooltip("Attack3用ノックバック")]
     [SerializeField]
     private float attack3Knockback = 8f;
 
     // 敵Layer
+    [Tooltip("敵Layer")]
     [SerializeField]
     private LayerMask enemyLayer;
 
@@ -168,10 +188,12 @@ public class PlayerController : MonoBehaviour
     private bool isAttackGizmoVisible = false;
 
     // 攻撃範囲を常時表示するか
+    [Tooltip("攻撃範囲を常時表示するか")]
     [SerializeField]
     private bool alwaysShowAttackGizmo = true;
 
     // Gizmo表示時間
+    [Tooltip("Gizmo表示時間")]
     [SerializeField]
     private float attackGizmoDuration = 0.2f;
 
@@ -179,16 +201,21 @@ public class PlayerController : MonoBehaviour
     private bool isBlocked;
 
     // 落下速度上限
+    [Tooltip("落下速度上限")]
     [SerializeField]
     private float maxFallSpeed = 8f;
 
     // 最初の向き右フラグ
+    [Tooltip("最初の向き右フラグ")]
     [SerializeField]
     private bool startFacingRight = true;
 
     // 攻撃中の移動距離(Attack1は多め、Attack3は少なめ)
+    [Tooltip("攻撃中の移動距離(Attack1は多め、Attack3は少なめ)")]
     [SerializeField] private float attack1MoveDistance = 0.55f;
+    [Tooltip("攻撃中の移動距離(Attack1は多め、Attack3は少なめ)")]
     [SerializeField] private float attack2MoveDistance = 0.55f;
+    [Tooltip("攻撃中の移動距離(Attack1は多め、Attack3は少なめ)")]
     [SerializeField] private float attack3MoveDistance = 0.275f;
 
     // 攻撃中の移動速度
@@ -200,8 +227,11 @@ public class PlayerController : MonoBehaviour
     // 攻撃中の移動がGround切れで途中終了したときに、攻撃終了まで移動させないようにするフラグ
     private bool isAttackLocked = false;
     // 攻撃終了後の硬直時間（調整ポイント）
+    [Tooltip("攻撃終了後の硬直時間（調整ポイント）")]
     [SerializeField] private float attack1EndLock = 0.25f;
+    [Tooltip("攻撃終了後の硬直時間（調整ポイント）")]
     [SerializeField] private float attack2EndLock = 0.12f;
+    [Tooltip("攻撃終了後の硬直時間（調整ポイント）")]
     [SerializeField] private float attack3EndLock = 0.12f;
 
     // ジャンプ攻撃中フラグ
@@ -212,30 +242,37 @@ public class PlayerController : MonoBehaviour
     // =========================
 
     // 前方判定
+    [Tooltip("前方判定")]
     [SerializeField]
     private Vector2 jumpAttackForwardOffset;
 
     // 下方向判定
+    [Tooltip("下方向判定")]
     [SerializeField]
     private Vector2 jumpAttackDownOffset;
 
     // 判定半径
+    [Tooltip("判定半径")]
     [SerializeField]
     private float jumpAttackRadius = 1.0f;
 
     // ノックバック
+    [Tooltip("ノックバック")]
     [SerializeField]
     private float jumpAttackKnockback = 10f;
 
     // ダメージ
+    [Tooltip("ダメージ")]
     [SerializeField]
     private int jumpAttackDamage = 1;
 
     // ジャンプ攻撃中の移動停止(落下停止)
+    [Tooltip("ジャンプ攻撃中の移動停止(落下停止)")]
     [SerializeField]
     private float jumpAttackStopTime = 0.15f;
 
     // スタン時間
+    [Tooltip("スタン時間")]
     [SerializeField]
     private float jumpAttackStunTime = 1f;
 

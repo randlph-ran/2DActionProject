@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BossProjectile : MonoBehaviour
 {
@@ -7,6 +7,7 @@ public class BossProjectile : MonoBehaviour
     // =========================
 
     // 飛行速度
+    [Tooltip("飛行速度")]
     [SerializeField]
     private float moveSpeed = 8f;
 
@@ -15,10 +16,12 @@ public class BossProjectile : MonoBehaviour
     // =========================
 
     // ダメージ量
+    [Tooltip("ダメージ量")]
     [SerializeField]
     private int damage = 1;
 
     // ノックバック力
+    [Tooltip("ノックバック力")]
     [SerializeField]
     private float knockbackForce = 6f;
 
@@ -27,6 +30,7 @@ public class BossProjectile : MonoBehaviour
     // =========================
 
     // 生存時間
+    [Tooltip("生存時間")]
     [SerializeField]
     private float lifeTime = 5f;
 

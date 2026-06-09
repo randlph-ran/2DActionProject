@@ -5,18 +5,22 @@ using UnityEngine.UI;
 public class FadeController : MonoBehaviour
 {
     // フェード対象のImage
+    [Tooltip("フェード対象のImage")]
     [SerializeField]
     private Image fadeImage;
 
     // フェード時間（秒）
+    [Tooltip("フェード時間（秒）")]
     [SerializeField]
     private float fadeDuration = 2f;
 
     // スタートテキストのCanvasGroup
+    [Tooltip("スタートテキストのCanvasGroup")]
     [SerializeField]
     private CanvasGroup startTextCanvasGroup;
 
     // スタートテキストの表示時間（秒）
+    [Tooltip("スタートテキストの表示時間（秒）")]
     [SerializeField]
     private float startTextDuration = 1.5f;
 

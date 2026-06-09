@@ -3,6 +3,7 @@
 public class EnemyAI : MonoBehaviour
 {
     // 移動速度設定
+    [Tooltip("移動速度設定")]
     [SerializeField]
     private float moveSpeed = 2f;
 
@@ -22,6 +23,7 @@ public class EnemyAI : MonoBehaviour
     private Transform playerTransform;
 
     // 追尾開始距離　指定距離以内なら追尾
+    [Tooltip("追尾開始距離　指定距離以内なら追尾")]
     [SerializeField]
     private float chaseDistance = 5f;
 
@@ -30,6 +32,7 @@ public class EnemyAI : MonoBehaviour
     // =========================
 
     // 近接攻撃距離
+    [Tooltip("近接攻撃距離")]
     [SerializeField]
     private float meleeAttackDistance = 1.5f;
 
@@ -38,14 +41,17 @@ public class EnemyAI : MonoBehaviour
     // =========================
 
     // 飛び道具攻撃するかどうか
+    [Tooltip("飛び道具攻撃するかどうか")]
     [SerializeField]
     private bool canShoot = false;
 
     // 飛び道具攻撃距離
+    [Tooltip("飛び道具攻撃距離")]
     [SerializeField]
     private float rangedAttackDistance = 0;
 
     // 飛び道具攻撃間隔
+    [Tooltip("飛び道具攻撃間隔")]
     [SerializeField]
     private float rangedAttackCooldown = 3f;
 
@@ -53,6 +59,7 @@ public class EnemyAI : MonoBehaviour
     private float nextRangedAttackTime;
 
     // 次攻撃までの間隔
+    [Tooltip("次攻撃までの間隔")]
     [SerializeField]
     private float attackCooldown = 2f;
 
@@ -63,43 +70,52 @@ public class EnemyAI : MonoBehaviour
     private bool isAttacking = false;
 
     // 攻撃判定位置
+    [Tooltip("攻撃判定位置")]
     [SerializeField]
     private Transform attackPoint;
 
     // 攻撃範囲
+    [Tooltip("攻撃範囲")]
     [SerializeField]
     private float attackRadius = 0.8f;
 
     // PlayerLayer
+    [Tooltip("PlayerLayer")]
     [SerializeField]
     private LayerMask playerLayer;
 
     // 壁確認位置
     // 前方の壁を調べるRayの開始地点
+    [Tooltip("前方の壁を調べるRayの開始地点")]
     [SerializeField]
     private Transform wallCheck;
 
     // 地面確認位置
     // 前方の足元を調べるRayの開始地点
+    [Tooltip("前方の足元を調べるRayの開始地点")]
     [SerializeField]
     private Transform groundCheck;
 
     // Rayの長さ
     // 数値を大きくすると遠くまで検知する
+    [Tooltip("Rayの長さ\n数値を大きくすると遠くまで検知する")]
     [SerializeField]
     private float checkDistance = 0.3f;
 
     // 地面用Layer
     // GroundLayerだけを検知する
+    [Tooltip("地面用Layer\nGroundLayerだけを検知する")]
     [SerializeField]
     private LayerMask groundLayer;
 
     // 攻撃力
+    [Tooltip("攻撃力")]
     [SerializeField]
     private int attackDamage = 1;
 
     // ノックバック力
     // Enemyごとに吹き飛ばし強さを変更できる
+    [Tooltip("ノックバック力\nEnemyごとに吹き飛ばし強さを変更できる")]
     [SerializeField]
     private float knockbackForce = 5f;
 
@@ -121,6 +137,7 @@ public class EnemyAI : MonoBehaviour
     private BossProjectile projectilePrefab;
 
     // 発射位置
+    [Tooltip("発射位置")]
     [SerializeField]
     private Transform firePoint;
 
@@ -135,14 +152,17 @@ public class EnemyAI : MonoBehaviour
     private float retreatEndTime;
 
     // 後退時間
+    [Tooltip("後退時間")]
     [SerializeField]
     private float retreatDuration = 1.5f;
 
     // 後退速度
+    [Tooltip("後退速度")]
     [SerializeField]
     private float retreatSpeed = 3f;
 
     // 後退方向の地面確認位置
+    [Tooltip("後退方向の地面確認位置")]
     [SerializeField]
     private Transform retreatGroundCheck;
 
