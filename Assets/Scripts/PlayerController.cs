@@ -177,7 +177,7 @@ public class PlayerController : MonoBehaviour
 
     // 落下速度上限
     [SerializeField]
-    private float maxFallSpeed = 12f;
+    private float maxFallSpeed = 8f;
 
     // 最初の向き右フラグ
     [SerializeField]

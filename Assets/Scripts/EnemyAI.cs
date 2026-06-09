@@ -146,6 +146,16 @@ public class EnemyAI : MonoBehaviour
     [SerializeField]
     private Transform retreatGroundCheck;
 
+    // =========================
+    // スタン設定
+    // =========================
+    private bool isStunned;
+    private float stunTimer;
+    private bool isStunImmune;
+    private float stunImmuneTimer;
+
+    // スタンテスト用
+    private bool stunTestDone;
 
     // 初期化
     private void Awake()
@@ -164,6 +174,34 @@ public class EnemyAI : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        // スタン時間
+        if (isStunned)
+        {
+            // スタン時間減らす
+            stunTimer -= Time.deltaTime;
+            // スタン時間終了したらスタン終了
+            if (stunTimer <= 0f)
+            {
+                EndStun();
+            }
+        }
+
+        // スタン無効時間
+        if (isStunImmune)
+        {
+            // スタン無効時間減らす
+            stunImmuneTimer -= Time.deltaTime;
+            // スタン無効時間終了したらスタン無効終了
+            if (stunImmuneTimer <= 0f)
+            {
+                // スタン無効終了
+                isStunImmune = false;
+            }
+        }
+    }
+
 
     // 物理更新
     private void FixedUpdate()
@@ -175,6 +213,13 @@ public class EnemyAI : MonoBehaviour
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
             return;
         }
+        // スタンテスト
+        if (!stunTestDone)
+        {
+            stunTestDone = true;
+
+            ApplyStun(2f);
+        }
 
         // 飛ばされ中は移動停止
         if (enemyHealth.IsLaunched)
@@ -182,6 +227,12 @@ public class EnemyAI : MonoBehaviour
             // 横移動停止
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
 
+            return;
+        }
+
+        // スタン中は移動停止
+        if (isStunned)
+        {
             return;
         }
 
@@ -582,5 +633,37 @@ public class EnemyAI : MonoBehaviour
 
         // 停止解除
         playerController.SetBlocked(false);
+    }
+
+    // スタン処理
+    public void ApplyStun(float stunTime)
+    {
+        // スタン無効中
+        if (isStunImmune)
+        {
+            Debug.Log("スタン無効中");
+            return;
+        }
+        // スタン中
+        isStunned = true;
+        // スタン時間セット
+        stunTimer = stunTime;
+        // スタン無効開始
+        isStunImmune = true;
+        // スタン無効時間セット
+        stunImmuneTimer = 5f;
+        // スタンアニメ開始
+        animator.SetBool("isStunned", true);
+        Debug.Log(gameObject.name + " スタン開始");
+
+    }
+    // スタン終了
+    private void EndStun()
+    {
+        Debug.Log(gameObject.name + " スタン終了");
+        // スタン終了
+        isStunned = false;
+        // スタンアニメ終了
+        animator.SetBool("isStunned", false);
     }
 }

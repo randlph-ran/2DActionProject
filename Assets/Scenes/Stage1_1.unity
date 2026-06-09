@@ -8302,6 +8302,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3741448961686238491, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
+      propertyPath: maxFallSpeed
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3741448961686238491, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
       propertyPath: attack2EndLock
       value: 0.2
       objectReference: {fileID: 0}
