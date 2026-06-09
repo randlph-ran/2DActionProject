@@ -136,7 +136,13 @@
 ---
 
 ## 進捗メモ <a id="progress-notes"></a>
+| 日付 | 作業内容 | 備考 | 作業時間（任意） |
+|------|-----------|------|------------------|
+| 6/8 | Playerの3連攻撃中にPlayerを前進させる ||| 7h |
+| 6/9 | Playerのジャンプ攻撃 | 吹き飛ばしによるスタン効果の作成 | |
 
+---
+以下、前半進捗メモ
 | 日付 | 作業内容 | 備考 | 作業時間（任意） |
 |------|-----------|------|------------------|
 | 5/18 | 企画概要、仕様のまとめ、Unityの基本対応とGit作成 | 一通り完了してPC操作実装に取り掛かり中 | 6h |
@@ -160,7 +166,11 @@
 ---
 
 ## エラーログ <a id="error-log"></a>
+| 日付 | エラー内容 | 発生箇所 | 解決方法 | 備考 |
+|------|-----------|----------|----------|------|
 
+---
+前半のエラー
 | 日付 | エラー内容 | 発生箇所 | 解決方法 | 備考 |
 |------|-----------|----------|----------|------|
 | 5/21 | Asset 'PlayerAnimator': Transition 'Player_Attack1 -> Play_Idle' in state 'Player_Attack1' doesn't have an Exit Time or any condition, transition will be ignored UnityEditor.EditorApplication:Internal_RestoreLastOpenedScenes () | Animator | Attack1からIdleに戻る場合の条件指定ミスだったのでHasExitTimeの設定削除 | |
