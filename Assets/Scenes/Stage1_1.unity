@@ -8302,6 +8302,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3741448961686238491, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
+      propertyPath: jumpPower
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 3741448961686238491, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
       propertyPath: maxFallSpeed
       value: 8
       objectReference: {fileID: 0}
@@ -8335,7 +8339,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3741448961686238491, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
       propertyPath: jumpAttackKnockback
-      value: 8
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 3741448961686238491, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
       propertyPath: jumpAttackDownOffset.x

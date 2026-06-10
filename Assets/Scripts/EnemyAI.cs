@@ -174,6 +174,13 @@ public class EnemyAI : MonoBehaviour
     private bool isStunImmune;
     private float stunImmuneTimer;
 
+    // スタン耐性レベル
+    // 0 = 弱い
+    // 1 = 普通
+    // 2 = 強い
+    [SerializeField]
+    private int stunLevel = 1;
+
     // 初期化
     private void Awake()
     {
@@ -646,28 +653,59 @@ public class EnemyAI : MonoBehaviour
         playerController.SetBlocked(false);
     }
 
-    // スタン処理
-    public void ApplyStun(float stunTime)
+    // スタンレベルに応じた基礎スタン時間を取得
+    private float GetBaseStunTime()
     {
-        // スタン無効中
+        switch (stunLevel)
+        {
+            // スタンに弱い
+            case 0:
+                return 2f;
+
+            // 標準
+            case 1:
+                return 1f;
+
+            // スタンに強い
+            case 2:
+                return 0.5f;
+
+            default:
+                return 1f;
+        }
+    }
+
+
+    // スタン処理
+    // スタン付与
+    // stunRate = 1.0で100%
+    public void ApplyStun(float stunRate)
+    {
+        // スタン無効中なら終了
         if (isStunImmune)
         {
-            Debug.Log("スタン無効中");
             return;
         }
-        // スタン中
+
+        // 0～200%に制限
+        stunRate = Mathf.Clamp(stunRate, 0f, 2f);
+
+        // 最終スタン時間
+        float finalStunTime =
+            GetBaseStunTime() * stunRate;
+
+        // スタン開始
         isStunned = true;
-        // スタン時間セット
-        stunTimer = stunTime * 2;
-        // スタン無効開始
+        stunTimer = finalStunTime;
+
+        // 5秒間スタン耐性
         isStunImmune = true;
-        // スタン無効時間セット
         stunImmuneTimer = 5f;
+
         // スタンアニメ開始
         animator.SetBool("isStunned", true);
-        Debug.Log(gameObject.name + " スタン開始");
-
     }
+
     // スタン終了
     private void EndStun()
     {

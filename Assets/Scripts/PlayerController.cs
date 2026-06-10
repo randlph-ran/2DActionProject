@@ -271,10 +271,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float jumpAttackStopTime = 0.15f;
 
-    // スタン時間
+    // スタン係数
+    // 1.0 = 100%
+    // 2.0 = 200%
+    // 0.5 = 50%
     [Tooltip("スタン時間")]
     [SerializeField]
-    private float jumpAttackStunTime = 1f;
+    private float jumpAttackStunRate = 1.0f;
 
     private void Start()
     {
@@ -1109,8 +1112,8 @@ public class PlayerController : MonoBehaviour
             // EnemyAIが存在するならスタンを与える
             if (enemyAI != null)
             {
-                // スタンを与える
-                enemyAI.ApplyStun(jumpAttackStunTime);
+                // スタン係数を渡す
+                enemyAI.ApplyStun(jumpAttackStunRate);
             }
         }
     }
