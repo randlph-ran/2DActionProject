@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Projectile（飛び道具）
@@ -95,6 +95,19 @@ public class Projectile : MonoBehaviour
     {
         this.direction = direction.normalized;
 
+        // =====================================
+        // 見た目を移動方向へ向ける
+        // =====================================
+
+        // directionから角度を計算
+        float angle = Mathf.Atan2( this.direction.y, this.direction.x) * Mathf.Rad2Deg;
+
+        // Projectileを回転
+        transform.rotation = Quaternion.Euler( 0f, 0f, angle);
+
+        // =====================================
+        // ダメージ関連の初期化
+        // =====================================
         this.damage = damage;
         this.knockbackPower = knockbackPower;
         this.launchPower = launchPower;

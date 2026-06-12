@@ -343,6 +343,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHP: 8
   knockbackForce: 2
+  weightLevel: 0
+  weight0Multiplier: 1
+  weight1Multiplier: 0.5
+  weight2Multiplier: 0
+  landingCheck: {fileID: 0}
+  landingCheckRadius: 0.15
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &4435916279548751840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -376,11 +385,12 @@ MonoBehaviour:
   attackDamage: 3
   knockbackForce: 8
   weightLevel: 2
-  projectilePrefab: {fileID: -5110534461669590181, guid: 2caac582ad8794d42a32f53bc18eca73, type: 3}
+  projectilePrefab: {fileID: 4541354297831035424, guid: 2caac582ad8794d42a32f53bc18eca73, type: 3}
   firePoint: {fileID: 1587529983598547597}
   retreatDuration: 1.5
   retreatSpeed: 3
-  retreatGroundCheck: {fileID: 0}
+  retreatGroundCheck: {fileID: 8538087602332882741}
+  stunLevel: 1
 --- !u!95 &5000552218476298777
 Animator:
   serializedVersion: 7
