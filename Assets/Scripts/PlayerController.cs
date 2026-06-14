@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     private float moveInput;
 
     // 移動速度
+    [Header("移動")]
     [Tooltip("移動速度")]
     [SerializeField]
     private float moveSpeed = 5f;
@@ -37,6 +38,7 @@ public class PlayerController : MonoBehaviour
     //private float attackDuration = 0.3f;
 
     // ジャンプ力
+    [Header("ジャンプ")]
     [Tooltip("ジャンプ力")]
     [SerializeField]
     private float jumpPower = 12f;
@@ -59,6 +61,7 @@ public class PlayerController : MonoBehaviour
     private int maxJumpCount = 2;
 
     // GroundCheck位置
+    [Header("接地判定")]
     [Tooltip("GroundCheck位置")]
     [SerializeField]
     private Transform groundCheck;
@@ -82,6 +85,7 @@ public class PlayerController : MonoBehaviour
     // =========================
     // Attack1設定
     // =========================
+    [Header("攻撃 - Attack1")]
 
     // Attack1の攻撃位置オフセット
     [Tooltip("Attack1の攻撃位置オフセット")]
@@ -97,6 +101,7 @@ public class PlayerController : MonoBehaviour
     // =========================
     // Attack2設定
     // =========================
+    [Header("攻撃 - Attack2")]
 
     // Attack2の攻撃位置オフセット
     [Tooltip("Attack2の攻撃位置オフセット")]
@@ -112,6 +117,7 @@ public class PlayerController : MonoBehaviour
     // =========================
     // Attack3設定
     // =========================
+    [Header("攻撃 - Attack3")]
 
     // Attack3の攻撃位置オフセット
     [Tooltip("Attack3の攻撃位置オフセット")]
@@ -124,6 +130,7 @@ public class PlayerController : MonoBehaviour
     private float attack3Radius = 1.5f;
 
     // Attack1浮かせ力
+    [Header("攻撃 - 効果")]
     [Tooltip("Attack1浮かせ力")]
     [SerializeField]
     private float attack1LaunchPower = 1.8f;
@@ -141,6 +148,22 @@ public class PlayerController : MonoBehaviour
     // 現在の浮かせ力
     private float currentLaunchPower;
 
+
+    //==============================
+    // アイテム
+    //==============================
+
+    [Header("アイテム")]
+
+    [Tooltip("現在装備中のアイテム")]
+    [SerializeField]
+    private ItemData currentItem;
+
+    // 現在の残り使用回数
+    private int currentUseCount;
+
+    // 次回発射可能時間
+    private float nextShootTime;
 
     // =========================
     // 現在使用中の攻撃情報
@@ -160,6 +183,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float attackRadius = 5f;*/
 
+    [Header("攻撃 - 共通")]
     [SerializeField]
     private int attackDM = 1;
 
@@ -186,6 +210,7 @@ public class PlayerController : MonoBehaviour
     // デバッグ用攻撃Gizmo表示フラグ
     private bool isAttackGizmoVisible = false;
 
+    [Header("デバッグ/表示")]
     // 攻撃範囲を常時表示するか
     [Tooltip("攻撃範囲を常時表示するか")]
     [SerializeField]
@@ -199,6 +224,7 @@ public class PlayerController : MonoBehaviour
     //Weight負け中移動停止フラグ
     private bool isBlocked;
 
+    [Header("落下/初期設定")]
     // 落下速度上限
     [Tooltip("落下速度上限")]
     [SerializeField]
@@ -209,6 +235,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private bool startFacingRight = true;
 
+    [Header("攻撃 - 移動")]
     // 攻撃中の移動距離(Attack1は多め、Attack3は少なめ)
     [Tooltip("攻撃中の移動距離(Attack1は多め、Attack3は少なめ)")]
     [SerializeField] private float attack1MoveDistance = 0.55f;
@@ -238,6 +265,7 @@ public class PlayerController : MonoBehaviour
     // JumpAttack設定
     // =========================
 
+    [Header("ジャンプ攻撃")]
     // 前方判定
     [Tooltip("前方判定")]
     [SerializeField]
@@ -276,13 +304,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float jumpAttackStunRate = 1.0f;
 
-    /// <summary>
-    /// ProjectilePrefab
-    /// </summary>
-    [Header("Projectile Settings")]
-    [Tooltip("発射するProjectilePrefab")]
-    [SerializeField] private Projectile projectilePrefab;
-
     private void Start()
     {
         // PlayerHealth取得
@@ -292,6 +313,9 @@ public class PlayerController : MonoBehaviour
 
         // 初期向き設定
         InitFacingDirection();
+
+        // アイテム初期化
+        InitializeItem();
     }
 
     // ゲーム開始時に最初に呼ばれる
@@ -414,13 +438,7 @@ public class PlayerController : MonoBehaviour
             isJumpAttacking = false;
             isAttacking = false;
         }
-        //飛び道具ボタン押したらShootProjectile()呼ぶ
-        if (inputReader.ShootPressed)
-        {
-            Debug.Log("ShootPressed: " + inputReader.ShootPressed);
-            //飛び道具発射メソッド
-            ShootProjectile();
-        }
+        HandleShootInput();
 
     }
 
@@ -1125,39 +1143,33 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void ShootProjectile()
     {
+        // 未装備なら発射しない
+        if (currentItem == null)
+        {
+            return;
+        }
+
+        // Projectileアイテム以外は発射しない
+        if (currentItem.ItemType != ItemType.Projectile)
+        {
+            return;
+        }
+
         // 1. 方向決定（8方向対応の想定）
         Vector2 direction = GetShootDirection();
 
         // 2. ダメージ・ノックバック・打ち上げをコンボから取得
-        int dmg = attackDM;
+        int dmg = currentItem.Damage;
 
-        // ダメージは固定で、ノックバックと打ち上げをコンボ段階に応じて変える想定
-        float knockback = 2f;
-        float launch = 1f;
+        float knockback = currentItem.KnockbackPower;
+        float launch = currentItem.LaunchPower;
 
-        switch (comboStep)
-        {
-            case 1:
-                knockback = attack1Knockback;
-                launch = attack1LaunchPower;
-                break;
-
-            case 2:
-                knockback = attack2Knockback;
-                launch = attack2LaunchPower;
-                break;
-
-            case 3:
-                knockback = attack3Knockback;
-                launch = attack3LaunchPower;
-                break;
-        }
 
         // 3. 生成位置（胸元想定）
         Vector3 spawnPos = transform.position + (Vector3)(direction * 0.5f);
 
         // 4. Instantiate
-        Projectile proj = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
+        Projectile proj = Instantiate(currentItem.ProjectilePrefab.GetComponent<Projectile>(),spawnPos,Quaternion.identity);
 
         // 5. 初期化（ここが本体）
         proj.Initialize(
@@ -1167,6 +1179,12 @@ public class PlayerController : MonoBehaviour
             launch,
             gameObject
         );
+
+        // 使用回数消費
+        ConsumeItemUse();
+
+        // 次回発射可能時間更新
+        nextShootTime = Time.time + currentItem.Cooldown;
     }
 
     // 8方向対応の射撃方向決定処理
@@ -1188,5 +1206,119 @@ public class PlayerController : MonoBehaviour
         dir = new Vector2(input.x, input.y);
         // 斜めも含めて正規化して返す
         return dir.normalized;
+    }
+
+    /// <summary>
+    /// 装備中アイテム情報初期化
+    /// </summary>
+    private void InitializeItem()
+    {
+        // 未装備なら終了
+        if (currentItem == null)
+        {
+            currentUseCount = 0;
+            return;
+        }
+
+        // 使用回数初期化
+        currentUseCount = currentItem.MaxUseCount;
+    }
+
+    /// <summary>
+    /// アイテム装備
+    /// </summary>
+    public void EquipItem(ItemData item)
+    {
+        // 未指定なら終了
+        if (item == null)
+        {
+            return;
+        }
+        // アイテム装備
+        currentItem = item;
+        // 使用回数初期化
+        currentUseCount = item.MaxUseCount;
+    }
+
+    /// <summary>
+    /// アイテム解除
+    /// </summary>
+    public void UnequipItem()
+    {
+        // アイテム解除
+        currentItem = null;
+        // 使用回数リセット
+        currentUseCount = 0;
+    }
+
+    /// <summary>
+    /// アイテム使用回数を消費する
+    /// </summary>
+    private void ConsumeItemUse()
+    {
+        // 無限使用なら消費しない
+        if (currentUseCount < 0)
+        {
+            return;
+        }
+
+        // 使用回数減少
+        currentUseCount--;
+
+        // 0以下になったら装備解除
+        if (currentUseCount <= 0)
+        {
+            UnequipItem();
+        }
+        Debug.Log("残り使用回数：" + currentUseCount);
+    }
+
+    /// <summary>
+    /// 発射可能か判定
+    /// </summary>
+    private bool CanShoot()
+    {
+        // 未装備
+        if (currentItem == null)
+        {
+            return false;
+        }
+
+        // Cooldown中
+        if (Time.time < nextShootTime)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// 射撃入力処理
+    /// </summary>
+    private void HandleShootInput()
+    {
+        // 未装備
+        if (currentItem == null)
+        {
+            return;
+        }
+
+        // 連射可能アイテム
+        if (currentItem.CanAutoFire)
+        {
+            if (inputReader.ShootHeld && CanShoot())
+            {
+                ShootProjectile();
+            }
+        }
+        // 単発アイテム
+        else
+        {
+            if (inputReader.ShootPressed && CanShoot())
+            {
+                ShootProjectile();
+            }
+        }
     }
 }
