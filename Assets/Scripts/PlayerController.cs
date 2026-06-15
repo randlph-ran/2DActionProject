@@ -298,11 +298,6 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        // PlayerHealth取得
-        playerHealth = GetComponent<PlayerHealth>();
-        // Animator取得
-        animator = GetComponent<Animator>();
-
         // 初期向き設定
         InitFacingDirection();
 
@@ -818,6 +813,7 @@ public class PlayerController : MonoBehaviour
     private void HandleJumpAttack()
     {
         isJumpAttacking = true;
+        // 攻撃状態ON
         isAttacking = true;
         // 使用済みなら終了
         if (hasUsedJumpAttack)
@@ -826,8 +822,7 @@ public class PlayerController : MonoBehaviour
         }
         // ジャンプ攻撃使用済みにする
         hasUsedJumpAttack = true;
-        // 攻撃状態ON
-        isAttacking = true;
+
         // ジャンプ攻撃Trigger
         animator.SetTrigger("JumpAttack");
         // 確認用ログ
@@ -873,59 +868,6 @@ public class PlayerController : MonoBehaviour
         }
 
         StartCoroutine(EndAttackRoutine(lockTime));
-    }
-
-    // Enemyと接触中
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        // Enemyタグ以外なら終了
-        if (!collision.gameObject.CompareTag("Enemy"))
-        {
-            return;
-        }
-
-        // EnemyAI取得
-        EnemyAI enemyAI =
-            collision.gameObject.GetComponent<EnemyAI>();
-
-        // EnemyAI無ければ終了
-        if (enemyAI == null)
-        {
-            return;
-        }
-
-        // Enemyの重さ取得
-        int enemyWeight = enemyAI.WeightLevel;
-
-        // =========================
-        // 重量2 = Boss級
-        // Playerが押し負ける
-        // =========================
-
-        if (enemyWeight >= 2)
-        {
-            // Player移動停止
-            rb.linearVelocity =
-                new Vector2(
-                    0,
-                    rb.linearVelocity.y
-                );
-        }
-
-        // =========================
-        // 重量1 = 同格
-        // 互いに押せない
-        // =========================
-
-        else if (enemyWeight == 1)
-        {
-            // Player横移動停止
-            rb.linearVelocity =
-                new Vector2(
-                    0,
-                    rb.linearVelocity.y
-                );
-        }
     }
 
     // Enemyとの接触終了

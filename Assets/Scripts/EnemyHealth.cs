@@ -32,6 +32,9 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     // 最大HP取得用
     public int MaxHP => maxHP;
 
+    // 元の色を保存
+    private Color originalColor;
+
     // ノックバック中か
     public bool IsKnockback { get; private set; }
 
@@ -84,6 +87,9 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         // Rigidbody2D取得
         rb = GetComponent<Rigidbody2D>();
+
+        // 元の色を保存
+        originalColor = spriteRenderer.color;
     }
 
     // 着地判定
@@ -212,17 +218,20 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         for (int i = 0; i < 3; i++)
         {
             // 赤色へ変更
-            spriteRenderer.color = Color.white;
+            spriteRenderer.color = Color.red;
 
             // 少し待機
             yield return new WaitForSeconds(0.08f);
 
             // 白色へ戻す
-            spriteRenderer.color = Color.red;
+            spriteRenderer.color = originalColor;
 
             // 少し待機
             yield return new WaitForSeconds(0.08f);
+
         }
+        // 念のため最後に確実に戻す
+        spriteRenderer.color = originalColor;
     }
 
     // ノックバック時間管理
@@ -288,14 +297,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         }
     }
 
-    /// <summary>
-    /// IDamageable実装（Projectile共通ダメージ入口）
-    /// 既存TakeDamageと同一処理
-    /// </summary>
-    void IDamageable.TakeDamage(int damage, Transform attacker, float knockbackPower, float launchPower)
-    {
-        // 既存処理へそのまま委譲
-        TakeDamage(damage, attacker, knockbackPower, launchPower);
-    }
+
 
 }

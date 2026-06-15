@@ -335,28 +335,5 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// IDamageable実装（Projectile用統一入口）
-    /// Enemyと同じ形式でダメージを受けるための変換ブリッジ
-    /// </summary>
-    public void TakeDamage(int damage, Transform attacker, float knockbackPower, float launchPower)
-    {
-        // =========================
-        // Transform → Vector2変換
-        // （既存TakeDamageに合わせるための変換）
-        // =========================
-        Vector2 attackerPosition = attacker != null
-            ? (Vector2)attacker.position
-            : (Vector2)transform.position;
 
-        // =========================
-        // launchPowerは現状Player仕様では未使用
-        // → 将来拡張用に受け取るが無視
-        // =========================
-
-        // =========================
-        // 既存ロジックへ委譲
-        // =========================
-        TakeDamage(damage, attackerPosition, knockbackPower);
-    }
 }

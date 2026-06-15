@@ -627,10 +627,16 @@ public class EnemyAI : MonoBehaviour
         {
             return;
         }
+
         // 重量級ならPlayerを停止させる
         if (weightLevel >= 2)
         {
             // Player停止
+            playerController.SetBlocked(true);
+        }
+        // 同格でもPlayerを停止させる
+        else if (weightLevel == 1)
+        {
             playerController.SetBlocked(true);
         }
     }
