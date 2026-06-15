@@ -733,7 +733,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 5
-  jumpPower: 25
+  jumpPower: 20
   maxJumpCount: 2
   groundCheck: {fileID: 1004223190282293765}
   attackMoveGroundCheckDistance: 0.6
@@ -747,13 +747,14 @@ MonoBehaviour:
   attack2Radius: 2
   attack3Offset: {x: 0.5, y: 0}
   attack3Radius: 1.6
-  attack1LaunchPower: 7
-  attack2LaunchPower: 3
+  attack1LaunchPower: 9
+  attack2LaunchPower: 5
   attack3LaunchPower: 1
+  currentItem: {fileID: 11400000, guid: 5b638d8243b1ee84c96f0ce020cf2af4, type: 2}
   attackDM: 1
   attack1Knockback: 1.1
   attack2Knockback: 1.5
-  attack3Knockback: 3
+  attack3Knockback: 5
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
