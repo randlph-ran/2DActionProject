@@ -162,6 +162,9 @@ public class PlayerController : MonoBehaviour
     // 次回発射可能時間
     private float nextShootTime;
 
+    // 発射方向キャッシュ
+    private Vector2 cachedShootDirection;
+
     // =========================
     // 現在使用中の攻撃情報
     // =========================
@@ -368,8 +371,8 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        // 攻撃中は向き固定
-        if (!isAttacking)
+        // 攻撃中、アイテム中は向き固定
+        if (!isAttacking && !isShooting)
         {
             Flip();
         }
@@ -449,8 +452,8 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        // 攻撃中は横移動停止
-        if (isAttacking)
+        // 攻撃中、アイテム中は横移動停止
+        if (isAttacking || isShooting)
         {
             // 横移動停止
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
@@ -1135,7 +1138,9 @@ public class PlayerController : MonoBehaviour
         if (currentItem == null) return;
         if (currentItem.ItemType != ItemType.Projectile) return;
 
-        Vector2 direction = GetShootDirection();
+        // GetShootDirection() ではなくキャッシュを使う
+        Vector2 direction = cachedShootDirection;
+
         int dmg = currentItem.Damage;
         float knockback = currentItem.KnockbackPower;
         float launch = currentItem.LaunchPower;
@@ -1148,9 +1153,7 @@ public class PlayerController : MonoBehaviour
         );
 
         proj.Initialize(direction, dmg, knockback, launch, gameObject);
-
-        // 次回発射可能時間更新
-        nextShootTime = Time.time + currentItem.Cooldown;
+        ConsumeItemUse();
     }
 
     // 8方向対応の射撃方向決定処理
@@ -1264,35 +1267,31 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void HandleShootInput()
     {
-        // 未装備
-        if (currentItem == null)
-        {
-            return;
-        }
+        if (currentItem == null) return;
 
-        // 連射可能アイテム
         if (currentItem.CanAutoFire)
         {
             if (inputReader.ShootHeld && CanShoot())
             {
-                // アニメ再生のみ（発射はAnimationEventで行う）
+                // ボタンを押した瞬間の方向を保存
+                cachedShootDirection = GetShootDirection();
+
                 animator.SetTrigger("Item");
                 isShooting = true;
                 animator.SetBool("isShooting", true);
-
-                // Cooldown更新はここで行う（連射制御のため）
                 nextShootTime = Time.time + currentItem.Cooldown;
             }
         }
-        // 単発アイテム
         else
         {
             if (inputReader.ShootPressed && CanShoot())
             {
+                // ボタンを押した瞬間の方向を保存
+                cachedShootDirection = GetShootDirection();
+
                 animator.SetTrigger("Item");
                 isShooting = true;
                 animator.SetBool("isShooting", true);
-
                 nextShootTime = Time.time + currentItem.Cooldown;
             }
         }
