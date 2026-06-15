@@ -33,9 +33,6 @@ public class PlayerController : MonoBehaviour
     // 次コンボへ進めるか
     private bool canNextCombo = false;
 
-    // 攻撃継続時間
-    //[SerializeField]
-    //private float attackDuration = 0.3f;
 
     // ジャンプ力
     [Header("ジャンプ")]
@@ -174,14 +171,6 @@ public class PlayerController : MonoBehaviour
 
     // 現在の攻撃範囲
     private float currentAttackRadius;
-    /*
-    // 攻撃判定位置
-    [SerializeField]
-    private Transform attackPoint;
-
-    // 攻撃範囲
-    [SerializeField]
-    private float attackRadius = 5f;*/
 
     [Header("攻撃 - 共通")]
     [SerializeField]
@@ -1143,45 +1132,22 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void ShootProjectile()
     {
-        // 未装備なら発射しない
-        if (currentItem == null)
-        {
-            return;
-        }
+        if (currentItem == null) return;
+        if (currentItem.ItemType != ItemType.Projectile) return;
 
-        // Projectileアイテム以外は発射しない
-        if (currentItem.ItemType != ItemType.Projectile)
-        {
-            return;
-        }
-
-        // 1. 方向決定（8方向対応の想定）
         Vector2 direction = GetShootDirection();
-
-        // 2. ダメージ・ノックバック・打ち上げをコンボから取得
         int dmg = currentItem.Damage;
-
         float knockback = currentItem.KnockbackPower;
         float launch = currentItem.LaunchPower;
 
-
-        // 3. 生成位置（胸元想定）
         Vector3 spawnPos = transform.position + (Vector3)(direction * 0.5f);
-
-        // 4. Instantiate
-        Projectile proj = Instantiate(currentItem.ProjectilePrefab.GetComponent<Projectile>(),spawnPos,Quaternion.identity);
-
-        // 5. 初期化（ここが本体）
-        proj.Initialize(
-            direction,
-            dmg,
-            knockback,
-            launch,
-            gameObject
+        Projectile proj = Instantiate(
+            currentItem.ProjectilePrefab.GetComponent<Projectile>(),
+            spawnPos,
+            Quaternion.identity
         );
 
-        // 使用回数消費
-        ConsumeItemUse();
+        proj.Initialize(direction, dmg, knockback, launch, gameObject);
 
         // 次回発射可能時間更新
         nextShootTime = Time.time + currentItem.Cooldown;
@@ -1309,7 +1275,13 @@ public class PlayerController : MonoBehaviour
         {
             if (inputReader.ShootHeld && CanShoot())
             {
-                ShootProjectile();
+                // アニメ再生のみ（発射はAnimationEventで行う）
+                animator.SetTrigger("Item");
+                isShooting = true;
+                animator.SetBool("isShooting", true);
+
+                // Cooldown更新はここで行う（連射制御のため）
+                nextShootTime = Time.time + currentItem.Cooldown;
             }
         }
         // 単発アイテム
@@ -1317,8 +1289,30 @@ public class PlayerController : MonoBehaviour
         {
             if (inputReader.ShootPressed && CanShoot())
             {
-                ShootProjectile();
+                animator.SetTrigger("Item");
+                isShooting = true;
+                animator.SetBool("isShooting", true);
+
+                nextShootTime = Time.time + currentItem.Cooldown;
             }
         }
+    }
+
+    // 射撃中フラグ（向き固定・移動制限に使う場合は追加）
+    private bool isShooting = false;
+
+    /// <summary>
+    /// 射撃アニメ終了処理
+    /// AnimationEvent から呼ぶ
+    /// </summary>
+    public void EndShoot()
+    {
+        isShooting = false;
+
+        // Triggerが残っていた場合のリセット
+        animator.ResetTrigger("Item");
+
+        // Animatorを通常状態へ戻す
+        animator.SetBool("isShooting", false);
     }
 }

@@ -16,7 +16,7 @@ MonoBehaviour:
   itemIcon: {fileID: 0}
   itemType: 0
   maxUseCount: -1
-  cooldown: 0.1
+  cooldown: 0.5
   canAutoFire: 0
   damage: 1
   knockbackPower: 5
