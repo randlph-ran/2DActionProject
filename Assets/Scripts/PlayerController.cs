@@ -296,6 +296,22 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float jumpAttackStunRate = 1.0f;
 
+
+    /// <summary>
+    /// 現在ガード中か
+    /// </summary>
+    [SerializeField]
+    [Tooltip("現在ガード状態かどうか（デバッグ確認用）")
+    ]
+    private bool isGuarding;
+
+    /// <summary>
+    /// 現在ガード中か
+    /// </summary>
+    public bool IsGuarding => isGuarding;
+
+    private bool previousGuardState;
+
     private void Start()
     {
         // 初期向き設定
@@ -345,14 +361,16 @@ public class PlayerController : MonoBehaviour
         // 左右入力
         moveInput = inputReader.MoveInput.x;
 
-        // 横入力があるか
-        bool isRunning = Mathf.Abs(moveInput) > 0.1f;
+        // 接地判定
+        CheckGround();
+        // ガード状態更新
+        UpdateGuardState();
+
+        // 移動状態は、左右入力があるかつガードしていないとき
+        bool isRunning = Mathf.Abs(moveInput) > 0.1f && !isGuarding;
 
         // Animatorへ移動状態を送る
         animator.SetBool("isRunning", isRunning);
-
-        // 接地判定
-        CheckGround();
 
         // 接地状態をAnimatorへ送る
         animator.SetBool("isGrounded", isGrounded);
@@ -362,6 +380,11 @@ public class PlayerController : MonoBehaviour
 
         // ノックバック中はジャンプ操作禁止
         if (playerHealth.IsKnockback)
+        {
+            return;
+        }
+        // ガード中は操作不可
+        if (isGuarding)
         {
             return;
         }
@@ -455,6 +478,16 @@ public class PlayerController : MonoBehaviour
 
             return;
         }
+
+        // ガード中は移動停止
+        if (isGuarding)
+        {
+            rb.linearVelocity =
+                new Vector2(0, rb.linearVelocity.y);
+
+            return;
+        }
+
 
         //Weight負け中は移動停止
         if (isBlocked)
@@ -1255,5 +1288,24 @@ public class PlayerController : MonoBehaviour
 
         // Animatorを通常状態へ戻す
         animator.SetBool("isShooting", false);
+    }
+
+    private void UpdateGuardState()
+    {
+        // 空中なら強制解除
+        if (!isGrounded)
+        {
+            isGuarding = false;
+            return;
+        }
+
+        // 地上なら入力状態を反映
+        isGuarding = inputReader.GuardHeld;
+
+        if (previousGuardState != isGuarding)
+        {
+            Debug.Log($"Guard State : {isGuarding}");
+            previousGuardState = isGuarding;
+        }
     }
 }

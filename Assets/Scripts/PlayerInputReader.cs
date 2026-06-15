@@ -21,6 +21,9 @@ public class PlayerInputReader : MonoBehaviour
     // 射撃ボタンを押している間
     public bool ShootHeld { get; private set; }
 
+    /// ガードボタンを押している間
+    public bool GuardHeld { get; private set; }
+
     private void Awake()
     {
         // プレイヤー入力アクションの初期化
@@ -53,5 +56,7 @@ public class PlayerInputReader : MonoBehaviour
         ShootPressed = inputActions.Player.Shoot.WasPressedThisFrame();
         // 射撃ボタンを押している間の状態の更新
         ShootHeld = inputActions.Player.Shoot.IsPressed();
+        // ガードボタンを押している間の状態を更新
+        GuardHeld = inputActions.Player.Guard.IsPressed();
     }
 }
