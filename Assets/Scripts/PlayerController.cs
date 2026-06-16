@@ -395,21 +395,9 @@ public class PlayerController : MonoBehaviour
             Flip();
         }
 
-        // ジャンプ入力
-        if (inputReader.JumpPressed)
-        {
-            Debug.Log(jumpCount + "回目");
-            // 最大回数未満ならジャンプ可能
-            if (jumpCount < maxJumpCount)
-            {
-                Jump();
-            }
-        }
-
         // 攻撃入力
         if (inputReader.AttackPressed)
         {
-
             // 空中ならジャンプ攻撃
             if (!isGrounded)
             {
@@ -418,7 +406,12 @@ public class PlayerController : MonoBehaviour
                 return;
             }
 
-            //
+            // 地上攻撃が可能か判定
+            if (!CanAttack())
+            {
+                return;
+            }
+            // 攻撃ロック中なら攻撃できない
             if (isAttackLocked)
             {
                 return;
@@ -439,15 +432,29 @@ public class PlayerController : MonoBehaviour
             Debug.Log("現在コンボ段数：" + comboStep);
         }
 
+        // ジャンプ入力
+        // 攻撃中・アイテム使用中・ガード中はジャンプできない
+        if (CanJump())
+        {
+            // ジャンプ入力
+            if (inputReader.JumpPressed)
+            {
+                // ジャンプカウントが最大未満なら2段ジャンプする
+                if (jumpCount < maxJumpCount)
+                {
+                    Jump();
+                }
+            }
+        }
+
         // 攻撃中の移動処理
         float direction = isFacingRight ? 1f : -1f;
 
-        // ジャンプ攻撃中で、ジャンプ攻撃アニメ再生中でなければ、ジャンプ攻撃終了
-        if (isJumpAttacking && !animator.GetCurrentAnimatorStateInfo(0).IsName("JumpAttack"))
-        {
-            isJumpAttacking = false;
-            isAttacking = false;
-        }
+        // アイテム入力処理
+        // Attack/JumpAttack入力判定の後に呼ぶことで、
+        // 同一フレームにAttackとItemが同時入力されても
+        // Attack側が先に isJumpAttacking=true をセットするため
+        // CanShoot()のisJumpAttackingチェックが正しく機能する
         HandleShootInput();
 
     }
@@ -513,6 +520,13 @@ public class PlayerController : MonoBehaviour
     // ジャンプ処理    
     private void Jump()
     {
+        Debug.Log($"Jump実行  isGrounded:{isGrounded}  jumpCount:{jumpCount}");
+        // 攻撃入力があるフレームはジャンプしない
+        if (inputReader.AttackPressed)
+        {
+            return;
+        }
+
         Debug.Log("ジャンプ入力したよ");
         // Y方向速度リセット
         // 落下中でも一定ジャンプ力になる
@@ -540,6 +554,7 @@ public class PlayerController : MonoBehaviour
         // 空中→接地になった瞬間
         if (!wasGrounded && isGrounded)
         {
+            Debug.Log("Grounded");
             ResetJumpCount();
             Debug.Log(jumpCount);//リセット処理入ったかの確認
         }
@@ -552,6 +567,9 @@ public class PlayerController : MonoBehaviour
         jumpCount = 0;
         // 空中ジャンプ攻撃使用フラグリセット
         hasUsedJumpAttack = false;
+        // 着地時にジャンプ攻撃フラグを強制リセット（AnimationEventが呼ばれなかった場合のフォールバック）
+        isJumpAttacking = false;
+        isAttacking = false;
     }
 
     // キャラクターの向きを変更する
@@ -845,14 +863,31 @@ public class PlayerController : MonoBehaviour
     // 空中ジャンプ攻撃処理
     private void HandleJumpAttack()
     {
-        isJumpAttacking = true;
-        // 攻撃状態ON
-        isAttacking = true;
-        // 使用済みなら終了
+        // HandleJumpAttack()のDebug.Logも変更
+        Debug.Log($"ジャンプ攻撃 frame:{Time.frameCount}");
+
+        // アイテム使用中はJumpAttack不可
+        // 仕様：Item中 → JumpAttack ×
+        // 先にItem入力があった場合はそちらを優先するため弾く
+        if (isShooting)
+        {
+            return;
+        }
+
+        // 使用済みなら何もしない
         if (hasUsedJumpAttack)
         {
             return;
         }
+
+        // 地上コンボを終了
+        canNextCombo = false;
+        comboStep = 0;
+        animator.SetInteger("ComboStep", 0);
+
+        // ジャンプ攻撃状態ON
+        isJumpAttacking = true;
+        isAttacking = true;
         // ジャンプ攻撃使用済みにする
         hasUsedJumpAttack = true;
 
@@ -1042,6 +1077,7 @@ public class PlayerController : MonoBehaviour
         FaceEnemy(comboTarget.position);
     }
 
+    // 攻撃終了処理をコルーチンで行う
     private IEnumerator EndAttackRoutine(float lockTime)
     {
         // ここで即解除しない
@@ -1220,15 +1256,62 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// 発射可能か判定
     /// </summary>
+    /// <summary>
+    /// アイテム使用可能か判定
+    /// </summary>
     private bool CanShoot()
     {
+        // CanShoot()のDebug.Logを以下に変更
+        Debug.Log($"CanShoot確認 frame:{Time.frameCount} - isAttacking:{isAttacking} / isShooting:{isShooting} / isJumpAttacking:{isJumpAttacking} / IsInTransition:{animator.IsInTransition(0)}");
         // 未装備
         if (currentItem == null)
         {
             return false;
         }
 
-        // Cooldown中
+        // 攻撃中
+        // isAttackingフラグが立っている間はItem使用不可
+        if (isAttacking)
+        {
+            return false;
+        }
+
+        // アイテム使用中
+        // すでにアイテムアニメが再生中ならItem使用不可
+        if (isShooting)
+        {
+            return false;
+        }
+
+        // ジャンプ攻撃中
+        // isJumpAttackingフラグが立っている間はItem使用不可
+        if (isJumpAttacking)
+        {
+            return false;
+        }
+
+        // ノックバック中
+        if (playerHealth.IsKnockback)
+        {
+            return false;
+        }
+
+        // ガード中
+        if (isGuarding)
+        {
+            return false;
+        }
+
+        // Animator遷移中
+        // アニメが切り替わる途中フレームでItem Triggerをセットすると
+        // AnimatorがTriggerを消費できずに残留し、isShooting=trueのまま
+        // EndShoot()が呼ばれない行動不能バグの原因になるため弾く
+        if (animator.IsInTransition(0))
+        {
+            return false;
+        }
+
+        // クールダウン中
         if (Time.time < nextShootTime)
         {
             return false;
@@ -1248,28 +1331,38 @@ public class PlayerController : MonoBehaviour
         {
             if (inputReader.ShootHeld && CanShoot())
             {
-                // ボタンを押した瞬間の方向を保存
-                cachedShootDirection = GetShootDirection();
-
-                animator.SetTrigger("Item");
-                isShooting = true;
-                animator.SetBool("isShooting", true);
-                nextShootTime = Time.time + currentItem.Cooldown;
+                StartShooting();
             }
         }
         else
         {
             if (inputReader.ShootPressed && CanShoot())
             {
-                // ボタンを押した瞬間の方向を保存
-                cachedShootDirection = GetShootDirection();
-
-                animator.SetTrigger("Item");
-                isShooting = true;
-                animator.SetBool("isShooting", true);
-                nextShootTime = Time.time + currentItem.Cooldown;
+                StartShooting();
             }
         }
+    }
+
+    /// <summary>
+    /// アイテム使用開始の共通処理
+    /// </summary>
+    private void StartShooting()
+    {
+        // ボタンを押した瞬間の方向を保存
+        cachedShootDirection = GetShootDirection();
+
+        // 地上コンボ状態を終了
+        canNextCombo = false;
+        comboStep = 0;
+        animator.SetInteger("ComboStep", 0);
+
+        // 残留TriggerをリセットしてからセットすることでAnimator不整合を防ぐ
+        animator.ResetTrigger("Item");
+        animator.SetTrigger("Item");
+
+        isShooting = true;
+        animator.SetBool("isShooting", true);
+        nextShootTime = Time.time + currentItem.Cooldown;
     }
 
     // 射撃中フラグ（向き固定・移動制限に使う場合は追加）
@@ -1308,4 +1401,43 @@ public class PlayerController : MonoBehaviour
             previousGuardState = isGuarding;
         }
     }
+
+    /// <summary>
+    /// ジャンプ入力を受け付けてよいか判定
+    /// </summary>
+    private bool CanJump()
+    {
+        // Attack中ならジャンプできない
+        if (isAttacking) return false;
+        // Projectile使用中ならジャンプできない
+        if (isShooting) return false;
+        // ジャンプ攻撃中ならジャンプできない
+        if (isJumpAttacking) return false;
+        // ノックバック中ならジャンプできない
+        if (playerHealth.IsKnockback) return false;
+        // ガード中ならジャンプできない
+        if (isGuarding) return false;
+        // それ以外はジャンプできる
+        return true;
+    }
+
+    /// <summary>
+    /// 地上攻撃入力を受け付けてよいか判定
+    /// </summary>
+    private bool CanAttack()
+    {
+        // Item使用中なら地上攻撃出せない
+        if (isShooting) return false;
+        // 空中なら地上攻撃出せない
+        if (!isGrounded) return false;
+        // ジャンプ攻撃中なら地上攻撃出せない
+        if (isJumpAttacking) return false;
+        // ノックバック中なら地上攻撃出せない
+        if (playerHealth.IsKnockback) return false;
+        // ガード中なら地上攻撃出せない
+        if (isGuarding) return false;
+        // それ以外は地上攻撃出せる
+        return true;
+    }
+
 }
