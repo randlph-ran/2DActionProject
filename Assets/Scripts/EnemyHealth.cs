@@ -38,6 +38,9 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     // ノックバック中か
     public bool IsKnockback { get; private set; }
 
+    // ノックバック時間管理用Coroutine
+    private Coroutine knockbackCoroutine;
+
     // 打ち上げ中か
     public bool IsLaunched { get; private set; }
 
@@ -74,6 +77,13 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [SerializeField]
     private LayerMask groundLayer;
 
+    [Header("攻撃エフェクト")]
+    [SerializeField] private GameObject attack1EffectPrefab;
+    [SerializeField] private GameObject attack2EffectPrefab;
+    [SerializeField] private GameObject attack3EffectPrefab;
+    [SerializeField] private GameObject jumpAttackEffectPrefab;
+    [SerializeField] private GameObject itemEffectPrefab;
+
     private void Awake()
     {
         // 初期HP設定
@@ -101,7 +111,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     // ダメージ受信
 
-    public void TakeDamage(int damage, Transform attacker, float knockbackPower, float launchPower)
+    public void TakeDamage(int damage, Transform attacker, float knockbackPower, float launchPower, AttackType attackType)
     {
         EnemyAI enemyAI = GetComponent<EnemyAI>();
         // 攻撃中なら攻撃をキャンセルしてノックバックさせる
@@ -110,15 +120,18 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             enemyAI.CancelAttack();
         }
 
-        // ノックバック中なら処理しない
+        /* ノックバック中なら処理しない
         if (IsKnockback)
         {
             Debug.Log("Knockback中なので無視");
             return;
-        }
+        }*/
 
         // 死亡中なら処理しない
         if (isDead) return;
+
+        // 攻撃種類に応じたエフェクトを発生させる
+        SpawnAttackEffect(attackType);
 
         // 現在HP減少
         currentHP -= damage;
@@ -131,9 +144,14 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         // 左右方向へノックバック Playerの位置との正負方向にノックバックさせる
         rb.AddForce(new Vector2(direction > 0 ? 1 : -1, 0) * knockbackPower, ForceMode2D.Impulse);
+        Debug.Log($"[KNOCKBACK] Force追加直後 velocity:{rb.linearVelocity} IsLaunched:{IsLaunched}");
 
-        // ノックバック時間開始
-        StartCoroutine(KnockbackCoroutine());
+        // ノックバック時間管理Coroutine開始
+        if (knockbackCoroutine != null)
+        {
+            StopCoroutine(knockbackCoroutine);
+        }
+        knockbackCoroutine = StartCoroutine(KnockbackCoroutine());
 
         // 被ダメ点滅開始
         StartCoroutine(FlashCoroutine());
@@ -181,6 +199,29 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (currentHP <= 0)
         {
             Die();
+        }
+    }
+
+    // 攻撃種類に応じたエフェクトをヒット位置に出す
+    private void SpawnAttackEffect(AttackType attackType)
+    {
+        GameObject prefab = GetEffectPrefab(attackType);
+        if (prefab == null) return;
+
+        Instantiate(prefab, transform.position, Quaternion.identity);
+    }
+
+    // 攻撃種類に応じたPrefabを返す
+    private GameObject GetEffectPrefab(AttackType attackType)
+    {
+        switch (attackType)
+        {
+            case AttackType.Attack1: return attack1EffectPrefab;
+            case AttackType.Attack2: return attack2EffectPrefab;
+            case AttackType.Attack3: return attack3EffectPrefab;
+            case AttackType.JumpAttack: return jumpAttackEffectPrefab;
+            case AttackType.Item: return itemEffectPrefab;
+            default: return null;
         }
     }
 
@@ -239,6 +280,15 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         // 少し待機
         yield return new WaitForSeconds(0.4f);
+
+        // X速度が収束するまで待つ（最大1秒でタイムアウト）
+        float timeout = 1f;
+        float timer = 0f;
+        while (Mathf.Abs(rb.linearVelocity.x) > 0.5f && timer < timeout)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
 
         // ノックバック終了
         IsKnockback = false;

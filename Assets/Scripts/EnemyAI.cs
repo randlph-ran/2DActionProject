@@ -2,6 +2,9 @@
 
 public class EnemyAI : MonoBehaviour
 {
+    // デバッグ用：ノックバック発生後の追跡フレーム数
+    private int debugTrackFrames = 0;
+
     // 移動速度設定
     [Tooltip("移動速度設定")]
     [SerializeField]
@@ -231,20 +234,23 @@ public class EnemyAI : MonoBehaviour
     // 物理更新
     private void FixedUpdate()
     {
+        // ノックバックが新しく始まった瞬間を検知してログ追跡を開始
+        if (enemyHealth.IsKnockback && debugTrackFrames <= 0)
+        {
+            debugTrackFrames = 15; // 以降15フレームだけ詳細ログ
+        }
+
+        if (debugTrackFrames > 0)
+        {
+            Debug.Log($"[TRACK] frame:{Time.frameCount} velocity:{rb.linearVelocity} IsKnockback:{enemyHealth.IsKnockback} IsLaunched:{enemyHealth.IsLaunched} isAttacking:{isAttacking} isStunned:{isStunned}");
+            debugTrackFrames--;
+        }
+
         // ★ゲーム開始前は何もしない
         if (!GameManager.IsGameStarted)
         {
             // 横移動停止
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
-            return;
-        }
-
-        // 飛ばされ中は移動停止
-        if (enemyHealth.IsLaunched)
-        {
-            // 横移動停止
-            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
-
             return;
         }
 
@@ -259,6 +265,7 @@ public class EnemyAI : MonoBehaviour
         {
             return;
         }
+
         // 打ち上げ中はAI停止
         if (enemyHealth.IsLaunched)
         {

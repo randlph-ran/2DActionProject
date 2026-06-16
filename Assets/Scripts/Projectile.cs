@@ -100,10 +100,10 @@ public class Projectile : MonoBehaviour
         // =====================================
 
         // directionから角度を計算
-        float angle = Mathf.Atan2( this.direction.y, this.direction.x) * Mathf.Rad2Deg;
+        float angle = Mathf.Atan2(this.direction.y, this.direction.x) * Mathf.Rad2Deg;
 
         // Projectileを回転
-        transform.rotation = Quaternion.Euler( 0f, 0f, angle);
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
 
         // =====================================
         // ダメージ関連の初期化
@@ -158,23 +158,25 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // 初期化前は当たり判定を無効化
         if (!isInitialized) return;
-
-        // 発射者には当たらない
+        // 発射者には当たらないようにする
         if (owner != null && other.gameObject == owner)
             return;
-
+        // IDamageableを持つオブジェクトにダメージを与える
         IDamageable target = other.GetComponent<IDamageable>();
-
+        // ダメージ転送
         if (target != null)
         {
+            // IDamageableのTakeDamageにダメージを転送
             target.TakeDamage(
                 damage,
                 owner != null ? owner.transform : transform,
                 knockbackPower,
-                launchPower
+                launchPower,
+                AttackType.Item
             );
-
+            // ヒットしたら消える
             Destroy(gameObject);
         }
     }

@@ -9,6 +9,9 @@ public class PlayerController : MonoBehaviour
     // Animator
     private Animator animator;
 
+    // 攻撃エフェクトPrefab
+    [SerializeField] private GameObject slashEffectPrefab;
+
     // 現在のコンボ段階（1〜3）
     private int comboStep = 0;
 
@@ -409,24 +412,32 @@ public class PlayerController : MonoBehaviour
             // 地上攻撃が可能か判定
             if (!CanAttack())
             {
+                Debug.Log($"[INPUT] CanAttack()がfalseで弾かれた frame:{Time.frameCount}");
                 return;
             }
             // 攻撃ロック中なら攻撃できない
             if (isAttackLocked)
             {
+                Debug.Log($"[INPUT] isAttackLockedで弾かれた frame:{Time.frameCount}");
                 return;
             }
             // 地上なら通常攻撃
             if (!isAttacking)
             {
+                Debug.Log($"[INPUT] 新規攻撃開始 frame:{Time.frameCount}");
                 // 攻撃処理
                 HandleAttackInput();
             }
             // 攻撃中で、次コンボ受付中なら、次のコンボへ進める
             else if (canNextCombo)
             {
+                Debug.Log($"[INPUT] コンボ継続 frame:{Time.frameCount}");
                 // 攻撃処理
                 HandleAttackInput();
+            }
+            else
+            {
+                Debug.Log($"[INPUT] 入力は来たが無視された(isAttacking=true, canNextCombo=false) frame:{Time.frameCount}");
             }
             Debug.Log("攻撃開始");
             Debug.Log("現在コンボ段数：" + comboStep);
@@ -723,8 +734,8 @@ public class PlayerController : MonoBehaviour
             // EnemyHealthが存在するなら
             if (enemyHealth != null)
             {
-                // ダメージを与える
-                enemyHealth.TakeDamage(attackDM, transform, currentKnockback, currentLaunchPower);
+                AttackType attackType = GetCurrentAttackType();
+                enemyHealth.TakeDamage(attackDM, transform, currentKnockback, currentLaunchPower, attackType);
                 Debug.Log(comboStep + "段目の攻撃が敵にヒット！ダメージ：" + attackDM);
             }
         }
@@ -786,7 +797,7 @@ public class PlayerController : MonoBehaviour
         {
             comboStep = 1;
         }
-
+        Debug.Log($"[COMBO] comboStep更新 frame:{Time.frameCount} 新comboStep:{comboStep}");
         // 現在のコンボ段階に応じて
         // 攻撃範囲設定を切り替える
         switch (comboStep)
@@ -905,6 +916,7 @@ public class PlayerController : MonoBehaviour
     public void EnableNextCombo()
     {
         canNextCombo = true;
+        Debug.Log($"[ANIM EVENT] EnableNextCombo発火 frame:{Time.frameCount} comboStep:{comboStep}");
 
         Debug.Log("次コンボ受付開始");
     }
@@ -1080,6 +1092,7 @@ public class PlayerController : MonoBehaviour
     // 攻撃終了処理をコルーチンで行う
     private IEnumerator EndAttackRoutine(float lockTime)
     {
+        Debug.Log($"[END] EndAttackRoutine開始 frame:{Time.frameCount} comboStep:{comboStep} lockTime:{lockTime}");
         // ここで即解除しない
         yield return new WaitForSeconds(lockTime);
 
@@ -1107,19 +1120,14 @@ public class PlayerController : MonoBehaviour
             // EnemyHealth取得
             EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
             // EnemyHealthが存在しないなら次の敵へ
-            if (enemyHealth == null)
-            {
-                continue;
-            }
-            // ダメージを与える
-            enemyHealth.TakeDamage(jumpAttackDamage, transform, jumpAttackKnockback, 0f);
+            if (enemyHealth == null) continue;
+            // ダメージとノックバックを与える
+            enemyHealth.TakeDamage(jumpAttackDamage, transform, jumpAttackKnockback, 0f, AttackType.JumpAttack);
 
-            // EnemyAI取得
             EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
             // EnemyAIが存在するならスタンを与える
             if (enemyAI != null)
             {
-                // スタン係数を渡す
                 enemyAI.ApplyStun(jumpAttackStunRate);
             }
         }
@@ -1440,4 +1448,16 @@ public class PlayerController : MonoBehaviour
         return true;
     }
 
+    // comboStepからAttackTypeを判定する
+    private AttackType GetCurrentAttackType()
+    {
+        // comboStepに応じてAttackTypeを返す
+        switch (comboStep)
+        {
+            case 1: return AttackType.Attack1;
+            case 2: return AttackType.Attack2;
+            case 3: return AttackType.Attack3;
+            default: return AttackType.Attack1;
+        }
+    }
 }
