@@ -352,6 +352,11 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 0
+  attack1EffectPrefab: {fileID: 0}
+  attack2EffectPrefab: {fileID: 0}
+  attack3EffectPrefab: {fileID: 0}
+  jumpAttackEffectPrefab: {fileID: 0}
+  itemEffectPrefab: {fileID: 0}
 --- !u!114 &4435916279548751840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -381,7 +386,7 @@ MonoBehaviour:
   checkDistance: 1.5
   groundLayer:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 264
   attackDamage: 3
   knockbackForce: 8
   weightLevel: 2

@@ -50,7 +50,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2947749010080835493, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.6
+      value: -0.33
+      objectReference: {fileID: 0}
+    - target: {fileID: 3225097791754489481, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.326
+      objectReference: {fileID: 0}
+    - target: {fileID: 3225097791754489481, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.334
       objectReference: {fileID: 0}
     - target: {fileID: 4435916279548751840, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: weightLevel

@@ -127,7 +127,7 @@ Transform:
   m_GameObject: {fileID: 2177962240194680311}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0.2, z: 0}
+  m_LocalPosition: {x: 0.5, y: 0.028, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -247,7 +247,7 @@ Transform:
   m_GameObject: {fileID: 3916028942231508607}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.2, y: 0, z: 0}
+  m_LocalPosition: {x: 0.315, y: -0.214, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -278,7 +278,7 @@ Transform:
   m_GameObject: {fileID: 4996279681993170784}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.274, z: 0}
+  m_LocalPosition: {x: 0, y: -0.329, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -385,7 +385,7 @@ Transform:
   m_GameObject: {fileID: 5816171511408714974}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.3, y: -0.25, z: 0}
+  m_LocalPosition: {x: -0.3, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -416,7 +416,7 @@ Transform:
   m_GameObject: {fileID: 6804356745389335476}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.25, y: -0.25, z: 0}
+  m_LocalPosition: {x: 0.25, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -454,7 +454,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 5, y: -1.8, z: 0}
-  m_LocalScale: {x: 1.2, y: 1.2, z: 1}
+  m_LocalScale: {x: 1.2192001, y: 1.18092, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8977949324638530059}
@@ -585,7 +585,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0229785, y: -0.00052672625}
+  m_Offset: {x: -0.022978485, y: -0.18660012}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.50145906, y: 0.9623118}
@@ -595,7 +595,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.8396205, y: 0.63}
+  m_Size: {x: 0.8396205, y: 0.44392747}
   m_EdgeRadius: 0
 --- !u!114 &2438158073428606219
 MonoBehaviour:
@@ -620,6 +620,11 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  attack1EffectPrefab: {fileID: 0}
+  attack2EffectPrefab: {fileID: 0}
+  attack3EffectPrefab: {fileID: 0}
+  jumpAttackEffectPrefab: {fileID: 0}
+  itemEffectPrefab: {fileID: 0}
 --- !u!114 &4435916279548751840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -632,7 +637,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0100deae85b36cb458b71ae9d104b181, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
-  moveSpeed: 2
+  moveSpeed: 4
   chaseDistance: 5
   meleeAttackDistance: 1.5
   canShoot: 0
@@ -649,15 +654,16 @@ MonoBehaviour:
   checkDistance: 1
   groundLayer:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 264
   attackDamage: 1
   knockbackForce: 5
   weightLevel: 0
-  projectilePrefab: {fileID: -5110534461669590181, guid: 2caac582ad8794d42a32f53bc18eca73, type: 3}
+  projectilePrefab: {fileID: 0}
   firePoint: {fileID: 0}
   retreatDuration: 1.5
   retreatSpeed: 2
   retreatGroundCheck: {fileID: 3225097791754489481}
+  stunLevel: 1
 --- !u!95 &533160155566962923
 Animator:
   serializedVersion: 7
