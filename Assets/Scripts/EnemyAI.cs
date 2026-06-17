@@ -402,12 +402,12 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
-            // 通常巡回　向きに合わせて巡回
-            moveDirection = isFacingRight ? 1f : -1f;
-
             // ■ Playerを追っていない時だけ
-            // 壁と崖を確認する
+            // 壁と崖を確認する（この中でFlip()が呼ばれる可能性がある）
             CheckWallAndGround();
+
+            // Flip()による向き変更を反映してから移動方向を決定する
+            moveDirection = isFacingRight ? 1f : -1f;
         }
 
         // 移動
@@ -426,18 +426,6 @@ public class EnemyAI : MonoBehaviour
         // 現在向いている方向を決める
         // 右向きなら右、左向きなら左
         Vector2 direction = isFacingRight ? Vector2.right : Vector2.left;
-
-        Debug.DrawRay(
-        wallCheck.position,
-        direction * checkDistance,
-        Color.red);
-
-        Debug.DrawRay(
-            groundCheck.position,
-            Vector2.down * checkDistance,
-            Color.white);
-
-
 
         // 前方向へRayを飛ばして壁確認
         RaycastHit2D wallHit = Physics2D.Raycast(
@@ -481,7 +469,7 @@ public class EnemyAI : MonoBehaviour
         if (groundHit.collider != null)
         {
             Debug.Log(
-                $"GroundHit:{groundHit.collider.name}");
+                 $"GroundHit:{groundHit.collider.name} Layer:{groundHit.collider.gameObject.layer}");
         }
         else
         {
@@ -683,6 +671,7 @@ public class EnemyAI : MonoBehaviour
         {
             playerController.SetBlocked(true);
         }
+        
     }
 
     // 接触終了
