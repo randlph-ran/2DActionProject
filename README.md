@@ -78,13 +78,13 @@
 - [x] PlayerController（移動・入力）
 - [x] Trigger / Collider
 - [x] UI（Canvas, Button, TextMeshPro）
-- [ ] ScriptableObject / JSONデータ
+- [×] ScriptableObject / JSONデータ
 - [ ] アニメーション / DOTween
 - [×] サウンド（BGM・SE）
 - [ ] NavMesh / AI
 - [x] Timeline / Cinemachine
 - [x] 物理（Rigidbody / CharacterController 等）
-- [ ] その他（　　　　　　　　　　　　　　　　　　　　）
+- [×] その他（　VFXPACK_IMPACT_WALLCOEUR_FreeVersion(エフェクト用)　）
 
 ---
 
@@ -214,6 +214,7 @@ Assets/
 ├─ Animations
 ├─ Font
 ├─ Image
+├─ Item
 ├─ Scripts/
 ├─ Prefabs/
 ├─ Scenes/
@@ -221,7 +222,7 @@ Assets/
 ├─ TextMeshPro
 ├─ TilePalette
 ├─ Tiles
-└─ 
+└─ VFXPACK_IMPACT_WALLCOEUR_FreeVersion
 ```
 
 ---
