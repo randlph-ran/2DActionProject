@@ -79,6 +79,11 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField]
     private PlayerHPUI hpUI;
 
+    // 被ダメージ時のエフェクトPrefab
+    [Header("被ダメージエフェクト")]
+    [SerializeField] private GameObject hitEffectPrefab;
+    [SerializeField] private GameObject guardEffectPrefab;
+
     // ゲーム開始時に呼ばれる
     private void Start()
     {
@@ -125,6 +130,19 @@ public class PlayerHealth : MonoBehaviour
 
             return;
         }
+
+        // ガード中ならダメージ軽減
+        if (playerController.IsGuarding)
+        {
+            damage = Mathf.Max(1, Mathf.CeilToInt(damage * 0.5f));
+
+            Debug.Log("ガード成功");
+        }
+
+        // 被ダメージエフェクトを発生させる
+        SpawnHitEffect();
+
+
         // HPをダメージで減少させる
         currentHP -= damage;
 
@@ -142,14 +160,19 @@ public class PlayerHealth : MonoBehaviour
         // 横方向だけノックバック
         Vector2 knockbackDirection = new Vector2(direction, 0.2f).normalized;
 
-        // ノックバック状態に切替
-        IsKnockback = true;
+        // ガード中でなければノックバックを発生させる
+        if (!playerController.IsGuarding)
+        {
+            IsKnockback = true;
 
-        //固定ノックバック
-        StartCoroutine(KnockbackCoroutine(knockbackDirection, knockbackForce));
+            StartCoroutine(KnockbackCoroutine(knockbackDirection, knockbackForce));
+        }
 
-
-        StartCoroutine(InvincibleCoroutine());
+        // ガード中でなければ無敵状態にする
+        if (!playerController.IsGuarding)
+        {
+            StartCoroutine(InvincibleCoroutine());
+        }
 
         // HP0以下なら死亡
         if (currentHP <= 0)
@@ -161,7 +184,19 @@ public class PlayerHealth : MonoBehaviour
             Die(enemyPosition);
         }
     }
-
+    // 被ダメージエフェクトをPlayerの位置に出す
+    private void SpawnHitEffect()
+    {
+        // ガード中かどうかでPrefabを切り替える
+        GameObject prefab = playerController.IsGuarding ? guardEffectPrefab : hitEffectPrefab;
+        // nullチェック
+        if (prefab == null)
+        {
+            return;
+        }
+        // Playerの位置にエフェクトを出す
+        Instantiate(prefab, transform.position, Quaternion.identity);
+    }
     // HP0時処理
     private void Die(Vector2 enemyPosition)
     {

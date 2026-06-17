@@ -369,6 +369,9 @@ public class PlayerController : MonoBehaviour
         // ガード状態更新
         UpdateGuardState();
 
+        // Animatorへガード状態を送る
+        animator.SetBool("isGuarding", isGuarding);
+
         // 移動状態は、左右入力があるかつガードしていないとき
         bool isRunning = Mathf.Abs(moveInput) > 0.1f && !isGuarding;
 
