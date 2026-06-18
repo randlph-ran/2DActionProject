@@ -385,7 +385,7 @@ Transform:
   m_GameObject: {fileID: 5816171511408714974}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.3, y: -0.5, z: 0}
+  m_LocalPosition: {x: -0.351, y: -0.462, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -585,7 +585,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.022978485, y: -0.18660012}
+  m_Offset: {x: -0.022978485, y: -0.17992105}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.50145906, y: 0.9623118}
@@ -595,7 +595,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.8396205, y: 0.44392747}
+  m_Size: {x: 0.8396205, y: 0.43056932}
   m_EdgeRadius: 0
 --- !u!114 &2438158073428606219
 MonoBehaviour:
@@ -620,11 +620,11 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  attack1EffectPrefab: {fileID: 0}
-  attack2EffectPrefab: {fileID: 0}
-  attack3EffectPrefab: {fileID: 0}
-  jumpAttackEffectPrefab: {fileID: 0}
-  itemEffectPrefab: {fileID: 0}
+  attack1EffectPrefab: {fileID: 3042519775331041172, guid: 841004c4c6a39e244abe2257394de913, type: 3}
+  attack2EffectPrefab: {fileID: 3042519775331041172, guid: 841004c4c6a39e244abe2257394de913, type: 3}
+  attack3EffectPrefab: {fileID: 4306488877223958017, guid: ecb38e0319a6ad44cbca52d7b5add7a6, type: 3}
+  jumpAttackEffectPrefab: {fileID: 1226031520979461127, guid: 9c692d73cd82e0d409bec909e987a5b8, type: 3}
+  itemEffectPrefab: {fileID: 467751860875805754, guid: 7c6d9bb9c8994364dbe5ba2e32dd4d13, type: 3}
 --- !u!114 &4435916279548751840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -639,13 +639,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
   moveSpeed: 4
   chaseDistance: 5
+  chaseHeight: 2
   meleeAttackDistance: 1.5
   canShoot: 0
   rangedAttackDistance: 0
   rangedAttackCooldown: 3
   attackCooldown: 2.5
   attackPoint: {fileID: 8977949324638530059}
-  attackRadius: 0.5
+  attackRadius: 0.7
   playerLayer:
     serializedVersion: 2
     m_Bits: 128
@@ -656,12 +657,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 264
   attackDamage: 1
-  knockbackForce: 5
+  knockbackForce: 6
   weightLevel: 0
   projectilePrefab: {fileID: 0}
   firePoint: {fileID: 0}
-  retreatDuration: 1.5
-  retreatSpeed: 2
+  retreatDuration: 4
+  retreatSpeed: 3
   retreatGroundCheck: {fileID: 3225097791754489481}
   stunLevel: 1
 --- !u!95 &533160155566962923

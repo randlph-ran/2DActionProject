@@ -30,6 +30,10 @@ public class EnemyAI : MonoBehaviour
     [SerializeField]
     private float chaseDistance = 5f;
 
+    [Tooltip("上下方向の索敵許容距離")]
+    [SerializeField]
+    private float chaseHeight = 2f;
+
     // =========================
     // 近接攻撃設定
     // =========================
@@ -38,6 +42,7 @@ public class EnemyAI : MonoBehaviour
     [Tooltip("近接攻撃距離")]
     [SerializeField]
     private float meleeAttackDistance = 1.5f;
+
 
     // =========================
     // 遠距離攻撃設定
@@ -184,6 +189,11 @@ public class EnemyAI : MonoBehaviour
     [SerializeField]
     private int stunLevel = 1;
 
+    // 外部取得用
+    public int AttackDamage => attackDamage;
+    // 外部取得用
+    public float KnockbackForce => knockbackForce;
+
     // 初期化
     private void Awake()
     {
@@ -285,6 +295,11 @@ public class EnemyAI : MonoBehaviour
         // Playerとの距離 Enemyの位置とPlayerの位置を測って入れる
         float distance = Vector2.Distance(transform.position, playerTransform.position);
 
+        // Playerとの上下距離を測る
+        float verticalDistance = Mathf.Abs(playerTransform.position.y - transform.position.y);
+        // 上下距離が追尾許容範囲内かどうか
+        bool canDetectPlayer = verticalDistance <= chaseHeight;
+
         // 後退中はPlayerと逆方向へ移動し、Player方向は向き続ける
         if (isRetreating)
         {
@@ -331,8 +346,10 @@ public class EnemyAI : MonoBehaviour
         // 移動方向
         float moveDirection;
 
-        // 攻撃距離内なら停止
-        if (distance <= meleeAttackDistance)
+        // =========================
+        // 近接攻撃距離
+        // =========================
+        if (canDetectPlayer && distance <= meleeAttackDistance)
         {
             // 移動停止
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
@@ -348,8 +365,8 @@ public class EnemyAI : MonoBehaviour
         // 飛び道具攻撃距離
         // =========================
 
-        // 飛び道具攻撃距離内なら停止して攻撃
-        if (distance <= rangedAttackDistance)
+        // 飛び道具攻撃可能なら攻撃
+        if (canDetectPlayer && distance <= rangedAttackDistance)
         {
             // 移動停止
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
@@ -381,8 +398,10 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        // Playerが近いなら追尾
-        if (distance <= chaseDistance)
+        // =========================
+        // Player追尾
+        // =========================
+        if (canDetectPlayer && distance <= chaseDistance)
         {
             // Playerが右にいるか　Playerが右なら1　左なら - 1
             moveDirection = playerTransform.position.x > transform.position.x ? 1f : -1f;
@@ -454,27 +473,6 @@ public class EnemyAI : MonoBehaviour
             Flip();
         }
 
-
-        if (hitWall)
-        {
-            Debug.Log("壁判定：" + wallHit.collider.name);
-        }
-
-        if (noGround)
-        {
-            Debug.Log("崖判定");
-        }
-
-        Debug.Log($"hitWall:{hitWall}  noGround:{noGround}");
-        if (groundHit.collider != null)
-        {
-            Debug.Log(
-                 $"GroundHit:{groundHit.collider.name} Layer:{groundHit.collider.gameObject.layer}");
-        }
-        else
-        {
-            Debug.Log("GroundHit:null");
-        }
     }
 
     /// <summary>
@@ -520,8 +518,6 @@ public class EnemyAI : MonoBehaviour
     // 向き変更
     private void Flip()
     {
-        Debug.Log(
-        $"Flip  wall:{wallCheck.position}  ground:{groundCheck.position}");
         // 向き反転
         isFacingRight = !isFacingRight;
 
@@ -640,60 +636,6 @@ public class EnemyAI : MonoBehaviour
             1f,              // launchPower（Enemyは仮値でOK）
             gameObject
         );
-    }
-
-    // Enemyと接触中
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        // Player以外なら終了
-        if (!collision.gameObject.CompareTag("Player"))
-        {
-            return;
-        }
-
-        // PlayerController取得
-        PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
-
-        // PlayerController無ければ終了
-        if (playerController == null)
-        {
-            return;
-        }
-
-        // 重量級ならPlayerを停止させる
-        if (weightLevel >= 2)
-        {
-            // Player停止
-            playerController.SetBlocked(true);
-        }
-        // 同格でもPlayerを停止させる
-        else if (weightLevel == 1)
-        {
-            playerController.SetBlocked(true);
-        }
-        
-    }
-
-    // 接触終了
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        // Player以外なら終了
-        if (!collision.gameObject.CompareTag("Player"))
-        {
-            return;
-        }
-
-        // PlayerController取得
-        PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
-
-        // 無ければ終了
-        if (playerController == null)
-        {
-            return;
-        }
-
-        // 停止解除
-        playerController.SetBlocked(false);
     }
 
     // スタンレベルに応じた基礎スタン時間を取得
