@@ -572,6 +572,7 @@ GameObject:
   - component: {fileID: 4628147407456074170}
   - component: {fileID: -7818320735057109993}
   - component: {fileID: -8307775951181623357}
+  - component: {fileID: 2104940646498491382}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -751,7 +752,6 @@ MonoBehaviour:
   attack1LaunchPower: 9
   attack2LaunchPower: 5
   attack3LaunchPower: 1
-  currentItem: {fileID: 11400000, guid: 5b638d8243b1ee84c96f0ce020cf2af4, type: 2}
   attackDM: 1
   attack1Knockback: 1.1
   attack2Knockback: 1.5
@@ -850,6 +850,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 353ac1d5b73e84e49bdb6badedf7e9f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInputReader
+--- !u!114 &2104940646498491382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8392564140115359092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14d8c7ad6084a714cb5919e83aebd247, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
+  inventory: []
+  equippedItem: {fileID: 0}
 --- !u!1 &8622455235830675196
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e673b3f82c80e0246a0963fefad2f672, type: 3}
+  m_Name: Potion
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: "\u30DD\u30FC\u30B7\u30E7\u30F3"
+  itemIcon: {fileID: -2880734798192188640, guid: 22e961828bbbbd541ad3fcdf9c79cc0d, type: 3}
+  description: 
+  itemType: 1
+  maxUseCount: 1
+  cooldown: 1
+  canAutoFire: 0
+  damage: 1
+  knockbackPower: 5
+  launchPower: 0
+  projectilePrefab: {fileID: 6931959343812305794, guid: c3621b2081749824bb7bce3334ec9dc0, type: 3}
+  healAmount: 30
+  chargeTime: 1
+  crashEffectPrefab: {fileID: 0}

@@ -272,18 +272,20 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     // アイテムドロップ処理
     private void DropItem()
     {
+        //（設定ミス用の確認）
         Debug.Log($"[DropItem] 呼び出し dropItem:{dropItem} / itemPickupPrefab:{itemPickupPrefab}");
 
         // ドロップアイテムかPrefabが未設定なら何もしない
         if (dropItem == null || itemPickupPrefab == null)
         {
+            //（設定ミス用の確認）
             Debug.LogWarning("[DropItem] dropItemまたはitemPickupPrefabが未設定のためスキップしました");
             return;
         }
 
         // 自分の位置にPickup用オブジェクトを生成
         GameObject pickupObj = Instantiate(itemPickupPrefab, transform.position, Quaternion.identity);
-
+        // 生成ログ（設定ミス用の確認）
         Debug.Log("[DropItem] " + pickupObj.name + " を生成 位置:" + transform.position);
 
         // ItemPickupへドロップ内容を設定
@@ -293,7 +295,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         {
             pickup.Setup(dropItem, dropCount);
         }
-
+        // 設定忘れ警告ログ
         Debug.LogWarning("[DropItem] " + itemPickupPrefab.name + " にItemPickupコンポーネントが見つかりません");
     }
 

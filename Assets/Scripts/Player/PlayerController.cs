@@ -21,6 +21,9 @@ public class PlayerController : MonoBehaviour
     // PlayerHealth
     private PlayerHealth playerHealth;
 
+    // InventoryManager
+    private InventoryManager inventoryManager;
+
     // 左右入力
     private float moveInput;
 
@@ -155,12 +158,9 @@ public class PlayerController : MonoBehaviour
 
     [Header("アイテム")]
 
-    [Tooltip("現在装備中のアイテム")]
-    [SerializeField]
-    private ItemData currentItem;
-
-    // 現在の残り使用回数
-    private int currentUseCount;
+    // 現在装備中のアイテム
+    // InventoryManagerが管理する装備状態をそのまま参照する
+    private ItemData currentItem => inventoryManager != null ? inventoryManager.EquippedItem : null;
 
     // 次回発射可能時間
     private float nextShootTime;
@@ -319,9 +319,6 @@ public class PlayerController : MonoBehaviour
     {
         // 初期向き設定
         InitFacingDirection();
-
-        // アイテム初期化
-        InitializeItem();
     }
 
     // ゲーム開始時に最初に呼ばれる
@@ -338,6 +335,9 @@ public class PlayerController : MonoBehaviour
 
         // PlayerInputReader取得
         inputReader = GetComponent<PlayerInputReader>();
+
+        // InventoryManager取得
+        inventoryManager = GetComponent<InventoryManager>();
     }
 
     // 毎フレーム実行
@@ -1200,23 +1200,8 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// 装備中アイテム情報初期化
-    /// </summary>
-    private void InitializeItem()
-    {
-        // 未装備なら終了
-        if (currentItem == null)
-        {
-            currentUseCount = 0;
-            return;
-        }
-
-        // 使用回数初期化
-        currentUseCount = currentItem.MaxUseCount;
-    }
-
-    /// <summary>
     /// アイテム装備
+    /// InventoryManager側の装備状態を更新する
     /// </summary>
     public void EquipItem(ItemData item)
     {
@@ -1225,43 +1210,38 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-        // アイテム装備
-        currentItem = item;
-        // 使用回数初期化
-        currentUseCount = item.MaxUseCount;
+        // InventoryManagerへ装備を依頼
+        inventoryManager?.EquipItem(item);
     }
 
     /// <summary>
     /// アイテム解除
+    /// InventoryManager側の装備状態を更新する
     /// </summary>
     public void UnequipItem()
     {
-        // アイテム解除
-        currentItem = null;
-        // 使用回数リセット
-        currentUseCount = 0;
+        // InventoryManagerへ装備解除を依頼
+        inventoryManager?.UnequipItem();
     }
 
     /// <summary>
     /// アイテム使用回数を消費する
+    /// 所持数を1消費し、0になればInventoryManager側で自動的に装備解除される
     /// </summary>
     private void ConsumeItemUse()
     {
-        // 無限使用なら消費しない
-        if (currentUseCount < 0)
+        if (inventoryManager == null)
         {
             return;
         }
 
-        // 使用回数減少
-        currentUseCount--;
+        // 装備中アイテムを使用（内部で所持数を1消費する）
+        ItemData usedItem = inventoryManager.UseEquippedItem();
 
-        // 0以下になったら装備解除
-        if (currentUseCount <= 0)
+        if (usedItem != null)
         {
-            UnequipItem();
+            Debug.Log("残り所持数：" + inventoryManager.GetItemCount(usedItem));
         }
-        Debug.Log("残り使用回数：" + currentUseCount);
     }
 
     /// <summary>
