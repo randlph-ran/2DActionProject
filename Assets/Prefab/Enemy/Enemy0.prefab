@@ -104,6 +104,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 9100000, guid: 0a6b3cc423e3efe4b8e0cbab173841da, type: 2}
     - target: {fileID: 2438158073428606219, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
+      propertyPath: dropCount
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2438158073428606219, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: weightLevel
       value: 0
       objectReference: {fileID: 0}
@@ -158,6 +162,10 @@ PrefabInstance:
     - target: {fileID: 4435916279548751840, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: weightLevel
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4435916279548751840, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
+      propertyPath: attackDamage
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4435916279548751840, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: groundLayer.m_Bits

@@ -357,6 +357,9 @@ MonoBehaviour:
   attack3EffectPrefab: {fileID: 0}
   jumpAttackEffectPrefab: {fileID: 0}
   itemEffectPrefab: {fileID: 0}
+  dropItem: {fileID: 0}
+  dropCount: 1
+  itemPickupPrefab: {fileID: 0}
 --- !u!114 &4435916279548751840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -371,6 +374,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
   moveSpeed: 1
   chaseDistance: 5
+  chaseHeight: 2
   meleeAttackDistance: 6
   canShoot: 1
   rangedAttackDistance: 12
@@ -395,7 +399,7 @@ MonoBehaviour:
   retreatDuration: 1.5
   retreatSpeed: 3
   retreatGroundCheck: {fileID: 8538087602332882741}
-  stunLevel: 1
+  stunLevel: 2
 --- !u!95 &5000552218476298777
 Animator:
   serializedVersion: 7

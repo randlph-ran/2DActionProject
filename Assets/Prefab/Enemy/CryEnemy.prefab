@@ -48,6 +48,18 @@ PrefabInstance:
       propertyPath: weightLevel
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4435916279548751840, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
+      propertyPath: attackDamage
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4435916279548751840, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
+      propertyPath: knockbackForce
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4435916279548751840, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
+      propertyPath: retreatDuration
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5506972699479269963, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_Size.x
       value: 0.66
@@ -74,11 +86,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6043761974081675124, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
-      value: 0.5
+      value: 0.5031975
       objectReference: {fileID: 0}
     - target: {fileID: 6043761974081675124, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.y
-      value: 0.5
+      value: 0.53996813
       objectReference: {fileID: 0}
     - target: {fileID: 6043761974081675124, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.x

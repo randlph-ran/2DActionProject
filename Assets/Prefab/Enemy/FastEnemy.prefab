@@ -645,8 +645,8 @@ MonoBehaviour:
   chaseHeight: 2
   meleeAttackDistance: 1.5
   canShoot: 0
-  rangedAttackDistance: 0
-  rangedAttackCooldown: 3
+  rangedAttackDistance: 0.5
+  rangedAttackCooldown: 1.5
   attackCooldown: 2.5
   attackPoint: {fileID: 8977949324638530059}
   attackRadius: 0.7
