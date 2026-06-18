@@ -177,19 +177,19 @@ PrefabInstance:
       objectReference: {fileID: 5015832910802947808, guid: b19997861ca2b5d4584b28629b395a18, type: 3}
     - target: {fileID: 6043761974081675124, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_Size.x
-      value: 0.63636476
+      value: 0.64268035
       objectReference: {fileID: 0}
     - target: {fileID: 6043761974081675124, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_Size.y
-      value: 0.45527047
+      value: 0.54656065
       objectReference: {fileID: 0}
     - target: {fileID: 6043761974081675124, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_Offset.x
-      value: -0.0037519634
+      value: -0.030068964
       objectReference: {fileID: 0}
     - target: {fileID: 6043761974081675124, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_Offset.y
-      value: -0.04481381
+      value: -0.06872305
       objectReference: {fileID: 0}
     - target: {fileID: 6043761974081675124, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
@@ -217,7 +217,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6265466934521111435, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.25
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6996493345611146003, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_SleepingMode
@@ -229,11 +229,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7320070065001925756, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 41.892868
+      value: 14.098116
       objectReference: {fileID: 0}
     - target: {fileID: 7320070065001925756, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7.325253
+      value: 6.407786
       objectReference: {fileID: 0}
     - target: {fileID: 7320070065001925756, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: m_LocalPosition.z

@@ -32,7 +32,7 @@ public class EnemyAI : MonoBehaviour
 
     [Tooltip("上下方向の索敵許容距離")]
     [SerializeField]
-    private float chaseHeight = 2f;
+    private float chaseHeight = 1.5f;
 
     // =========================
     // 近接攻撃設定
