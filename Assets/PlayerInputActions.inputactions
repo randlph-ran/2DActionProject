@@ -294,7 +294,7 @@
                 {
                     "name": "",
                     "id": "f4c85379-cb73-4017-97f5-a9b9d48677bb",
-                    "path": "<XInputController>/buttonWest",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -327,7 +327,7 @@
                 {
                     "name": "",
                     "id": "cc4cb723-90ea-4c4c-ab02-6396f3e6ffa2",
-                    "path": "<XInputController>/buttonNorth",
+                    "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

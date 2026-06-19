@@ -573,14 +573,6 @@ public class PlayerController : MonoBehaviour
             Debug.Log(jumpCount);//リセット処理入ったかの確認
         }
 
-        // 着地時にまだ射撃中（ShootProjectile未発火含む）なら強制終了
-        if (isShooting)
-        {
-            // 発射済みなら弾はすでに出ているのでそのままEndShoot
-            // 未発射なら発射をキャンセルしてEndShoot
-            hasShot = false; // リセットして次回に備える
-            EndShoot();
-        }
     }
 
     // ジャンプ回数リセット
@@ -1395,6 +1387,17 @@ public class PlayerController : MonoBehaviour
         //animator.ResetTrigger("Item");
         //animator.SetTrigger("Item");
 
+        // 空中発射時は重力と速度を停止し、座標を固定する
+        // 着地と発射アニメ完走のタイミングが競合して
+        // 地上Stateへ誤って引き込まれる不安定挙動を防ぐ
+        isShootGravityFrozen = !isGrounded;
+        if (isShootGravityFrozen)
+        {
+            shootOriginalGravity = rb.gravityScale;
+            rb.gravityScale = 0f;
+            rb.linearVelocity = Vector2.zero;
+        }
+
         isShooting = true;
         animator.SetBool("isShooting", true);
         nextShootTime = Time.time + currentItem.Cooldown;
@@ -1402,6 +1405,12 @@ public class PlayerController : MonoBehaviour
 
     // 射撃中フラグ（向き固定・移動制限に使う場合は追加）
     private bool isShooting = false;
+
+    // 空中発射中に停止させた重力の復元用
+    private float shootOriginalGravity;
+
+    // 空中発射時に重力を停止したか
+    private bool isShootGravityFrozen;
 
     /// <summary>
     /// 射撃アニメ終了処理
@@ -1417,6 +1426,13 @@ public class PlayerController : MonoBehaviour
 
         // Animatorを通常状態へ戻す
         animator.SetBool("isShooting", false);
+
+        // 空中発射で止めていた重力を復帰する
+        if (isShootGravityFrozen)
+        {
+            rb.gravityScale = shootOriginalGravity;
+            isShootGravityFrozen = false;
+        }
     }
 
     private void UpdateGuardState()
