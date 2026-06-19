@@ -572,6 +572,15 @@ public class PlayerController : MonoBehaviour
             ResetJumpCount();
             Debug.Log(jumpCount);//リセット処理入ったかの確認
         }
+
+        // 着地時にまだ射撃中（ShootProjectile未発火含む）なら強制終了
+        if (isShooting)
+        {
+            // 発射済みなら弾はすでに出ているのでそのままEndShoot
+            // 未発射なら発射をキャンセルしてEndShoot
+            hasShot = false; // リセットして次回に備える
+            EndShoot();
+        }
     }
 
     // ジャンプ回数リセット
@@ -1157,6 +1166,13 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void ShootProjectile()
     {
+        Debug.Log($"ShootProjectile呼び出し frame:{Time.frameCount} clip:{animator.GetCurrentAnimatorClipInfo(0)[0].clip.name}");
+        // isShooting が false になっていたら発射しない
+        // アニメ遷移の巻き込みによる誤発火を防ぐ
+        if (!isShooting) return;
+        if (hasShot) return; // ← 追加：1回押しにつき1発のみ
+        Debug.Log("ShootProjectile");
+
         if (currentItem == null) return;
         if (currentItem.ItemType != ItemType.Projectile) return;
 
@@ -1173,10 +1189,12 @@ public class PlayerController : MonoBehaviour
             spawnPos,
             Quaternion.identity
         );
-
+        Debug.Log($"Projectile生成 pos:{spawnPos} direction:{direction} instanceID:{proj.GetInstanceID()}");
         proj.Initialize(direction, dmg, knockback, launch, gameObject);
         ConsumeItemUse();
     }
+
+
 
     // 8方向対応の射撃方向決定処理
     private Vector2 GetShootDirection()
@@ -1252,6 +1270,8 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private bool CanShoot()
     {
+        Debug.Log($"CanShoot呼び出し frame:{Time.frameCount} isShooting:{isShooting} isGrounded:{isGrounded}");
+
         // CanShoot()のDebug.Logを以下に変更
         Debug.Log($"CanShoot確認 frame:{Time.frameCount} - isAttacking:{isAttacking} / isShooting:{isShooting} / isJumpAttacking:{isJumpAttacking} / IsInTransition:{animator.IsInTransition(0)}");
         // 未装備
@@ -1322,6 +1342,7 @@ public class PlayerController : MonoBehaviour
         {
             if (inputReader.ShootHeld && CanShoot())
             {
+                Debug.Log($"StartShooting呼び出し(AutoFire) frame:{Time.frameCount}");
                 StartShooting();
             }
         }
@@ -1329,18 +1350,41 @@ public class PlayerController : MonoBehaviour
         {
             if (inputReader.ShootPressed && CanShoot())
             {
+                Debug.Log($"StartShooting呼び出し(Press) frame:{Time.frameCount}");
                 StartShooting();
             }
         }
     }
+
+    // 発射済みフラグ（AnimationEventで発射処理を呼ぶため、1回だけ発射するようにする）
+    private bool hasShot = false;
 
     /// <summary>
     /// アイテム使用開始の共通処理
     /// </summary>
     private void StartShooting()
     {
+        hasShot = false; // 発射ボタンを押すたびにリセット
+
         // ボタンを押した瞬間の方向を保存
         cachedShootDirection = GetShootDirection();
+
+        // Animator用の射撃方向 0 = 横
+        int shootDirection = 0;
+
+        // 1 = 上方向
+        if (cachedShootDirection.y > 0.5f)
+        {
+            shootDirection = 1;
+        }
+        // 2 = 下方向
+        else if (cachedShootDirection.y < -0.5f)
+        {
+            shootDirection = 2;
+        }
+
+        // Animatorへ送る
+        animator.SetInteger("ShootDirection", shootDirection);
 
         // 地上コンボ状態を終了
         canNextCombo = false;
@@ -1348,8 +1392,8 @@ public class PlayerController : MonoBehaviour
         animator.SetInteger("ComboStep", 0);
 
         // 残留TriggerをリセットしてからセットすることでAnimator不整合を防ぐ
-        animator.ResetTrigger("Item");
-        animator.SetTrigger("Item");
+        //animator.ResetTrigger("Item");
+        //animator.SetTrigger("Item");
 
         isShooting = true;
         animator.SetBool("isShooting", true);
@@ -1365,10 +1409,11 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void EndShoot()
     {
+        Debug.Log($"EndShoot呼び出し frame:{Time.frameCount}");
         isShooting = false;
-
+        hasShot = false; // ← 追加：念のためリセット
         // Triggerが残っていた場合のリセット
-        animator.ResetTrigger("Item");
+        //animator.ResetTrigger("Item");
 
         // Animatorを通常状態へ戻す
         animator.SetBool("isShooting", false);
