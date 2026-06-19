@@ -33,8 +33,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float moveSpeed = 5f;
 
-    // 攻撃中判定
-    private bool isAttacking = false;
+    // Player行動状態（Attacking/Shooting/JumpAttackingは互いに排他）
+    private enum PlayerState
+    {
+        Idle,
+        Attacking,
+        Shooting,
+        JumpAttacking
+    }
+
+    // 現在の行動状態
+    private PlayerState currentState = PlayerState.Idle;
 
     // 次コンボへ進めるか
     private bool canNextCombo = false;
@@ -253,8 +262,6 @@ public class PlayerController : MonoBehaviour
     [Tooltip("攻撃終了後の硬直時間（調整ポイント）")]
     [SerializeField] private float attack3EndLock = 0.25f;
 
-    // ジャンプ攻撃中フラグ
-    private bool isJumpAttacking;
 
     // =========================
     // JumpAttack設定
@@ -396,7 +403,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // 攻撃中、アイテム中は向き固定
-        if (!isAttacking && !isShooting)
+        if (currentState == PlayerState.Idle)
         {
             Flip();
         }
@@ -425,7 +432,7 @@ public class PlayerController : MonoBehaviour
                 return;
             }
             // 地上なら通常攻撃
-            if (!isAttacking)
+            if (currentState != PlayerState.Attacking)
             {
                 Debug.Log($"[INPUT] 新規攻撃開始 frame:{Time.frameCount}");
                 // 攻撃処理
@@ -440,7 +447,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                Debug.Log($"[INPUT] 入力は来たが無視された(isAttacking=true, canNextCombo=false) frame:{Time.frameCount}");
+                Debug.Log($"[INPUT] 入力は来たが無視された(currentState={currentState}, canNextCombo=false) frame:{Time.frameCount}");
             }
             Debug.Log("攻撃開始");
             Debug.Log("現在コンボ段数：" + comboStep);
@@ -467,8 +474,8 @@ public class PlayerController : MonoBehaviour
         // アイテム入力処理
         // Attack/JumpAttack入力判定の後に呼ぶことで、
         // 同一フレームにAttackとItemが同時入力されても
-        // Attack側が先に isJumpAttacking=true をセットするため
-        // CanShoot()のisJumpAttackingチェックが正しく機能する
+        // Attack側が先に currentState=JumpAttacking をセットするため
+        // CanShoot()のcurrentStateチェックが正しく機能する
         HandleShootInput();
 
     }
@@ -492,7 +499,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // 攻撃中、アイテム中は横移動停止
-        if (isAttacking || isShooting)
+        if (currentState == PlayerState.Attacking || currentState == PlayerState.JumpAttacking || currentState == PlayerState.Shooting)
         {
             // 横移動停止
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
@@ -582,9 +589,11 @@ public class PlayerController : MonoBehaviour
         jumpCount = 0;
         // 空中ジャンプ攻撃使用フラグリセット
         hasUsedJumpAttack = false;
-        // 着地時にジャンプ攻撃フラグを強制リセット（AnimationEventが呼ばれなかった場合のフォールバック）
-        isJumpAttacking = false;
-        isAttacking = false;
+        // 着地時にジャンプ攻撃状態を強制リセット（AnimationEventが呼ばれなかった場合のフォールバック）
+        if (currentState == PlayerState.Attacking || currentState == PlayerState.JumpAttacking)
+        {
+            currentState = PlayerState.Idle;
+        }
     }
 
     // キャラクターの向きを変更する
@@ -872,7 +881,7 @@ public class PlayerController : MonoBehaviour
 
         // 攻撃中状態ON
         // 移動停止や向き固定に使用
-        isAttacking = true;
+        currentState = PlayerState.Attacking;
     }
 
     // 空中ジャンプ攻撃処理
@@ -884,7 +893,7 @@ public class PlayerController : MonoBehaviour
         // アイテム使用中はJumpAttack不可
         // 仕様：Item中 → JumpAttack ×
         // 先にItem入力があった場合はそちらを優先するため弾く
-        if (isShooting)
+        if (currentState == PlayerState.Shooting)
         {
             return;
         }
@@ -901,8 +910,7 @@ public class PlayerController : MonoBehaviour
         animator.SetInteger("ComboStep", 0);
 
         // ジャンプ攻撃状態ON
-        isJumpAttacking = true;
-        isAttacking = true;
+        currentState = PlayerState.JumpAttacking;
         // ジャンプ攻撃使用済みにする
         hasUsedJumpAttack = true;
 
@@ -1100,7 +1108,7 @@ public class PlayerController : MonoBehaviour
         // ここで即解除しない
         yield return new WaitForSeconds(lockTime);
 
-        isAttacking = false;
+        currentState = PlayerState.Idle;
         canNextCombo = false;
 
         comboStep = 0;
@@ -1111,8 +1119,7 @@ public class PlayerController : MonoBehaviour
     // ジャンプ攻撃終了処理
     public void EndJumpAttack()
     {
-        isAttacking = false;
-        isJumpAttacking = false;
+        currentState = PlayerState.Idle;
     }
 
     // ジャンプ攻撃で敵にダメージを与える処理
@@ -1159,9 +1166,9 @@ public class PlayerController : MonoBehaviour
     private void ShootProjectile()
     {
         Debug.Log($"ShootProjectile呼び出し frame:{Time.frameCount} clip:{animator.GetCurrentAnimatorClipInfo(0)[0].clip.name}");
-        // isShooting が false になっていたら発射しない
+        // currentStateがShootingでなければ発射しない
         // アニメ遷移の巻き込みによる誤発火を防ぐ
-        if (!isShooting) return;
+        if (currentState != PlayerState.Shooting) return;
         if (hasShot) return; // ← 追加：1回押しにつき1発のみ
         Debug.Log("ShootProjectile");
 
@@ -1262,33 +1269,18 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private bool CanShoot()
     {
-        Debug.Log($"CanShoot呼び出し frame:{Time.frameCount} isShooting:{isShooting} isGrounded:{isGrounded}");
+        Debug.Log($"CanShoot呼び出し frame:{Time.frameCount} currentState:{currentState} isGrounded:{isGrounded}");
 
         // CanShoot()のDebug.Logを以下に変更
-        Debug.Log($"CanShoot確認 frame:{Time.frameCount} - isAttacking:{isAttacking} / isShooting:{isShooting} / isJumpAttacking:{isJumpAttacking} / IsInTransition:{animator.IsInTransition(0)}");
+        Debug.Log($"CanShoot確認 frame:{Time.frameCount} - currentState:{currentState} / IsInTransition:{animator.IsInTransition(0)}");
         // 未装備
         if (currentItem == null)
         {
             return false;
         }
 
-        // 攻撃中
-        // isAttackingフラグが立っている間はItem使用不可
-        if (isAttacking)
-        {
-            return false;
-        }
-
-        // アイテム使用中
-        // すでにアイテムアニメが再生中ならItem使用不可
-        if (isShooting)
-        {
-            return false;
-        }
-
-        // ジャンプ攻撃中
-        // isJumpAttackingフラグが立っている間はItem使用不可
-        if (isJumpAttacking)
+        // 攻撃中・アイテム使用中・ジャンプ攻撃中はItem使用不可
+        if (currentState != PlayerState.Idle)
         {
             return false;
         }
@@ -1398,19 +1390,45 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
         }
 
-        isShooting = true;
+        currentState = PlayerState.Shooting;
         animator.SetBool("isShooting", true);
         nextShootTime = Time.time + currentItem.Cooldown;
-    }
 
-    // 射撃中フラグ（向き固定・移動制限に使う場合は追加）
-    private bool isShooting = false;
+        // Animatorの遷移競合でAnimationEvent(ShootProjectile/EndShoot)が
+        // 発火しなかった場合の保険。一定時間後も発射中のままなら強制終了する
+        if (shootTimeoutCoroutine != null)
+        {
+            StopCoroutine(shootTimeoutCoroutine);
+        }
+        shootTimeoutCoroutine = StartCoroutine(ShootTimeoutCoroutine());
+    }
 
     // 空中発射中に停止させた重力の復元用
     private float shootOriginalGravity;
 
     // 空中発射時に重力を停止したか
     private bool isShootGravityFrozen;
+
+    // 発射タイムアウト監視用コルーチン
+    private Coroutine shootTimeoutCoroutine;
+
+    // 発射タイムアウト時間（最長の発射クリップより少し長めに設定）
+    [Tooltip("発射タイムアウト時間（最長の発射クリップより少し長めに設定）")]
+    [SerializeField]
+    private float shootTimeoutDuration = 0.5f;
+
+    // AnimationEventが発火しなかった場合のフォールバック処理
+    private IEnumerator ShootTimeoutCoroutine()
+    {
+        yield return new WaitForSeconds(shootTimeoutDuration);
+
+        // タイムアウトしてもまだ発射中状態が続いていたら強制終了する
+        if (currentState == PlayerState.Shooting)
+        {
+            Debug.LogWarning($"ShootTimeout発火 frame:{Time.frameCount} AnimationEventが来なかったため強制EndShoot");
+            EndShoot();
+        }
+    }
 
     /// <summary>
     /// 射撃アニメ終了処理
@@ -1419,13 +1437,20 @@ public class PlayerController : MonoBehaviour
     public void EndShoot()
     {
         Debug.Log($"EndShoot呼び出し frame:{Time.frameCount}");
-        isShooting = false;
+        currentState = PlayerState.Idle;
         hasShot = false; // ← 追加：念のためリセット
         // Triggerが残っていた場合のリセット
         //animator.ResetTrigger("Item");
 
         // Animatorを通常状態へ戻す
         animator.SetBool("isShooting", false);
+
+        // タイムアウト監視を停止する
+        if (shootTimeoutCoroutine != null)
+        {
+            StopCoroutine(shootTimeoutCoroutine);
+            shootTimeoutCoroutine = null;
+        }
 
         // 空中発射で止めていた重力を復帰する
         if (isShootGravityFrozen)
@@ -1459,12 +1484,8 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private bool CanJump()
     {
-        // Attack中ならジャンプできない
-        if (isAttacking) return false;
-        // Projectile使用中ならジャンプできない
-        if (isShooting) return false;
-        // ジャンプ攻撃中ならジャンプできない
-        if (isJumpAttacking) return false;
+        // Attack中・Projectile使用中・ジャンプ攻撃中ならジャンプできない
+        if (currentState != PlayerState.Idle) return false;
         // ノックバック中ならジャンプできない
         if (playerHealth.IsKnockback) return false;
         // ガード中ならジャンプできない
@@ -1479,11 +1500,11 @@ public class PlayerController : MonoBehaviour
     private bool CanAttack()
     {
         // Item使用中なら地上攻撃出せない
-        if (isShooting) return false;
+        if (currentState == PlayerState.Shooting) return false;
         // 空中なら地上攻撃出せない
         if (!isGrounded) return false;
         // ジャンプ攻撃中なら地上攻撃出せない
-        if (isJumpAttacking) return false;
+        if (currentState == PlayerState.JumpAttacking) return false;
         // ノックバック中なら地上攻撃出せない
         if (playerHealth.IsKnockback) return false;
         // ガード中なら地上攻撃出せない

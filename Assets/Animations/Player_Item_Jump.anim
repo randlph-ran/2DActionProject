@@ -26,8 +26,6 @@ AnimationClip:
       value: {fileID: -5326703000338352748, guid: 0be9cb169724f494786e9fa4ebf9b340, type: 3}
     - time: 0.33333334
       value: {fileID: -5326703000338352748, guid: 0be9cb169724f494786e9fa4ebf9b340, type: 3}
-    - time: 0.5
-      value: {fileID: 7672979344865970148, guid: 3a2c0fd74f7a4ef42b1eb94eb5dc9a8c, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -53,13 +51,12 @@ AnimationClip:
     - {fileID: -6263683614026132719, guid: 07fd58290bc7df046b39e852785ffecd, type: 3}
     - {fileID: -5326703000338352748, guid: 0be9cb169724f494786e9fa4ebf9b340, type: 3}
     - {fileID: -5326703000338352748, guid: 0be9cb169724f494786e9fa4ebf9b340, type: 3}
-    - {fileID: 7672979344865970148, guid: 3a2c0fd74f7a4ef42b1eb94eb5dc9a8c, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.51666665
+    m_StopTime: 0.35000002
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -86,7 +83,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.5
+  - time: 0.35
     functionName: EndShoot
     data: 
     objectReferenceParameter: {fileID: 0}
