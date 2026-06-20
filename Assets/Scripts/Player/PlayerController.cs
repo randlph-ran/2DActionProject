@@ -18,6 +18,9 @@ public class PlayerController : MonoBehaviour
     // Rigidbody2D
     private Rigidbody2D rb;
 
+    // SpriteRenderer
+    private SpriteRenderer spriteRenderer;
+
     // PlayerHealth
     private PlayerHealth playerHealth;
 
@@ -322,6 +325,37 @@ public class PlayerController : MonoBehaviour
 
     private bool previousGuardState;
 
+    // =========================
+    // 残像エフェクト設定（ジャンプ・攻撃などPlayerの複数アクションで共用）
+    // =========================
+    [Header("残像エフェクト")]
+    // 分身の表示時間（フェードアウトにかかる時間）
+    [Tooltip("分身の表示時間（フェードアウトにかかる時間）")]
+    [SerializeField]
+    private float afterimageDuration = 0.5f;
+
+    // 分身生成時の初期アルファ値
+    [Tooltip("分身生成時の初期アルファ値")]
+    [SerializeField]
+    private float afterimageStartAlpha = 0.5f;
+
+    // ジャンプ軌跡用の分身の生成間隔（接地するまでこの間隔で連続生成する）
+    [Tooltip("ジャンプ軌跡用の分身の生成間隔（接地するまでこの間隔で連続生成する）")]
+    [SerializeField]
+    private float jumpAfterimageSpawnInterval = 0.05f;
+
+    // 軌跡用の分身生成コルーチンが実行中か
+    private bool isJumpAfterimageActive;
+
+    /// <summary>
+    /// ジャンプ攻撃のスタン時間を計算するための、最後にジャンプ攻撃を受けた時間
+    /// ジャンプ中（着地待ち）かどうか。isGroundedではUpdate内でしか更新されないので
+    /// ジャンプ直後の1フレームはまだtrueのままになってしまうので、
+    /// 2段ジャンプ用のResetJumpCountで着地判定をし、
+    /// falseにすることでコルーチンの停止タイミングを正確にする
+    /// </summary>
+    private bool isAirborneFromJump;
+
     private void Start()
     {
         // 初期向き設定
@@ -345,6 +379,9 @@ public class PlayerController : MonoBehaviour
 
         // InventoryManager取得
         inventoryManager = GetComponent<InventoryManager>();
+
+        // SpriteRenderer取得　ジャンプエフェクト用に取得
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // 毎フレーム実行
@@ -474,8 +511,8 @@ public class PlayerController : MonoBehaviour
         // アイテム入力処理
         // Attack/JumpAttack入力判定の後に呼ぶことで、
         // 同一フレームにAttackとItemが同時入力されても
-        // Attack側が先に currentState=JumpAttacking をセットするため
-        // CanShoot()のcurrentStateチェックが正しく機能する
+        // Attack側が先に currentState=JumpAttacking をセットするので
+        // CanShoot()のcurrentStateチェックが正しく機能するようになる
         HandleShootInput();
 
     }
@@ -530,7 +567,7 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
 
-        // 落下速度制限
+        // 落下速度制限　落下距離が長くなると速くなりすぎるのを防止するため
         if (rb.linearVelocity.y < -maxFallSpeed)
         {
             rb.linearVelocity =
@@ -558,6 +595,84 @@ public class PlayerController : MonoBehaviour
 
         // ジャンプ回数加算
         jumpCount++;
+
+        // ジャンプしたので着地待ち状態にする
+        isAirborneFromJump = true;
+
+        // ジャンプ軌跡用の分身エフェクトを開始（既に実行中なら多重起動しない）
+        if (!isJumpAfterimageActive)
+        {
+            // コルーチン開始
+            StartCoroutine(JumpAfterimageTrailCoroutine());
+        }
+    }
+
+    // 着地するまで一定間隔で分身エフェクトを生成し続ける（2段ジャンプ目もこの中で継続される）
+    private IEnumerator JumpAfterimageTrailCoroutine()
+    {
+        // 分身生成開始フラグON
+        isJumpAfterimageActive = true;
+        // 着地判定するまでループ
+        while (isAirborneFromJump)
+        {
+            // 分身生成
+            SpawnAfterimage();
+            // 指定間隔待機してから次の分身生成へ
+            yield return new WaitForSeconds(jumpAfterimageSpawnInterval);
+        }
+        // 分身生成終了フラグOFF
+        isJumpAfterimageActive = false;
+    }
+
+    // 半透明な分身GameObjectを1個生成する（ジャンプ・攻撃などどのアクションからでも呼べる汎用処理）
+    private void SpawnAfterimage()
+    {
+        // spriteRendererが無ければ終了
+        if (spriteRenderer == null || spriteRenderer.sprite == null)
+        {
+            return;
+        }
+
+        // 分身用GameObjectを生成
+        GameObject afterimage = new GameObject("Afterimage");
+        // 分身の位置と回転をPlayerと同じにする
+        afterimage.transform.SetPositionAndRotation(transform.position, transform.rotation);
+        // 分身のスケールをPlayerと同じにする（向き反転も含めて）
+        afterimage.transform.localScale = transform.localScale;
+
+        // 分身用SpriteRendererを設定（元Playerの見た目を複製）
+        SpriteRenderer afterimageRenderer = afterimage.AddComponent<SpriteRenderer>();
+        // 元のSpriteとMaterialをコピーして、初期アルファ値を設定
+        afterimageRenderer.sprite = spriteRenderer.sprite;
+        // 重要：Materialも共有することで、分身の色を変えてもPlayerの色に影響が出ないようにする
+        afterimageRenderer.sharedMaterial = spriteRenderer.sharedMaterial;
+        // 初期アルファ値を設定
+        afterimageRenderer.color = new Color(1f, 1f, 1f, afterimageStartAlpha);
+        // 元のSpriteRendererと同じSortingLayerとOrderを設定
+        afterimageRenderer.sortingLayerID = spriteRenderer.sortingLayerID;
+        afterimageRenderer.sortingOrder = spriteRenderer.sortingOrder;
+        // 元のSpriteRendererと同じFlip状態(向き)を設定
+        afterimageRenderer.flipX = spriteRenderer.flipX;
+        afterimageRenderer.flipY = spriteRenderer.flipY;
+        // 分身をフェードアウトさせるコルーチン開始
+        StartCoroutine(FadeOutAfterimage(afterimageRenderer));
+    }
+
+    // 分身を一定時間でフェードアウトさせて消す
+    private IEnumerator FadeOutAfterimage(SpriteRenderer afterimageRenderer)
+    {
+        float elapsed = 0f;
+        Color startColor = afterimageRenderer.color;
+
+        while (elapsed < afterimageDuration)
+        {
+            elapsed += Time.deltaTime;
+            float alpha = Mathf.Lerp(startColor.a, 0f, elapsed / afterimageDuration);
+            afterimageRenderer.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
+            yield return null;
+        }
+
+        Destroy(afterimageRenderer.gameObject);
     }
     // 接地判定
     private void CheckGround()
@@ -589,6 +704,8 @@ public class PlayerController : MonoBehaviour
         jumpCount = 0;
         // 空中ジャンプ攻撃使用フラグリセット
         hasUsedJumpAttack = false;
+        // 着地したので軌跡エフェクトの生成を停止する
+        isAirborneFromJump = false;
         // 着地時にジャンプ攻撃状態を強制リセット（AnimationEventが呼ばれなかった場合のフォールバック）
         if (currentState == PlayerState.Attacking || currentState == PlayerState.JumpAttacking)
         {
@@ -1412,7 +1529,9 @@ public class PlayerController : MonoBehaviour
     // 発射タイムアウト監視用コルーチン
     private Coroutine shootTimeoutCoroutine;
 
+
     // 発射タイムアウト時間（最長の発射クリップより少し長めに設定）
+    [Header("飛び道具発射タイムアウト時間")]
     [Tooltip("発射タイムアウト時間（最長の発射クリップより少し長めに設定）")]
     [SerializeField]
     private float shootTimeoutDuration = 0.5f;

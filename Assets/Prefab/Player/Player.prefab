@@ -652,7 +652,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.76, y: 1.16}
+  m_Size: {x: 0.58, y: 0.79}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -734,7 +734,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   slashEffectPrefab: {fileID: 0}
-  moveSpeed: 5
+  moveSpeed: 7
   jumpPower: 20
   maxJumpCount: 2
   groundCheck: {fileID: 1004223190282293765}
@@ -761,7 +761,7 @@ MonoBehaviour:
     m_Bits: 64
   alwaysShowAttackGizmo: 1
   attackGizmoDuration: 0.2
-  maxFallSpeed: 8
+  maxFallSpeed: 10
   startFacingRight: 1
   attack1MoveDistance: 0.55
   attack2MoveDistance: 0.55
@@ -777,6 +777,9 @@ MonoBehaviour:
   jumpAttackStopTime: 0.3
   jumpAttackStunRate: 1
   isGuarding: 0
+  jumpAfterimageDuration: 0.5
+  jumpAfterimageStartAlpha: 0.5
+  shootTimeoutDuration: 0.5
 --- !u!114 &2237189157722497506
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -862,8 +865,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14d8c7ad6084a714cb5919e83aebd247, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
-  inventory: []
-  equippedItem: {fileID: 0}
+  inventory:
+  - itemData: {fileID: 11400000, guid: 5b638d8243b1ee84c96f0ce020cf2af4, type: 2}
+    count: -1
+  equippedItem: {fileID: 11400000, guid: 5b638d8243b1ee84c96f0ce020cf2af4, type: 2}
 --- !u!1 &8622455235830675196
 GameObject:
   m_ObjectHideFlags: 0
