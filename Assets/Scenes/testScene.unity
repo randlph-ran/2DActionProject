@@ -7268,7 +7268,7 @@ CompositeCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_GeometryType: 0
+  m_GeometryType: 1
   m_GenerationType: 0
   m_EdgeRadius: 0
   m_ColliderPaths:
@@ -7749,6 +7749,22 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2484889139916247626, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 333.7891
+      objectReference: {fileID: 0}
+    - target: {fileID: 2484889139916247626, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -26.2788
+      objectReference: {fileID: 0}
+    - target: {fileID: 2484889139916247626, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -28.3483
+      objectReference: {fileID: 0}
+    - target: {fileID: 2484889139916247626, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.06119919
+      objectReference: {fileID: 0}
     - target: {fileID: 3456931493024808848, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.49
@@ -7790,6 +7806,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3741448961686238491, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
+      propertyPath: afterimageDuration
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3741448961686238491, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
+      propertyPath: afterimageStartAlpha
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3741448961686238491, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
       propertyPath: jumpAfterimageDuration
       value: 0.5
       objectReference: {fileID: 0}
@@ -7799,11 +7823,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3741448961686238491, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
       propertyPath: jumpAfterimageSpawnInterval
-      value: 0.1
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5642536874115836130, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 72.7328
       objectReference: {fileID: 0}
     - target: {fileID: 8392564140115359092, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 9102353066472535152, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9102353066472535152, guid: 1d967a0080454304b85e13fb80d6f056, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
