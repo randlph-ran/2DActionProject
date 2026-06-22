@@ -154,6 +154,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MenuConfirm"",
+                    ""type"": ""Button"",
+                    ""id"": ""d5d4460a-150a-4f82-9547-85da1fd4bb6f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MenuCancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""010a53d6-d560-49c5-99ee-fff2eeee42af"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -277,6 +295,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f8a61556-e7ce-4b95-a689-faa3914b0925"",
+                    ""path"": ""<Gamepad>/dpad"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
@@ -442,6 +471,61 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Menu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""242967c4-afee-4959-ae2c-d3a20398a59a"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MenuConfirm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""556d95db-e795-4eb5-84b2-7278d9b345d1"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MenuConfirm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b8a3f1f0-0c36-492b-95ed-1dccf47b8ee3"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MenuConfirm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""74bed43f-6dde-4448-b93f-c6c3508df15a"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MenuCancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d216d860-d3ac-49e1-82fb-fcfb1b304195"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MenuCancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -457,6 +541,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_UI = m_Player.FindAction("UI", throwIfNotFound: true);
         m_Player_Guard = m_Player.FindAction("Guard", throwIfNotFound: true);
         m_Player_Menu = m_Player.FindAction("Menu", throwIfNotFound: true);
+        m_Player_MenuConfirm = m_Player.FindAction("MenuConfirm", throwIfNotFound: true);
+        m_Player_MenuCancel = m_Player.FindAction("MenuCancel", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -544,6 +630,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_UI;
     private readonly InputAction m_Player_Guard;
     private readonly InputAction m_Player_Menu;
+    private readonly InputAction m_Player_MenuConfirm;
+    private readonly InputAction m_Player_MenuCancel;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -583,6 +671,14 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Menu".
         /// </summary>
         public InputAction @Menu => m_Wrapper.m_Player_Menu;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/MenuConfirm".
+        /// </summary>
+        public InputAction @MenuConfirm => m_Wrapper.m_Player_MenuConfirm;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/MenuCancel".
+        /// </summary>
+        public InputAction @MenuCancel => m_Wrapper.m_Player_MenuCancel;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -630,6 +726,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Menu.started += instance.OnMenu;
             @Menu.performed += instance.OnMenu;
             @Menu.canceled += instance.OnMenu;
+            @MenuConfirm.started += instance.OnMenuConfirm;
+            @MenuConfirm.performed += instance.OnMenuConfirm;
+            @MenuConfirm.canceled += instance.OnMenuConfirm;
+            @MenuCancel.started += instance.OnMenuCancel;
+            @MenuCancel.performed += instance.OnMenuCancel;
+            @MenuCancel.canceled += instance.OnMenuCancel;
         }
 
         /// <summary>
@@ -662,6 +764,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Menu.started -= instance.OnMenu;
             @Menu.performed -= instance.OnMenu;
             @Menu.canceled -= instance.OnMenu;
+            @MenuConfirm.started -= instance.OnMenuConfirm;
+            @MenuConfirm.performed -= instance.OnMenuConfirm;
+            @MenuConfirm.canceled -= instance.OnMenuConfirm;
+            @MenuCancel.started -= instance.OnMenuCancel;
+            @MenuCancel.performed -= instance.OnMenuCancel;
+            @MenuCancel.canceled -= instance.OnMenuCancel;
         }
 
         /// <summary>
@@ -751,5 +859,19 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMenu(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MenuConfirm" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMenuConfirm(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MenuCancel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMenuCancel(InputAction.CallbackContext context);
     }
 }
