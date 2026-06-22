@@ -151,10 +151,10 @@ public class ItemData : ScriptableObject
     /// Projectileは、Itemを使用したときに生成されるオブジェクトで、攻撃の当たり判定や移動などを担当します。
     /// 例えば、銃の弾や魔法の弾などがProjectileに該当します。
     /// --------------------------------
-    /// ProjectilePrefabは、ItemDataに設定されたProjectileのPrefabを指し、Itemを使用したときにこのPrefabが生成されます。
-    /// これにより、Itemを使用するたびに同じProjectileが生成され、攻撃の挙動や見た目を統一することができます。
-    /// 例えば、銃の弾のPrefabをProjectilePrefabに設定すれば、Itemを使用するたびにその銃の弾が生成され、攻撃の当たり判定や移動などが行われます。
-    /// つまり、ProjectilePrefabは、Itemを使用したときに生成される攻撃のオブジェクトのテンプレートとなるものです。
+    /// ProjectilePrefabは、ItemDataに設定されたProjectileのPrefabを指し、Itemを使用したときにこのPrefabが生成。
+    /// これにより、Itemを使用するたびに同じProjectileが生成され、攻撃の挙動や見た目を統一することができる。
+    /// 例えば、銃の弾のPrefabをProjectilePrefabに設定すれば、Itemを使用するたびにその銃の弾が生成され、攻撃の当たり判定や移動などが行われる。
+    /// つまり、ProjectilePrefabは、Itemを使用したときに生成される攻撃のオブジェクトのテンプレートとなる。
     /// </summary>
     public GameObject ProjectilePrefab => projectilePrefab;
 
