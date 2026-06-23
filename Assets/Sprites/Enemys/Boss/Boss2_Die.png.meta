@@ -124,12 +124,12 @@ TextureImporter:
       name: Boss2_Die_0
       rect:
         serializedVersion: 2
-        x: 5
-        y: 1
-        width: 706
-        height: 399
+        x: 143
+        y: 11
+        width: 403
+        height: 388
       alignment: 9
-      pivot: {x: 0.49595383, y: 0.53148675}
+      pivot: {x: 0.4916978, y: 0.6044262}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -146,12 +146,12 @@ TextureImporter:
       name: Boss2_Die_3
       rect:
         serializedVersion: 2
-        x: 0
-        y: 10
-        width: 711
-        height: 390
+        x: 143
+        y: 11
+        width: 404
+        height: 389
       alignment: 9
-      pivot: {x: 0.4945667, y: 0.55311733}
+      pivot: {x: 0.48403138, y: 0.67476016}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
