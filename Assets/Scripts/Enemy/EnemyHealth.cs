@@ -110,6 +110,22 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [SerializeField]
     private GameObject itemPickupPrefab;
 
+    [Header("ボス死亡演出")]
+    [Tooltip("ボスかどうか\nONの場合、死亡時に点滅の代わりにDieアニメーションを再生し、再生後に指定Sceneへ遷移する")]
+    [SerializeField]
+    private bool isBoss = false;
+
+    [Tooltip("Die再生後に移動するScene名（isBossがONの場合のみ使用）")]
+    [SerializeField]
+    private string nextSceneOnDeath;
+
+    [Tooltip("Dieアニメーションの再生時間（秒）\nこの時間が経過してからSceneを遷移する")]
+    [SerializeField]
+    private float deathAnimationDuration = 2f;
+
+    // Animator参照（ボス死亡演出用）
+    private Animator animator;
+
     private void Awake()
     {
         // 初期HP設定
@@ -123,6 +139,9 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         // Rigidbody2D取得
         rb = GetComponent<Rigidbody2D>();
+
+        // Animator取得（未設定なら通常Enemyとして扱う）
+        animator = GetComponent<Animator>();
 
         // 元の色を保存
         originalColor = spriteRenderer.color;
@@ -356,6 +375,13 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     // 死亡演出
     private IEnumerator DeathCoroutine()
     {
+        // ボスならDieアニメーションを再生して次Sceneへ
+        if (isBoss)
+        {
+            yield return BossDeathCoroutine();
+            yield break;
+        }
+
         // 5回点滅
         for (int i = 0; i < 5; i++)
         {
@@ -372,16 +398,24 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             yield return new WaitForSeconds(0.08f);
         }
 
-        // Boss-1ならクリア画面へ
-        if (gameObject.name.Contains("Boss-1"))
+        // 通常Enemyは削除
+        Destroy(gameObject);
+    }
+
+    // ボス死亡演出 Dieアニメーション再生後に次Sceneへ遷移する
+    private IEnumerator BossDeathCoroutine()
+    {
+        // Dieトリガーを発火
+        if (animator != null)
         {
-            SceneManager.LoadScene("ClearScene");
+            animator.SetTrigger("Die");
         }
-        else
-        {
-            // 通常Enemyは削除
-            Destroy(gameObject);
-        }
+
+        // アニメーション再生時間分待機
+        yield return new WaitForSeconds(deathAnimationDuration);
+
+        // 次Sceneへ遷移
+        SceneManager.LoadScene(nextSceneOnDeath);
     }
 
     // 着地判定
