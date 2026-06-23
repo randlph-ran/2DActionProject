@@ -30,9 +30,5 @@ public class BossHPUI : MonoBehaviour
     {
         // 現在HP反映
         hpSlider.value = bossHealth.CurrentHP;
-
-        // デバッグ用にHP表示
-        Debug.Log("Boss HP : " + bossHealth.CurrentHP);
-
     }
 }

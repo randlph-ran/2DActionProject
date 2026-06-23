@@ -572,6 +572,14 @@ PrefabInstance:
       propertyPath: bossHealth
       value: 
       objectReference: {fileID: 1886004903}
+    - target: {fileID: 4804986824391618236, guid: fe450906db8ab5f4e8f3c0ef03e19e18, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4804986824391618236, guid: fe450906db8ab5f4e8f3c0ef03e19e18, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7864671843842501752, guid: fe450906db8ab5f4e8f3c0ef03e19e18, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -579,6 +587,18 @@ PrefabInstance:
     - target: {fileID: 7864671843842501752, guid: fe450906db8ab5f4e8f3c0ef03e19e18, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7940333302288299403, guid: fe450906db8ab5f4e8f3c0ef03e19e18, type: 3}
+      propertyPath: m_text
+      value: "\u30AD\u30DE\u30A4\u30E9\u30FB\u30D3\u30FC\u30B9\u30C8"
+      objectReference: {fileID: 0}
+    - target: {fileID: 7940333302288299403, guid: fe450906db8ab5f4e8f3c0ef03e19e18, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7940333302288299403, guid: fe450906db8ab5f4e8f3c0ef03e19e18, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278255615
       objectReference: {fileID: 0}
     - target: {fileID: 7978949018381511689, guid: fe450906db8ab5f4e8f3c0ef03e19e18, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5894,7 +5914,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2318872484673963719, guid: c6c1d34df1a02bf4eac009980d77300e, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2387986645324800897, guid: c6c1d34df1a02bf4eac009980d77300e, type: 3}
       propertyPath: fadeDuration

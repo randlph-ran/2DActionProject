@@ -103,12 +103,12 @@ TextureImporter:
       name: Boss2_walk4_0
       rect:
         serializedVersion: 2
-        x: 71
+        x: 35
         y: 29
-        width: 297
+        width: 291
         height: 339
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.4654365, y: 0.67009526}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: e64aa093b857d9f49b3f4940751e86d7
     internalID: 0
     vertices: []
     indices: 
