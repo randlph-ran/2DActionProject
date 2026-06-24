@@ -204,8 +204,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossProjectile
   moveSpeed: 8
-  damage: 1
-  knockbackForce: 6
+  damage: 10
+  knockbackForce: 15
   lifeTime: 5
 --- !u!114 &4541354297831035424
 MonoBehaviour:
@@ -219,10 +219,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 643a957e591e27c4ea89eb1ad8f5f251, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
-  moveSpeed: 10
-  damage: 1
-  knockbackPower: 3
-  launchPower: 1
+  moveSpeed: 20
+  damage: 10
+  knockbackPower: 10
+  launchPower: 2
   owner: {fileID: 0}
   lifeTime: 4
 --- !u!1001 &4627631755020332313

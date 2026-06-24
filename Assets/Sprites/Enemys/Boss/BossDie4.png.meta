@@ -103,9 +103,9 @@ TextureImporter:
       name: BossDie4_0
       rect:
         serializedVersion: 2
-        x: 76
+        x: 57
         y: 19
-        width: 216
+        width: 235
         height: 135
       alignment: 9
       pivot: {x: 0.49658027, y: 0.64773196}

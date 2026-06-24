@@ -289,12 +289,16 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             enemyAI.enabled = false;
         }
 
-        // Collider無効化
-        Collider2D col = GetComponent<Collider2D>();
-
-        if (col != null)
+        // ボスは地面コライダーを兼用しているため無効化しない（無効化すると地面を貫通して落下してしまう）
+        if (!isBoss)
         {
-            col.enabled = false;
+            // Collider無効化
+            Collider2D col = GetComponent<Collider2D>();
+
+            if (col != null)
+            {
+                col.enabled = false;
+            }
         }
 
         // 死亡演出開始
@@ -405,10 +409,16 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     // ボス死亡演出 Dieアニメーション再生後に次Sceneへ遷移する
     private IEnumerator BossDeathCoroutine()
     {
-        // Dieトリガーを発火
+        // ノックバックの勢いを止める（地面コライダーは有効のままなので落下はしないが、横滑りは防ぐ）
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+        }
+
+        // isDieをtrueにしてAnimatorのDie状態へ遷移させる
         if (animator != null)
         {
-            animator.SetTrigger("Die");
+            animator.SetBool("isDie", true);
         }
 
         // アニメーション再生時間分待機
