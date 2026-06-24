@@ -52,6 +52,14 @@ public class ItemData : ScriptableObject
     [SerializeField]
     private bool canAutoFire;
 
+    [Tooltip("空中で使用可能か\nOFFの場合、空中では使用できず地上限定になる")]
+    [SerializeField]
+    private bool canUseInAir = true;
+
+    [Tooltip("使用アニメーションのタイムアウト秒数\nAnimationEventが発火しなかった場合の保険。実際のクリップ再生時間より少し長めに設定する")]
+    [SerializeField]
+    private float useTimeoutDuration = 0.5f;
+
     //==============================
     // 攻撃設定
     //==============================
@@ -130,6 +138,14 @@ public class ItemData : ScriptableObject
     /// ボタン長押しで連射するか
     /// </summary>
     public bool CanAutoFire => canAutoFire;
+    /// <summary>
+    /// 空中で使用可能か
+    /// </summary>
+    public bool CanUseInAir => canUseInAir;
+    /// <summary>
+    /// 使用アニメーションのタイムアウト秒数
+    /// </summary>
+    public float UseTimeoutDuration => useTimeoutDuration;
 
     /// <summary>
     /// 与えるダメージ

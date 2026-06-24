@@ -180,6 +180,44 @@ public class PlayerController : MonoBehaviour
     // 発射方向キャッシュ
     private Vector2 cachedShootDirection;
 
+    //==============================
+    // SE
+    //==============================
+
+    [Header("SE")]
+
+    [Tooltip("足音ループ再生用AudioSource（Loop=ON, Play On Awake=OFF）")]
+    [SerializeField]
+    private AudioSource footstepSource;
+
+    [Tooltip("ジャンプ時のSE（2段ジャンプも共通）")]
+    [SerializeField]
+    private AudioClip jumpSE;
+
+    [Tooltip("地上攻撃1段目のSE")]
+    [SerializeField]
+    private AudioClip attack1SE;
+
+    [Tooltip("地上攻撃2段目のSE")]
+    [SerializeField]
+    private AudioClip attack2SE;
+
+    [Tooltip("地上攻撃3段目のSE")]
+    [SerializeField]
+    private AudioClip attack3SE;
+
+    [Tooltip("ジャンプ攻撃のSE")]
+    [SerializeField]
+    private AudioClip jumpAttackSE;
+
+    [Tooltip("飛び道具発射ボタン入力時のSE")]
+    [SerializeField]
+    private AudioClip projectileSE;
+
+    [Tooltip("回復アイテム使用時のSE（ShootProjectile()のAnimationEventと同フレームで再生）")]
+    [SerializeField]
+    private AudioClip recoverySE;
+
     // =========================
     // 現在使用中の攻撃情報
     // =========================
@@ -427,6 +465,22 @@ public class PlayerController : MonoBehaviour
         // Animatorへ移動状態を送る
         animator.SetBool("isRunning", isRunning);
 
+        // 足音制御：Idle状態（実際に自由に動けている状態）かつ接地中かつ移動入力があるときだけ再生
+        // currentStateを見ることで、攻撃中などで横移動が止まっているのに足音だけ鳴り続ける矛盾を防ぐ
+        bool shouldPlayFootstep = currentState == PlayerState.Idle && isGrounded && isRunning;
+
+        if (footstepSource != null)
+        {
+            if (shouldPlayFootstep && !footstepSource.isPlaying)
+            {
+                footstepSource.Play();
+            }
+            else if (!shouldPlayFootstep && footstepSource.isPlaying)
+            {
+                footstepSource.Stop();
+            }
+        }
+
         // 接地状態をAnimatorへ送る
         animator.SetBool("isGrounded", isGrounded);
 
@@ -591,6 +645,10 @@ public class PlayerController : MonoBehaviour
         }
 
         Debug.Log("ジャンプ入力したよ");
+
+        // ジャンプSE再生（2段ジャンプも同じSEで共通）
+        SoundManager.Instance?.PlaySE(jumpSE);
+
         // Y方向速度リセット
         // 落下中でも一定ジャンプ力になる
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
@@ -993,6 +1051,16 @@ public class PlayerController : MonoBehaviour
         // これによってAttack1～3を切り替える
         animator.SetInteger("ComboStep", comboStep);
 
+        // 攻撃SE再生（コンボ段数に応じて切替、ヒット有無は問わず入力時に再生）
+        AudioClip attackSE = comboStep switch
+        {
+            1 => attack1SE,
+            2 => attack2SE,
+            3 => attack3SE,
+            _ => null
+        };
+        SoundManager.Instance?.PlaySE(attackSE);
+
         // Attack開始Trigger
         // Attack1開始時のみTriggerを送る
         // Attack2以降はAnimator側の遷移で継続する
@@ -1025,6 +1093,9 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
+
+        // ジャンプ攻撃SE再生（ヒット有無は問わず入力時に再生）
+        SoundManager.Instance?.PlaySE(jumpAttackSE);
 
         // 地上コンボを終了
         canNextCombo = false;
@@ -1295,6 +1366,18 @@ public class PlayerController : MonoBehaviour
         Debug.Log("ShootProjectile");
 
         if (currentItem == null) return;
+
+        // 回復アイテムならHPを回復して消費するだけで終了（Projectile生成はしない）
+        if (currentItem.ItemType == ItemType.Recovery)
+        {
+            // 回復SE再生（AnimationEventのこのタイミングと同フレームで再生）
+            SoundManager.Instance?.PlaySE(recoverySE);
+            playerHealth.Heal(currentItem.HealAmount);
+            ConsumeItemUse();
+            hasShot = true; // 1回押しにつき1回のみ実行されるようにする
+            return;
+        }
+
         if (currentItem.ItemType != ItemType.Projectile) return;
 
         // GetShootDirection() ではなくキャッシュを使う
@@ -1401,6 +1484,12 @@ public class PlayerController : MonoBehaviour
             return false;
         }
 
+        // 空中使用不可のアイテムなら、地上にいない場合は使用不可
+        if (!currentItem.CanUseInAir && !isGrounded)
+        {
+            return false;
+        }
+
         // 攻撃中・アイテム使用中・ジャンプ攻撃中はItem使用不可
         if (currentState != PlayerState.Idle)
         {
@@ -1472,6 +1561,13 @@ public class PlayerController : MonoBehaviour
     {
         hasShot = false; // 発射ボタンを押すたびにリセット
 
+        // 飛び道具なら入力時点でSE再生（命中・不命中は問わない）
+        // 回復はShootProjectile()内のAnimationEventタイミングで別途再生する
+        if (currentItem.ItemType == ItemType.Projectile)
+        {
+            SoundManager.Instance?.PlaySE(projectileSE);
+        }
+
         // ボタンを押した瞬間の方向を保存
         cachedShootDirection = GetShootDirection();
 
@@ -1491,6 +1587,9 @@ public class PlayerController : MonoBehaviour
 
         // Animatorへ送る
         animator.SetInteger("ShootDirection", shootDirection);
+
+        // アイテム種別をAnimatorへ送る（0:Projectile, 1:Recovery, 2:Special）
+        animator.SetInteger("ItemType", (int)currentItem.ItemType);
 
         // 地上コンボ状態を終了
         canNextCombo = false;
@@ -1522,7 +1621,7 @@ public class PlayerController : MonoBehaviour
         {
             StopCoroutine(shootTimeoutCoroutine);
         }
-        shootTimeoutCoroutine = StartCoroutine(ShootTimeoutCoroutine());
+        shootTimeoutCoroutine = StartCoroutine(ShootTimeoutCoroutine(currentItem.UseTimeoutDuration));
     }
 
     // 空中発射中に停止させた重力の復元用
@@ -1535,16 +1634,11 @@ public class PlayerController : MonoBehaviour
     private Coroutine shootTimeoutCoroutine;
 
 
-    // 発射タイムアウト時間（最長の発射クリップより少し長めに設定）
-    [Header("飛び道具発射タイムアウト時間")]
-    [Tooltip("発射タイムアウト時間（最長の発射クリップより少し長めに設定）")]
-    [SerializeField]
-    private float shootTimeoutDuration = 0.5f;
-
     // AnimationEventが発火しなかった場合のフォールバック処理
-    private IEnumerator ShootTimeoutCoroutine()
+    // タイムアウト秒数はItemDataごとに設定（アイテムによってアニメーション再生時間が異なるため）
+    private IEnumerator ShootTimeoutCoroutine(float timeoutDuration)
     {
-        yield return new WaitForSeconds(shootTimeoutDuration);
+        yield return new WaitForSeconds(timeoutDuration);
 
         // タイムアウトしてもまだ発射中状態が続いていたら強制終了する
         if (currentState == PlayerState.Shooting)
@@ -1586,6 +1680,13 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateGuardState()
     {
+        // アイテム使用中はガード不可（排他にする）
+        if (currentState == PlayerState.Shooting)
+        {
+            isGuarding = false;
+            return;
+        }
+
         // 空中なら強制解除
         if (!isGrounded)
         {

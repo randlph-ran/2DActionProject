@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 22e961828bbbbd541ad3fcdf9c79cc0d
+guid: 4d4642cbd93c4074eaed49858856850e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2880734798192188640
-    second: Potion_0
+      213: 5635886381248013788
+    second: Potion03_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Potion_0
+      name: Potion03_0
       rect:
         serializedVersion: 2
-        x: 12
-        y: 11
-        width: 52
-        height: 57
+        x: 25
+        y: 0
+        width: 63
+        height: 96
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 023e5adb6f29508d0800000000000000
-      internalID: -2880734798192188640
+      spriteID: cd5efb4bdc0b63e40800000000000000
+      internalID: 5635886381248013788
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5d9800c1c2cee6b4ba435481959c2d79
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Potion_0: -2880734798192188640
+      Potion03_0: 5635886381248013788
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 // Scene切替用
@@ -10,6 +10,22 @@ public class TitleManager : MonoBehaviour
     [Tooltip("遷移先Scene名")]
     [SerializeField]
     private string nextSceneName = "Stage1_1";
+
+    [Header("サウンド")]
+
+    [Tooltip("Titleで再生するBGM")]
+    [SerializeField]
+    private AudioClip titleBGM;
+
+    [Tooltip("ゲームスタート時に再生するSE")]
+    [SerializeField]
+    private AudioClip startSE;
+
+    private void Start()
+    {
+        // TitleのBGMを再生
+        SoundManager.Instance?.PlayBGM(titleBGM);
+    }
 
     // Update:
     // 毎フレーム処理
@@ -23,6 +39,9 @@ public class TitleManager : MonoBehaviour
         // 遷移条件を満たしたらScene遷移
         if (startPressed)
         {
+            // スタートSEを再生
+            SoundManager.Instance?.PlaySE(startSE);
+
             // Scene遷移
             SceneManager.LoadScene(nextSceneName);
         }

@@ -122,6 +122,24 @@ public class PlayerHealth : MonoBehaviour
         CheckFallDeath();
     }
 
+    // HPを回復する処理
+    public void Heal(int amount)
+    {
+        // 死亡済みなら処理しない
+        if (isDead)
+        {
+            return;
+        }
+
+        // HPを回復量分増やす（最大HPを超えないようにする）
+        currentHP = Mathf.Min(currentHP + amount, maxHP);
+
+        // HP表示更新
+        UpdateHPUI();
+
+        Debug.Log("Playerは" + amount + " 回復した。現在HP: " + currentHP);
+    }
+
     // ダメージを受ける処理
     public void TakeDamage(int damage, Vector2 enemyPosition, float knockbackForce)
     {
