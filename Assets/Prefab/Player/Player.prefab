@@ -752,7 +752,15 @@ MonoBehaviour:
   attack1LaunchPower: 9
   attack2LaunchPower: 5
   attack3LaunchPower: 1
-  attackDM: 1
+  footstepSource: {fileID: 0}
+  jumpSE: {fileID: 0}
+  attack1SE: {fileID: 0}
+  attack2SE: {fileID: 0}
+  attack3SE: {fileID: 0}
+  jumpAttackSE: {fileID: 0}
+  projectileSE: {fileID: 0}
+  recoverySE: {fileID: 0}
+  attackDM: 3
   attack1Knockback: 1.1
   attack2Knockback: 1.5
   attack3Knockback: 10
@@ -773,7 +781,7 @@ MonoBehaviour:
   jumpAttackDownOffset: {x: 0.5, y: -1.3}
   jumpAttackRadius: 0.7
   jumpAttackKnockback: 12
-  jumpAttackDamage: 2
+  jumpAttackDamage: 5
   jumpAttackStopTime: 0.3
   jumpAttackStunRate: 1
   isGuarding: 0
@@ -781,7 +789,6 @@ MonoBehaviour:
   afterimageStartAlpha: 0.3
   afterimageTintColor: {r: 0.6, g: 0.8, b: 1, a: 1}
   jumpAfterimageSpawnInterval: 0.125
-  shootTimeoutDuration: 0.5
 --- !u!114 &2237189157722497506
 MonoBehaviour:
   m_ObjectHideFlags: 0

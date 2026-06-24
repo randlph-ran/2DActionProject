@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 2177962240194680311}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: -0.3, z: 0}
+  m_LocalPosition: {x: 1.239, y: -0.563, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 2428110606810519369}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.944, y: -0.264, z: 0}
+  m_LocalPosition: {x: 0.944, y: -0.195, z: 0}
   m_LocalScale: {x: 0.24000001, y: 0.24000001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -178,7 +178,7 @@ Transform:
   m_GameObject: {fileID: 5678617171179878673}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.751, y: -0.606, z: 0}
+  m_LocalPosition: {x: 1.18, y: -0.88, z: 0}
   m_LocalScale: {x: 0.24000001, y: 0.24000001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -209,7 +209,7 @@ Transform:
   m_GameObject: {fileID: 6098234922932202328}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: -0.07542, z: 0}
+  m_LocalPosition: {x: 1.265, y: -0.3, z: 0}
   m_LocalScale: {x: 0.24000001, y: 0.24000001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -240,7 +240,7 @@ Transform:
   m_GameObject: {fileID: 9086023751660112129}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.7, y: -0.7, z: 0}
+  m_LocalPosition: {x: -0.788, y: -0.95, z: 0}
   m_LocalScale: {x: 0.24, y: 0.24, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -339,7 +339,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -2240994688644343673, guid: bafe71c65de3d1241803165df70a6df6, type: 3}
-  m_Color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -409,7 +409,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.11010575, y: -0.057637513}
+  m_Offset: {x: 0.09085083, y: -0.24603361}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5270262, y: 0.5679455}
@@ -419,8 +419,8 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.2146235, y: 1.4725686}
-  m_EdgeRadius: 0
+  m_Size: {x: 1.5198152, y: 1.0631657}
+  m_EdgeRadius: 0.3
 --- !u!114 &2438158073428606219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -453,8 +453,8 @@ MonoBehaviour:
   dropCount: 1
   itemPickupPrefab: {fileID: 0}
   isBoss: 0
-  nextSceneOnDeath: 
-  deathAnimationDuration: 2
+  nextSceneOnDeath: S1Clear
+  deathAnimationDuration: 5
 --- !u!114 &4435916279548751840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -467,13 +467,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0100deae85b36cb458b71ae9d104b181, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
-  moveSpeed: 1
-  chaseDistance: 5
-  chaseHeight: 2
-  meleeAttackDistance: 6
+  moveSpeed: 2
+  chaseDistance: 10
+  chaseHeight: 5
+  meleeAttackDistance: 5
   canShoot: 1
-  rangedAttackDistance: 12
-  rangedAttackCooldown: 2.5
+  rangedAttackDistance: 15
+  rangedAttackCooldown: 2
   projectilePrefab: {fileID: 4541354297831035424, guid: 2caac582ad8794d42a32f53bc18eca73, type: 3}
   firePoint: {fileID: 1587529983598547597}
   attackCooldown: 2
@@ -482,8 +482,8 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 128
-  attackDamage: 20
-  knockbackForce: 10
+  attackDamage: 10
+  knockbackForce: 20
   wallCheck: {fileID: 1499674319430875639}
   groundCheck: {fileID: 7851631338989123890}
   checkDistance: 1.5
