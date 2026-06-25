@@ -1051,16 +1051,6 @@ public class PlayerController : MonoBehaviour
         // これによってAttack1～3を切り替える
         animator.SetInteger("ComboStep", comboStep);
 
-        // 攻撃SE再生（コンボ段数に応じて切替、ヒット有無は問わず入力時に再生）
-        AudioClip attackSE = comboStep switch
-        {
-            1 => attack1SE,
-            2 => attack2SE,
-            3 => attack3SE,
-            _ => null
-        };
-        SoundManager.Instance?.PlaySE(attackSE);
-
         // Attack開始Trigger
         // Attack1開始時のみTriggerを送る
         // Attack2以降はAnimator側の遷移で継続する
@@ -1093,9 +1083,6 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-
-        // ジャンプ攻撃SE再生（ヒット有無は問わず入力時に再生）
-        SoundManager.Instance?.PlaySE(jumpAttackSE);
 
         // 地上コンボを終了
         canNextCombo = false;
@@ -1647,6 +1634,18 @@ public class PlayerController : MonoBehaviour
             EndShoot();
         }
     }
+
+    /// <summary>
+    /// 攻撃SE再生（AnimationEventから呼ぶ。各Attackクリップの発生フレームに配置する）
+    /// </summary>
+    public void PlayAttack1SE() => SoundManager.Instance?.PlaySE(attack1SE);
+    public void PlayAttack2SE() => SoundManager.Instance?.PlaySE(attack2SE);
+    public void PlayAttack3SE() => SoundManager.Instance?.PlaySE(attack3SE);
+
+    /// <summary>
+    /// ジャンプ攻撃SE再生（AnimationEventから呼ぶ）
+    /// </summary>
+    public void PlayJumpAttackSE() => SoundManager.Instance?.PlaySE(jumpAttackSE);
 
     /// <summary>
     /// 射撃アニメ終了処理

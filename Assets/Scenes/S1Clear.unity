@@ -479,6 +479,7 @@ MonoBehaviour:
   pages:
   - backgroundSprite: {fileID: -7602567268364559450, guid: 4bb0410bb410c804ba20c83b14fb5898, type: 3}
     storyText: "\u713C\u3044\u305F\u3089\u98DF\u3048\u308B\u304B\u306A\u2025"
+    advanceSE: {fileID: 0}
   backgroundImage: {fileID: 783959463}
   backgroundBrightness: 0.5
   storyText: {fileID: 951121665}
@@ -486,6 +487,8 @@ MonoBehaviour:
   textFadeDuration: 2
   inputDelay: 1
   nextSceneName: Stage1_1
+  bgm: {fileID: 8300000, guid: be013b4f69e378946a2cb20b1a624b0d, type: 3}
+  sceneTransitionSE: {fileID: 8300000, guid: c8aa24afa4248874ab0dcfbfa9bd2779, type: 3}
 --- !u!4 &1257747383
 Transform:
   m_ObjectHideFlags: 0

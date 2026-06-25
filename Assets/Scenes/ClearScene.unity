@@ -423,7 +423,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 2048
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -584,6 +584,63 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!1001 &1666136868
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4635818882941813098, guid: 18bfe39f35aef3f47bdcb308bff6f8c7, type: 3}
+      propertyPath: m_Name
+      value: SoundManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 6348380063528733645, guid: 18bfe39f35aef3f47bdcb308bff6f8c7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -5.71318
+      objectReference: {fileID: 0}
+    - target: {fileID: 6348380063528733645, guid: 18bfe39f35aef3f47bdcb308bff6f8c7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.35776
+      objectReference: {fileID: 0}
+    - target: {fileID: 6348380063528733645, guid: 18bfe39f35aef3f47bdcb308bff6f8c7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6348380063528733645, guid: 18bfe39f35aef3f47bdcb308bff6f8c7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6348380063528733645, guid: 18bfe39f35aef3f47bdcb308bff6f8c7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6348380063528733645, guid: 18bfe39f35aef3f47bdcb308bff6f8c7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6348380063528733645, guid: 18bfe39f35aef3f47bdcb308bff6f8c7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6348380063528733645, guid: 18bfe39f35aef3f47bdcb308bff6f8c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6348380063528733645, guid: 18bfe39f35aef3f47bdcb308bff6f8c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6348380063528733645, guid: 18bfe39f35aef3f47bdcb308bff6f8c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 18bfe39f35aef3f47bdcb308bff6f8c7, type: 3}
 --- !u!1 &2143856862
 GameObject:
   m_ObjectHideFlags: 0
@@ -615,14 +672,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StoryEventScene
   pages:
   - backgroundSprite: {fileID: -4744545927160845504, guid: af538a1ae66e17745b7850e6e6d7a61b, type: 3}
-    storyText: "To Be Continue...\u03B2\u7248\u306F\u3053\u3053\u307E\u3067\u3067\u3059\u3002"
+    storyText: "To Be Continue...\u03B2\u7248\u306F\u3053\u3053\u307E\u3067\u3067\u3059\u3002\nThank
+      You For Playing..."
+    advanceSE: {fileID: 0}
   backgroundImage: {fileID: 615739820}
   backgroundBrightness: 0.5
   storyText: {fileID: 772092136}
-  storyTextCanvasGroup: {fileID: 0}
-  textFadeDuration: 2
+  storyTextCanvasGroup: {fileID: 1651498731}
+  textFadeDuration: 3
   inputDelay: 1
   nextSceneName: Title
+  bgm: {fileID: 8300000, guid: 1bfcfe20831c02342a97b1f2907cdabb, type: 3}
+  sceneTransitionSE: {fileID: 0}
 --- !u!4 &2143856864
 Transform:
   m_ObjectHideFlags: 0
@@ -645,3 +706,4 @@ SceneRoots:
   - {fileID: 157882295}
   - {fileID: 1651498730}
   - {fileID: 2143856864}
+  - {fileID: 1666136868}

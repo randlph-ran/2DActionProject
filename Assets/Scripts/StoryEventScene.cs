@@ -21,6 +21,9 @@ public class StoryEventScene : MonoBehaviour
         [Tooltip("このページで表示するストーリーテキスト")]
         [TextArea(2, 5)]
         public string storyText;
+
+        [Tooltip("このページから次ページへ進む時に再生するSE")]
+        public AudioClip advanceSE;
     }
 
     [Header("ページ設定（上限9枚）")]
@@ -59,6 +62,15 @@ public class StoryEventScene : MonoBehaviour
     [SerializeField]
     private string nextSceneName;
 
+    [Header("サウンド")]
+    [Tooltip("このシーンで再生するBGM")]
+    [SerializeField]
+    private AudioClip bgm;
+
+    [Tooltip("最後のページから次Sceneへ遷移する時に再生するSE")]
+    [SerializeField]
+    private AudioClip sceneTransitionSE;
+
     // 現在表示中のページ番号
     private int currentPageIndex;
 
@@ -72,6 +84,9 @@ public class StoryEventScene : MonoBehaviour
 
     private void Start()
     {
+        // このシーンのBGMを再生
+        SoundManager.Instance?.PlayBGM(bgm);
+
         // ページ数の上限チェック
         if (pages.Length > MaxPageCount)
         {
@@ -161,10 +176,16 @@ public class StoryEventScene : MonoBehaviour
 
         if (isLastPage)
         {
+            // シーン遷移時のSE再生（ページ送りとは別の音を鳴らせる）
+            SoundManager.Instance?.PlaySE(sceneTransitionSE);
+
             SceneManager.LoadScene(nextSceneName);
         }
         else
         {
+            // ページ送り時のSE再生（ページごとに個別設定）
+            SoundManager.Instance?.PlaySE(pages[currentPageIndex].advanceSE);
+
             currentPageIndex++;
             ShowPage(currentPageIndex);
         }

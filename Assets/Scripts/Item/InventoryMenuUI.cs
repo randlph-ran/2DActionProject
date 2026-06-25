@@ -59,6 +59,32 @@ public class InventoryMenuUI : MonoBehaviour
     [SerializeField]
     private ConfirmationPopupUI confirmPopup;
 
+    [Header("サウンド")]
+
+    [Tooltip("メニューを開く時のSE")]
+    [SerializeField]
+    private AudioClip openMenuSE;
+
+    [Tooltip("メニューを閉じる時のSE")]
+    [SerializeField]
+    private AudioClip closeMenuSE;
+
+    [Tooltip("カーソル移動時のSE")]
+    [SerializeField]
+    private AudioClip cursorMoveSE;
+
+    [Tooltip("装備確認ポップアップ表示時のSE")]
+    [SerializeField]
+    private AudioClip popupShowSE;
+
+    [Tooltip("決定時のSE")]
+    [SerializeField]
+    private AudioClip decideSE;
+
+    [Tooltip("キャンセル時のSE")]
+    [SerializeField]
+    private AudioClip cancelSE;
+
     //==============================
     // 依存コンポーネント
     //==============================
@@ -156,7 +182,11 @@ public class InventoryMenuUI : MonoBehaviour
 
             case MenuState.ConfirmPopup:
                 HandlePopupNavigation();
-                if (inputReader.MenuConfirmPressed) confirmPopup.Confirm();
+                if (inputReader.MenuConfirmPressed)
+                {
+                    SoundManager.Instance?.PlaySE(decideSE);
+                    confirmPopup.Confirm();
+                }
                 if (inputReader.MenuCancelPressed)  CloseConfirmPopup();
                 break;
         }
@@ -174,6 +204,9 @@ public class InventoryMenuUI : MonoBehaviour
 
     private void OpenMenu()
     {
+        // メニューを開くSE再生
+        SoundManager.Instance?.PlaySE(openMenuSE);
+
         isOpen                 = true;
         inputReader.IsMenuOpen = true;
         Time.timeScale         = 0f;
@@ -191,6 +224,9 @@ public class InventoryMenuUI : MonoBehaviour
 
     private void CloseMenu()
     {
+        // メニューを閉じるSE再生
+        SoundManager.Instance?.PlaySE(closeMenuSE);
+
         isOpen                 = false;
         inputReader.IsMenuOpen = false;
         Time.timeScale         = 1f;
@@ -243,6 +279,8 @@ public class InventoryMenuUI : MonoBehaviour
         // 移動先にスロットがある場合のみ移動
         if (newIndex < itemSlots.Count)
         {
+            SoundManager.Instance?.PlaySE(cursorMoveSE);
+
             selectedIndex = newIndex;
             UpdateSlotSelection();
             UpdateDescription();
@@ -273,6 +311,9 @@ public class InventoryMenuUI : MonoBehaviour
         prevPopupHorizontal = 0f;
         currentState        = MenuState.ConfirmPopup;
 
+        // ポップアップ表示SE再生
+        SoundManager.Instance?.PlaySE(popupShowSE);
+
         confirmPopup.Show(
             message,
             onYesCallback: () => ExecuteEquip(item),
@@ -293,6 +334,9 @@ public class InventoryMenuUI : MonoBehaviour
 
     private void CloseConfirmPopup()
     {
+        // キャンセルSE再生
+        SoundManager.Instance?.PlaySE(cancelSE);
+
         confirmPopup.Hide();
         currentState = MenuState.ItemGrid;
     }
@@ -306,8 +350,16 @@ public class InventoryMenuUI : MonoBehaviour
         float h = inputReader.MenuNavigateInput.x;
 
         // 閾値を越えた瞬間だけ切り替え（リピートなし）
-        if      (h >  0.5f && prevPopupHorizontal <=  0.5f) confirmPopup.MoveSelection( 1f);
-        else if (h < -0.5f && prevPopupHorizontal >= -0.5f) confirmPopup.MoveSelection(-1f);
+        if (h > 0.5f && prevPopupHorizontal <= 0.5f)
+        {
+            SoundManager.Instance?.PlaySE(cursorMoveSE);
+            confirmPopup.MoveSelection(1f);
+        }
+        else if (h < -0.5f && prevPopupHorizontal >= -0.5f)
+        {
+            SoundManager.Instance?.PlaySE(cursorMoveSE);
+            confirmPopup.MoveSelection(-1f);
+        }
 
         prevPopupHorizontal = h;
     }

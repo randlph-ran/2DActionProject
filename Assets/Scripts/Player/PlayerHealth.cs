@@ -84,6 +84,13 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private GameObject hitEffectPrefab;
     [SerializeField] private GameObject guardEffectPrefab;
 
+    // 被ダメージ/ガード時のSE
+    [Header("被ダメージ/ガードSE")]
+    [Tooltip("被ダメージ時の共通SE（Enemy種別を問わない）")]
+    [SerializeField] private AudioClip damageSE;
+    [Tooltip("ガード成功時のSE")]
+    [SerializeField] private AudioClip guardSE;
+
     // ゲーム開始時に呼ばれる
     private void Start()
     {
@@ -212,8 +219,13 @@ public class PlayerHealth : MonoBehaviour
     // 被ダメージエフェクトをPlayerの位置に出す
     private void SpawnHitEffect()
     {
-        // ガード中かどうかでPrefabを切り替える
+        // ガード中かどうかでPrefabとSEを切り替える
         GameObject prefab = playerController.IsGuarding ? guardEffectPrefab : hitEffectPrefab;
+        AudioClip  se      = playerController.IsGuarding ? guardSE          : damageSE;
+
+        // SE再生
+        SoundManager.Instance?.PlaySE(se);
+
         // nullチェック
         if (prefab == null)
         {

@@ -452,6 +452,135 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &8226479051816239836
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 141455041412556150}
+  - component: {fileID: 555469907032173630}
+  m_Layer: 0
+  m_Name: FootstepAudio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &141455041412556150
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8226479051816239836}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 481.158, y: 269.78473, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3456931493024808848}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &555469907032173630
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8226479051816239836}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: cdd231be4c5ec654e88fef6ec4ee3d11, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &8340059418614370074
 GameObject:
   m_ObjectHideFlags: 0
@@ -596,6 +725,7 @@ Transform:
   - {fileID: 1004223190282293765}
   - {fileID: 4136659141938994368}
   - {fileID: 7002143073784106943}
+  - {fileID: 141455041412556150}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2436800672496282198
@@ -752,14 +882,14 @@ MonoBehaviour:
   attack1LaunchPower: 9
   attack2LaunchPower: 5
   attack3LaunchPower: 1
-  footstepSource: {fileID: 0}
-  jumpSE: {fileID: 0}
-  attack1SE: {fileID: 0}
-  attack2SE: {fileID: 0}
-  attack3SE: {fileID: 0}
-  jumpAttackSE: {fileID: 0}
-  projectileSE: {fileID: 0}
-  recoverySE: {fileID: 0}
+  footstepSource: {fileID: 555469907032173630}
+  jumpSE: {fileID: 8300000, guid: 64ae397ce5d85f648ace248b6fb87ebc, type: 3}
+  attack1SE: {fileID: 8300000, guid: 5cd1212241f2c3c479da3686d36f7010, type: 3}
+  attack2SE: {fileID: 8300000, guid: 1e173c7ac40bfcb44b303080bbfde990, type: 3}
+  attack3SE: {fileID: 8300000, guid: fed662953cfe033428dffeab537eab21, type: 3}
+  jumpAttackSE: {fileID: 8300000, guid: 4757368ed2f49ee449372daafb4b7af2, type: 3}
+  projectileSE: {fileID: 8300000, guid: 1d9e415de16742744ad9fe0cda160a1f, type: 3}
+  recoverySE: {fileID: 8300000, guid: 27dda3d27168bf84889b19f84fd8db7b, type: 3}
   attackDM: 3
   attack1Knockback: 1.1
   attack2Knockback: 1.5
@@ -876,7 +1006,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
   inventory:
   - itemData: {fileID: 11400000, guid: 5b638d8243b1ee84c96f0ce020cf2af4, type: 2}
-    count: -1
+    count: 10
+  - itemData: {fileID: 11400000, guid: 5b8654a461828374b9dc0a1b5d8f5b68, type: 2}
+    count: 5
   equippedItem: {fileID: 11400000, guid: 5b638d8243b1ee84c96f0ce020cf2af4, type: 2}
 --- !u!1 &8622455235830675196
 GameObject:
