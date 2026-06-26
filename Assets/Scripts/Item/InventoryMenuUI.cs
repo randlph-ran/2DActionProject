@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -138,31 +137,20 @@ public class InventoryMenuUI : MonoBehaviour
     // ポップアップ水平入力の前フレーム値（押した瞬間だけ反応させるため）
     private float prevPopupHorizontal;
 
-    // 内部状態に追加
-    private bool isMenuEnabled = false;
-
-
     //==============================
     // Unity イベント
     //==============================
 
-    // 公開メソッドを追加
-    public void EnableMenu()
-    {
-        // メニューがnullだったら有効化する
-        if (inputReader == null)
-            inputReader = FindFirstObjectByType<PlayerInputReader>();
-        // InventoryManager の参照を取得
-        if (inventoryManager == null)
-            inventoryManager = FindFirstObjectByType<InventoryManager>();
-        isMenuEnabled = true;
-    }
-
-
     private void Update()
     {
-        // メニューが有効化されるまで入力を無視する
-        if (!isMenuEnabled) return;
+        // ゲーム開始前（フェード/スタートテキスト演出中など）は入力を無視する
+        // フラグを個別に持たず、GameManager.IsGameStarted を単一の判定基準にする
+        if (!GameManager.IsGameStarted)
+        {
+            // ゲーム開始前にメニューが開いたままだと困るので強制的に閉じる
+            if (isOpen) CloseMenu();
+            return;
+        }
 
         // inputReaderが取得できていない場合は再取得を試みる
         // （Scene遷移時の重複Player/Menu破棄レースにより、一時的に壊れた参照を掴んでしまうケースの保険）
@@ -170,6 +158,12 @@ public class InventoryMenuUI : MonoBehaviour
         {
             inputReader = FindFirstObjectByType<PlayerInputReader>();
             if (inputReader == null) return;
+        }
+
+        // InventoryManager の参照が取れていない場合も再取得を試みる
+        if (inventoryManager == null)
+        {
+            inventoryManager = FindFirstObjectByType<InventoryManager>();
         }
 
         // メニュー開閉は状態に関わらず常に受け付ける
@@ -506,29 +500,4 @@ public class InventoryMenuUI : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// シーン切り替え時の処理
-    /// </summary>
-    /// <param name="scene"></param>
-    /// <param name="mode"></param>
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        // シーン切り替え時にメニューを閉じる
-        if (isOpen) CloseMenu();
-        // シーン切り替え時にメニューを無効化する
-        isMenuEnabled = false;
-
-        // 新しいシーンの Player コンポーネントを再取得する
-        inputReader = FindFirstObjectByType<PlayerInputReader>();
-        inventoryManager = FindFirstObjectByType<InventoryManager>();
-
-        Debug.Log($"OnSceneLoaded: inputReader={inputReader}, inventoryManager={inventoryManager}");
-    }
-
-    // シーン切り替え時にメニューを閉じ、参照をリセットする
-    public void DisableMenu()
-    {
-        if (isOpen) CloseMenu();
-        isMenuEnabled = false;
-    }
 }

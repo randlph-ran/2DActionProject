@@ -22,8 +22,8 @@ public class FadeController : MonoBehaviour
 
     private void Start()
     {
-        // フェード開始前にメニューを無効化する
-        FindFirstObjectByType<InventoryMenuUI>()?.DisableMenu();
+        // メニューの開閉はGameManager.IsGameStartedを見て自律的に判断するため、
+        // ここでの無効化呼び出しは不要（ResetGameState()がfalseのまま開始される）
 
         StartCoroutine(FadeIn());
         StartCoroutine(ShowStartText());
@@ -54,10 +54,7 @@ public class FadeController : MonoBehaviour
         startTextCanvasGroup.alpha = 0f;
 
         // ゲーム開始
+        // これにより GameManager.IsGameStarted を見ているメニューも自動的に開けるようになる
         GameManager.StartGame();
-        var menuUI = FindFirstObjectByType<InventoryMenuUI>();
-
-        menuUI?.EnableMenu();
-        // シーンをまたいで持続している InventoryMenuUI を動的に取得して有効化
     }
 }
