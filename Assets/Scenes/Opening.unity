@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundManager
   seSource: {fileID: 1447290041}
-  seVolume: 1
+  seVolume: 0.8
   bgmSource: {fileID: 1299522577}
   bgmVolume: 0.5
 --- !u!4 &720763521
@@ -540,7 +540,7 @@ MonoBehaviour:
     storyText: "\u5411\u3053\u3046\u898B\u305A\u306E\u3000\u7537\u306F\n\u8001\u4EBA\u306E\u3000\u9759\u6B62\u3082\u52B9\u304B\u305A\u306B\n\u30AD\u30E3\u30F3\u30D7\u3092\u3000\u98DB\u3073\u51FA\u3057\n\u5B9F\u9A13\u5834\u8DE1\u306E\u3000\u6D1E\u7A9F\u5165\u53E3\u306B\n\u7ACB\u3063\u3066\u3044\u305F\n\n\u306A\u305C\u5F7C\u306F\u3000\u305D\u3093\u306A\u5371\u967A\u306A\u5834\u6240\u3078\n\u8D74\u3044\u305F\u306E\u304B\n\u305D\u306E\u7B54\u3048\u306F\u3000\u3053\u306E\u6D1E\u7A9F\u306E\u5965\u306B\n\u3042\u308B\u304B\u3082\u3057\u308C\u306A\u3044"
     advanceSE: {fileID: 8300000, guid: b76b0b1609c3b7747a9e24587f9a4a6a, type: 3}
   backgroundImage: {fileID: 783959463}
-  backgroundBrightness: 0.7
+  backgroundBrightness: 0.5
   storyText: {fileID: 951121665}
   storyTextCanvasGroup: {fileID: 951121667}
   textFadeDuration: 2

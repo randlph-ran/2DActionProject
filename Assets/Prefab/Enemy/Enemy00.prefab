@@ -78,7 +78,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6028132960645388922, guid: d5426a68fc35eab4ebaa3b7e0fc447ea, type: 3}
       propertyPath: maxHP
-      value: 20
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 6028132960645388922, guid: d5426a68fc35eab4ebaa3b7e0fc447ea, type: 3}
       propertyPath: knockbackForce

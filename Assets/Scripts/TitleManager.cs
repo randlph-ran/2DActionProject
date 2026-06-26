@@ -31,6 +31,10 @@ public class TitleManager : MonoBehaviour
 
     private void Start()
     {
+        // Titleへ戻ってきたら所持品・HPの引き継ぎデータを初期化する
+        // （ClearScene/GameOverどちらの経路で戻ってきても、ここで必ずリセットされる）
+        GameData.Instance?.ResetData();
+
         // TitleのBGMを再生
         SoundManager.Instance?.PlayBGM(titleBGM);
     }

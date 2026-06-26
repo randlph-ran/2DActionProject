@@ -37,6 +37,10 @@ PrefabInstance:
       value: -0.07136218
       objectReference: {fileID: 0}
     - target: {fileID: 2438158073428606219, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
+      propertyPath: maxHP
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2438158073428606219, guid: b8acfc84eae580440bce0f094e624e39, type: 3}
       propertyPath: damageSE
       value: 
       objectReference: {fileID: 8300000, guid: 49b7ff0a18753304688036470a2be595, type: 3}

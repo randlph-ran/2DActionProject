@@ -84,4 +84,22 @@ public class GameData : MonoBehaviour
             i => new InventoryItem { itemData = i.itemData, count = i.count }
         );
     }
+
+    //==============================
+    // リセット
+    //==============================
+
+    /// <summary>
+    /// 保存済みのHP・インベントリを初期状態に戻す。
+    /// Titleへ戻った時（クリア後・ゲームオーバー後など）に呼び、
+    /// 次回のNewGame開始時に前回までのデータを引き継がないようにする。
+    /// </summary>
+    public void ResetData()
+    {
+        CurrentHP     = 0;
+        MaxHP         = 0;
+        savedInventory.Clear();
+        EquippedItem  = null;
+        isInitialized = false;
+    }
 }

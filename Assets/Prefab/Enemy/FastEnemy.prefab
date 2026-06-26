@@ -754,8 +754,8 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 128
-  attackDamage: 4
-  knockbackForce: 6
+  attackDamage: 7
+  knockbackForce: 8
   wallCheck: {fileID: 135283353082105963}
   groundCheck: {fileID: 2947749010080835493}
   checkDistance: 1
