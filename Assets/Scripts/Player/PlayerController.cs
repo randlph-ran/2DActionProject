@@ -1359,7 +1359,7 @@ public class PlayerController : MonoBehaviour
         {
             // 回復SE再生（AnimationEventのこのタイミングと同フレームで再生）
             SoundManager.Instance?.PlaySE(recoverySE);
-            playerHealth.Heal(currentItem.HealAmount);
+            playerHealth.Heal(currentItem.Value);
             ConsumeItemUse();
             hasShot = true; // 1回押しにつき1回のみ実行されるようにする
             return;
@@ -1370,7 +1370,7 @@ public class PlayerController : MonoBehaviour
         // GetShootDirection() ではなくキャッシュを使う
         Vector2 direction = cachedShootDirection;
 
-        int dmg = currentItem.Damage;
+        int dmg = currentItem.Value;
         float knockback = currentItem.KnockbackPower;
         float launch = currentItem.LaunchPower;
 

@@ -343,8 +343,11 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         {
             pickup.Setup(dropItem, dropCount);
         }
-        // 設定忘れ警告ログ
-        Debug.LogWarning("[DropItem] " + itemPickupPrefab.name + " にItemPickupコンポーネントが見つかりません");
+        else
+        {
+            // 設定忘れ警告ログ
+            Debug.LogWarning("[DropItem] " + itemPickupPrefab.name + " にItemPickupコンポーネントが見つかりません");
+        }
     }
 
     // 被ダメ点滅処理

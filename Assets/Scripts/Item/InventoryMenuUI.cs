@@ -15,7 +15,7 @@ public class InventoryMenuUI : MonoBehaviour
     //==============================
 
     private const int Columns = 4;
-    private const int Rows    = 2;
+    private const int Rows = 2;
 
     //==============================
     // UI参照
@@ -123,7 +123,7 @@ public class InventoryMenuUI : MonoBehaviour
     }
 
     private MenuState currentState;
-    private bool      isOpen;
+    private bool isOpen;
 
     // グリッドカーソルの平坦インデックス（0 〜 Columns×Rows-1）
     private int selectedIndex;
@@ -133,7 +133,7 @@ public class InventoryMenuUI : MonoBehaviour
 
     // グリッドナビゲーション用
     private float navigateTimer;
-    private bool  isHolding;
+    private bool isHolding;
 
     // ポップアップ水平入力の前フレーム値（押した瞬間だけ反応させるため）
     private float prevPopupHorizontal;
@@ -149,9 +149,10 @@ public class InventoryMenuUI : MonoBehaviour
     // 公開メソッドを追加
     public void EnableMenu()
     {
-        // 参照が切れていたら新しいシーンの Player から再取得
+        // メニューがnullだったら有効化する
         if (inputReader == null)
             inputReader = FindFirstObjectByType<PlayerInputReader>();
+        // InventoryManager の参照を取得
         if (inventoryManager == null)
             inventoryManager = FindFirstObjectByType<InventoryManager>();
         isMenuEnabled = true;
@@ -163,62 +164,83 @@ public class InventoryMenuUI : MonoBehaviour
         // メニューが有効化されるまで入力を無視する
         if (!isMenuEnabled) return;
 
+        // inputReaderが取得できていない場合は再取得を試みる
+        // （Scene遷移時の重複Player/Menu破棄レースにより、一時的に壊れた参照を掴んでしまうケースの保険）
+        if (inputReader == null)
+        {
+            inputReader = FindFirstObjectByType<PlayerInputReader>();
+            if (inputReader == null) return;
+        }
+
         // メニュー開閉は状態に関わらず常に受け付ける
         if (inputReader.MenuPressed)
         {
             ToggleMenu();
             return;
         }
-
+        // メニューが開いていない場合は以降の入力を無視する
         if (!isOpen) return;
 
+        // メニューが開いている場合の入力処理
         switch (currentState)
         {
+            // グリッド選択中
             case MenuState.ItemGrid:
+                // グリッドナビゲーション処理
                 HandleGridNavigation();
+                // 決定・キャンセル入力
                 if (inputReader.MenuConfirmPressed) OnGridConfirm();
-                if (inputReader.MenuCancelPressed)  CloseMenu();
+                // キャンセル入力でメニューを閉じる
+                if (inputReader.MenuCancelPressed) CloseMenu();
                 break;
-
+            // 装備確認ポップアップ表示中
             case MenuState.ConfirmPopup:
+                // ポップアップナビゲーション処理
                 HandlePopupNavigation();
+                // 決定・キャンセル入力
                 if (inputReader.MenuConfirmPressed)
                 {
+                    // 決定SE再生
                     SoundManager.Instance?.PlaySE(decideSE);
+                    // ポップアップの「はい」を選択している場合のみ装備処理を実行
                     confirmPopup.Confirm();
                 }
-                if (inputReader.MenuCancelPressed)  CloseConfirmPopup();
+                // キャンセル入力でポップアップを閉じる
+                if (inputReader.MenuCancelPressed) CloseConfirmPopup();
                 break;
         }
     }
 
     //==============================
-    // メニュー開閉
+    // メニュー開閉の処理
     //==============================
 
     private void ToggleMenu()
     {
+        //　開いてたら閉じて、閉じてたら開く
         if (isOpen) CloseMenu();
-        else        OpenMenu();
+        else OpenMenu();
     }
 
     private void OpenMenu()
     {
         // メニューを開くSE再生
         SoundManager.Instance?.PlaySE(openMenuSE);
-
-        isOpen                 = true;
+        // メニューを開く
+        isOpen = true;
+        // PlayerInputReader の状態を更新して、ゲーム内の操作を無効化する
         inputReader.IsMenuOpen = true;
-        Time.timeScale         = 0f;
-
+        // ゲームを一時停止
+        Time.timeScale = 0f;
+        // メニューUIを表示
         inventoryMenu.SetActive(true);
 
         // カーソルとタイマーを初期化
         selectedIndex = 0;
         navigateTimer = 0f;
-        isHolding     = false;
-        currentState  = MenuState.ItemGrid;
-
+        isHolding = false;
+        currentState = MenuState.ItemGrid;
+        // グリッドを更新して表示
         RefreshGrid();
     }
 
@@ -226,12 +248,15 @@ public class InventoryMenuUI : MonoBehaviour
     {
         // メニューを閉じるSE再生
         SoundManager.Instance?.PlaySE(closeMenuSE);
-
-        isOpen                 = false;
+        // メニューを閉じる
+        isOpen = false;
+        // PlayerInputReader の状態を更新して、ゲーム内の操作を有効化する
         inputReader.IsMenuOpen = false;
-        Time.timeScale         = 1f;
-
+        // ゲームを再開
+        Time.timeScale = 1f;
+        // メニューUIを非表示
         inventoryMenu.SetActive(false);
+        // ポップアップが開いていた場合は閉じる
         confirmPopup.Hide();
     }
 
@@ -241,16 +266,21 @@ public class InventoryMenuUI : MonoBehaviour
 
     private void HandleGridNavigation()
     {
+        // 入力ベクトルを取得
         Vector2 nav = inputReader.MenuNavigateInput;
-
+        // 入力が閾値未満ならリピートタイマーをリセットして終了
         if (nav.magnitude < 0.5f)
         {
+            // 入力がない場合はリピートタイマーをリセット
             navigateTimer = 0f;
-            isHolding     = false;
+            // 長押し状態もリセット
+            isHolding = false;
+            // 以降の処理をスキップ
             return;
         }
-
+        // リピートタイマーを減算
         navigateTimer -= Time.unscaledDeltaTime;
+        // タイマーが残っている場合は移動処理をスキップ
         if (navigateTimer > 0f) return;
 
         // 斜め入力は上下優先で4方向に限定
@@ -258,9 +288,10 @@ public class InventoryMenuUI : MonoBehaviour
             NavigateGrid(0, nav.y > 0 ? -1 : 1);  // 上 / 下
         else
             NavigateGrid(nav.x > 0 ? 1 : -1, 0);  // 右 / 左
-
+        // リピートタイマーをリセット
         navigateTimer = isHolding ? repeatDelay : firstRepeatDelay;
-        isHolding     = true;
+        // 長押し状態を記録
+        isHolding = true;
     }
 
     /// <summary>
@@ -269,26 +300,37 @@ public class InventoryMenuUI : MonoBehaviour
     /// </summary>
     private void NavigateGrid(int colDelta, int rowDelta)
     {
+        // 現在の行・列を計算
         int currentRow = selectedIndex / Columns;
+        // 現在の列を計算
         int currentCol = selectedIndex % Columns;
-
-        int newRow   = Mathf.Clamp(currentRow + rowDelta, 0, Rows    - 1);
-        int newCol   = Mathf.Clamp(currentCol + colDelta, 0, Columns - 1);
+        // 移動先の行を計算（範囲外はClampで補正）
+        int newRow = Mathf.Clamp(currentRow + rowDelta, 0, Rows - 1);
+        // 移動先の列を計算（範囲外はClampで補正）
+        int newCol = Mathf.Clamp(currentCol + colDelta, 0, Columns - 1);
+        // 移動先のインデックスを計算
         int newIndex = newRow * Columns + newCol;
 
         // 移動先にスロットがある場合のみ移動
         if (newIndex < itemSlots.Count)
         {
+            // カーソル移動SE再生
             SoundManager.Instance?.PlaySE(cursorMoveSE);
-
+            // カーソル位置を更新
             selectedIndex = newIndex;
+            // スロットの選択状態を更新
             UpdateSlotSelection();
+            // 説明テキストを更新
             UpdateDescription();
         }
     }
 
+    /// <summary>
+    /// スロットの選択状態を更新する。
+    /// </summary>
     private void UpdateSlotSelection()
     {
+        // 選択中のスロットだけを選択状態にする
         for (int i = 0; i < itemSlots.Count; i++)
             itemSlots[i].SetSelected(i == selectedIndex);
     }
@@ -299,39 +341,51 @@ public class InventoryMenuUI : MonoBehaviour
 
     private void OnGridConfirm()
     {
+        // 所持アイテムがない場合は何もしない
         if (itemSlots.Count == 0) return;
-
-        InventoryItem item      = inventoryManager.Inventory[selectedIndex];
-        bool          isEquipped = inventoryManager.EquippedItem == item.itemData;
-
+        // 選択中のアイテムを取得
+        InventoryItem item = inventoryManager.Inventory[selectedIndex];
+        // 装備中かどうかを判定
+        bool isEquipped = inventoryManager.EquippedItem == item.itemData;
+        // ポップアップのメッセージを作成
         string message = isEquipped
             ? $"{item.itemData.ItemName} を外しますか？"
             : $"{item.itemData.ItemName} を装備しますか？";
-
+        // ポップアップ表示中は水平入力の前フレーム値をリセットして、押した瞬間だけ反応するようにする
         prevPopupHorizontal = 0f;
-        currentState        = MenuState.ConfirmPopup;
+        // メニュー状態をポップアップ表示中に切り替え
+        currentState = MenuState.ConfirmPopup;
 
         // ポップアップ表示SE再生
         SoundManager.Instance?.PlaySE(popupShowSE);
-
+        // ポップアップを表示して、Yes/Noのコールバックを設定
         confirmPopup.Show(
             message,
             onYesCallback: () => ExecuteEquip(item),
-            onNoCallback:  ()  => CloseConfirmPopup()
+            onNoCallback: () => CloseConfirmPopup()
         );
     }
 
+    /// <summary>
+    /// 装備・解除処理を実行する
+    /// </summary>
+    /// <param name="item"></param>
     private void ExecuteEquip(InventoryItem item)
     {
+        // 装備中のアイテムと同じ場合は解除、違う場合は装備する
         if (inventoryManager.EquippedItem == item.itemData)
             inventoryManager.UnequipItem();
         else
             inventoryManager.EquipItem(item.itemData);
-
+        // ポップアップを閉じて、グリッドを更新
         CloseConfirmPopup();
+        // グリッドを更新して、装備欄の表示も更新
         RefreshGrid();
     }
 
+    /// <summary>
+    /// 装備確認ポップアップを閉じる
+    /// </summary>
     private void CloseConfirmPopup()
     {
         // キャンセルSE再生
@@ -347,6 +401,7 @@ public class InventoryMenuUI : MonoBehaviour
 
     private void HandlePopupNavigation()
     {
+        // 水平入力を取得
         float h = inputReader.MenuNavigateInput.x;
 
         // 閾値を越えた瞬間だけ切り替え（リピートなし）
@@ -360,7 +415,7 @@ public class InventoryMenuUI : MonoBehaviour
             SoundManager.Instance?.PlaySE(cursorMoveSE);
             confirmPopup.MoveSelection(-1f);
         }
-
+        // 前フレームの水平入力を更新
         prevPopupHorizontal = h;
     }
 
@@ -379,18 +434,23 @@ public class InventoryMenuUI : MonoBehaviour
         int count = Mathf.Min(inventoryManager.Inventory.Count, Columns * Rows);
         for (int i = 0; i < count; i++)
         {
-            InventoryItem     item    = inventoryManager.Inventory[i];
-            GameObject        slotObj = Instantiate(itemSlotPrefab, itemGridContainer);
-            InventoryItemSlot slot    = slotObj.GetComponent<InventoryItemSlot>();
-
+            // 所持アイテムを取得
+            InventoryItem item = inventoryManager.Inventory[i];
+            // スロットを生成して初期化
+            GameObject slotObj = Instantiate(itemSlotPrefab, itemGridContainer);
+            // InventoryItemSlot コンポーネントを取得
+            InventoryItemSlot slot = slotObj.GetComponent<InventoryItemSlot>();
+            // 装備中かどうかを判定
             bool isEquipped = inventoryManager.EquippedItem == item.itemData;
+            // スロットをセットアップして、クリック時のコールバックを設定
             slot.Setup(item, isEquipped, OnSlotClicked);
+            // 生成済みスロットリストに追加
             itemSlots.Add(slot);
         }
 
         // アイテム減少時にカーソルが範囲外にならないよう補正
         selectedIndex = Mathf.Clamp(selectedIndex, 0, Mathf.Max(0, itemSlots.Count - 1));
-
+        // スロットの選択状態・説明テキスト・装備欄表示を更新
         UpdateSlotSelection();
         UpdateDescription();
         UpdateEquipmentDisplay();
@@ -399,12 +459,17 @@ public class InventoryMenuUI : MonoBehaviour
     /// <summary>マウスクリック時：クリックされたスロットにカーソルを合わせてポップアップを開く</summary>
     private void OnSlotClicked(InventoryItem item)
     {
+        // クリックされたアイテムのインデックスを取得
         int idx = inventoryManager.Inventory.IndexOf(item);
+        // インデックスが見つからない場合は何もしない
         if (idx < 0) return;
-
+        // カーソル位置を更新して、スロットの選択状態・説明テキストを更新
         selectedIndex = idx;
+        // スロットの選択状態・説明テキストを更新
         UpdateSlotSelection();
+        // 説明テキストを更新
         UpdateDescription();
+        // グリッド決定処理を呼び出してポップアップを開く
         OnGridConfirm();
     }
 
@@ -414,8 +479,9 @@ public class InventoryMenuUI : MonoBehaviour
 
     private void UpdateDescription()
     {
+        // 説明テキストが設定されていない場合は何もしない
         if (descriptionText == null) return;
-
+        // 選択中のアイテムが存在する場合は説明を表示、存在しない場合は空文字列にする
         descriptionText.text = (itemSlots.Count > 0 && selectedIndex < inventoryManager.Inventory.Count)
             ? inventoryManager.Inventory[selectedIndex].itemData.Description
             : string.Empty;
@@ -433,16 +499,23 @@ public class InventoryMenuUI : MonoBehaviour
         // アイコンは装備中アイテムがあれば表示、なければ非表示
         if (equippedIcon != null)
         {
-            equippedIcon.sprite  = equipped?.ItemIcon;
+            equippedIcon.sprite = equipped?.ItemIcon;
             equippedIcon.enabled = equipped?.ItemIcon != null;
             // アイコンが表示される場合はアスペクト比を維持する設定にする
             equippedIcon.preserveAspect = true;
         }
     }
 
+    /// <summary>
+    /// シーン切り替え時の処理
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="mode"></param>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // シーン切り替え時にメニューを閉じる
         if (isOpen) CloseMenu();
+        // シーン切り替え時にメニューを無効化する
         isMenuEnabled = false;
 
         // 新しいシーンの Player コンポーネントを再取得する

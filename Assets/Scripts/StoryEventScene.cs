@@ -179,6 +179,9 @@ public class StoryEventScene : MonoBehaviour
             // シーン遷移時のSE再生（ページ送りとは別の音を鳴らせる）
             SoundManager.Instance?.PlaySE(sceneTransitionSE);
 
+            // 次Scene開始時はフェード待ち状態に戻す
+            GameManager.ResetGameState();
+
             SceneManager.LoadScene(nextSceneName);
         }
         else

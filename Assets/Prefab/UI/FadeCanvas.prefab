@@ -117,9 +117,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FadeController
   fadeImage: {fileID: 3327065775576684454}
-  fadeDuration: 6
+  fadeDuration: 7
   startTextCanvasGroup: {fileID: 3656596362838006556}
-  startTextDuration: 4
+  startTextDuration: 5
 --- !u!1 &5563509537021505509
 GameObject:
   m_ObjectHideFlags: 0

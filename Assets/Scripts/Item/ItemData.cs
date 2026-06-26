@@ -24,6 +24,10 @@ public class ItemData : ScriptableObject
     [TextArea]
     private string description;
 
+    [Tooltip("取得時に再生するSE")]
+    [SerializeField]
+    private AudioClip pickupSE;
+
     //==============================
     // アイテム種別
     //==============================
@@ -61,14 +65,14 @@ public class ItemData : ScriptableObject
     private float useTimeoutDuration = 0.5f;
 
     //==============================
-    // 攻撃設定
+    // 効果量
     //==============================
 
-    [Header("攻撃設定")]
+    [Header("効果量")]
 
-    [Tooltip("与えるダメージ")]
+    [Tooltip("アイテムが及ぼす効果の大きさ\nProjectile:与えるダメージ / Recovery:回復量")]
     [SerializeField]
-    private int damage = 1;
+    private int value = 1;
 
     [Tooltip("ノックバック強さ")]
     [SerializeField]
@@ -87,16 +91,6 @@ public class ItemData : ScriptableObject
     [Tooltip("発射するProjectile")]
     [SerializeField]
     private GameObject projectilePrefab;
-
-    //==============================
-    // Recovery用
-    //==============================
-
-    [Header("Recovery設定")]
-
-    [Tooltip("回復量")]
-    [SerializeField]
-    private int healAmount = 30;
 
     //==============================
     // Crash用
@@ -120,11 +114,10 @@ public class ItemData : ScriptableObject
     public Sprite ItemIcon => itemIcon;
     public ItemType ItemType => itemType;
     public string Description => description;
-
     /// <summary>
-    /// 回復量
+    /// 取得時に再生するSE
     /// </summary>
-    public int HealAmount => healAmount;
+    public AudioClip PickupSE => pickupSE;
 
     /// <summary>
     /// -1で無限使用
@@ -148,9 +141,9 @@ public class ItemData : ScriptableObject
     public float UseTimeoutDuration => useTimeoutDuration;
 
     /// <summary>
-    /// 与えるダメージ
+    /// アイテムが及ぼす効果の大きさ（Projectile:ダメージ / Recovery:回復量）
     /// </summary>
-    public int Damage => damage;
+    public int Value => value;
     /// <summary>
     /// ノックバック強さ
     /// </summary>

@@ -36,7 +36,8 @@ public class FadeController : MonoBehaviour
 
         while (timer < fadeDuration)
         {
-            timer += Time.deltaTime;
+            // 1フレームの進み幅を制限し、コマ落ちで一気にフェードが進むのを防ぐ
+            timer += Mathf.Min(Time.deltaTime, 0.05f);
             color.a = Mathf.Lerp(1f, 0f, timer / fadeDuration);
             fadeImage.color = color;
             yield return null;

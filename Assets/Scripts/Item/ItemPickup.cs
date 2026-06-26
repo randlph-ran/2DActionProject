@@ -57,6 +57,9 @@ public class ItemPickup : MonoBehaviour
             return;
         }
 
+        // 取得SE再生
+        SoundManager.Instance?.PlaySE(itemData.PickupSE);
+
         // 所持アイテムへ追加
         inventory.AddItem(itemData, count);
 

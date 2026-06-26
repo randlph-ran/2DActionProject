@@ -15,7 +15,9 @@ public class GameManager : MonoBehaviour
     }
 
 
-
+    /// <summary>
+    /// ゲーム開始処理を実行するメソッド
+    /// </summary>
     public static void StartGame()
     {
         //ログ

@@ -15,16 +15,16 @@ MonoBehaviour:
   itemName: "\u30DD\u30FC\u30B7\u30E7\u30F3"
   itemIcon: {fileID: -2880734798192188640, guid: 22e961828bbbbd541ad3fcdf9c79cc0d, type: 3}
   description: "\u3069\u3053\u306B\u3067\u3082\u58F2\u3089\u308C\u3066\u3044\u308B\u3000\u56DE\u5FA9\u85AC\n\u98F2\u3080\u3068\u3000\u9B54\u529B\u52B9\u679C\u306B\u3088\u3063\u3066\n\u5C11\u3057\u3060\u3051\u3000\u50B7\u304C\u6CBB\u308B"
+  pickupSE: {fileID: 8300000, guid: d4af4c37bcb4b1546aca0dda9e87114f, type: 3}
   itemType: 1
   maxUseCount: 1
-  cooldown: 1
+  cooldown: 2
   canAutoFire: 0
   canUseInAir: 0
   useTimeoutDuration: 2
-  damage: 1
-  knockbackPower: 5
+  value: 15
+  knockbackPower: 0
   launchPower: 0
   projectilePrefab: {fileID: 0}
-  healAmount: 30
   chargeTime: 1
   crashEffectPrefab: {fileID: 0}

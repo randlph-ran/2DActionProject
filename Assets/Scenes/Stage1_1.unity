@@ -11881,9 +11881,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: FadeCanvas
       objectReference: {fileID: 0}
-    - target: {fileID: 2318872484673963719, guid: c6c1d34df1a02bf4eac009980d77300e, type: 3}
-      propertyPath: m_IsActive
-      value: 1
+    - target: {fileID: 2387986645324800897, guid: c6c1d34df1a02bf4eac009980d77300e, type: 3}
+      propertyPath: fadeDuration
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
