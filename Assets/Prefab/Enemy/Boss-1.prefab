@@ -449,9 +449,9 @@ MonoBehaviour:
   attack3EffectPrefab: {fileID: 4306488877223958017, guid: ecb38e0319a6ad44cbca52d7b5add7a6, type: 3}
   jumpAttackEffectPrefab: {fileID: 1226031520979461127, guid: 9c692d73cd82e0d409bec909e987a5b8, type: 3}
   itemEffectPrefab: {fileID: 467751860875805754, guid: 7c6d9bb9c8994364dbe5ba2e32dd4d13, type: 3}
-  dropItem: {fileID: 11400000, guid: 5b8654a461828374b9dc0a1b5d8f5b68, type: 2}
-  dropCount: 20
-  itemPickupPrefab: {fileID: 5798747640496130727, guid: 6353491dcaf6f9940aa7dcbe8e23f46c, type: 3}
+  dropItem: {fileID: 0}
+  dropCount: 0
+  itemPickupPrefab: {fileID: 0}
   damageSE: {fileID: 8300000, guid: 89eb45c4476e74c489ea9c2b6cf77d83, type: 3}
   dieSE: {fileID: 8300000, guid: fc1a782a025fa494baca2e26e2b1a16e, type: 3}
   isBoss: 1

@@ -42,11 +42,11 @@ public class TitleManager : MonoBehaviour
         // スタート済みなら入力を無視する
         if (isStarting) return;
 
-        // Enterキーまたは左クリックでScene遷移
+        // Enterキーまたは左クリック、ゲームパッドはEastボタン（メニューの決定と統一）でScene遷移
         bool startPressed = Keyboard.current.enterKey.wasPressedThisFrame
             || Mouse.current.leftButton.wasPressedThisFrame
             || (Gamepad.current != null &&
-            Gamepad.current.buttonSouth.wasPressedThisFrame);
+            Gamepad.current.buttonEast.wasPressedThisFrame);
 
         // 遷移条件を満たしたらScene遷移
         if (startPressed)

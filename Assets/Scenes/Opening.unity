@@ -226,7 +226,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 2086207200247368052, guid: d395b24bbf14ecf48b3a80eb6dd9bc55, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -527,6 +527,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StoryEventScene
   pages:
+  - backgroundSprite: {fileID: 2086207200247368052, guid: d395b24bbf14ecf48b3a80eb6dd9bc55, type: 3}
+    storyText: "\n\n\n\n\n\n\n\n\n\n\n\u64CD\u4F5C\u8AAC\u660E"
+    advanceSE: {fileID: 8300000, guid: b76b0b1609c3b7747a9e24587f9a4a6a, type: 3}
   - backgroundSprite: {fileID: -7224004138593259240, guid: b9195d982867b784597cbdb83a093457, type: 3}
     storyText: "\u304B\u3064\u3066\u6804\u83EF\u3092\u8A87\u3063\u3066\u3044\u305F\u3000\u30EB\u30C8\u30E9\u5E1D\u56FD\n\u305D\u3053\u306B\u306F\u3000\u7F6A\u4EBA\u3068\u9B54\u7269\u3092\u4F7F\u3063\u3066\n\u65B0\u305F\u306A\u751F\u7269\u3092\u3000\u751F\u307F\u51FA\u3059\n\u79D8\u5BC6\u306E\u3000\u751F\u7269\u5B9F\u9A13\u5834\u304C\u3042\u3063\u305F\n\n\u3057\u304B\u3057\u3000\u81EA\u3089\u304C\u751F\u307F\u51FA\u3057\u305F\u751F\u7269\u306B\n\u5E1D\u56FD\u306F\u3000\u6EC5\u307C\u3055\u308C\u3066\u3057\u307E\u3046\u306E\u3060\u3063\u305F\n\u25BC"
     advanceSE: {fileID: 8300000, guid: b76b0b1609c3b7747a9e24587f9a4a6a, type: 3}
@@ -537,7 +540,7 @@ MonoBehaviour:
     storyText: "\u5411\u3053\u3046\u898B\u305A\u306E\u3000\u7537\u306F\n\u8001\u4EBA\u306E\u3000\u9759\u6B62\u3082\u52B9\u304B\u305A\u306B\n\u30AD\u30E3\u30F3\u30D7\u3092\u3000\u98DB\u3073\u51FA\u3057\n\u5B9F\u9A13\u5834\u8DE1\u306E\u3000\u6D1E\u7A9F\u5165\u53E3\u306B\n\u7ACB\u3063\u3066\u3044\u305F\n\n\u306A\u305C\u5F7C\u306F\u3000\u305D\u3093\u306A\u5371\u967A\u306A\u5834\u6240\u3078\n\u8D74\u3044\u305F\u306E\u304B\n\u305D\u306E\u7B54\u3048\u306F\u3000\u3053\u306E\u6D1E\u7A9F\u306E\u5965\u306B\n\u3042\u308B\u304B\u3082\u3057\u308C\u306A\u3044"
     advanceSE: {fileID: 8300000, guid: b76b0b1609c3b7747a9e24587f9a4a6a, type: 3}
   backgroundImage: {fileID: 783959463}
-  backgroundBrightness: 0.5
+  backgroundBrightness: 0.7
   storyText: {fileID: 951121665}
   storyTextCanvasGroup: {fileID: 951121667}
   textFadeDuration: 2

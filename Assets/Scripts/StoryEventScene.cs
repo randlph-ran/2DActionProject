@@ -164,10 +164,10 @@ public class StoryEventScene : MonoBehaviour
         // ページ切替中、または入力受付前なら無視
         if (isShowingPage || !canAdvance) return;
 
-        // 決定ボタンまたはキー入力
+        // 決定ボタンまたはキー入力、ゲームパッドはEastボタン（メニューの決定と統一）
         bool confirmPressed = Keyboard.current.enterKey.wasPressedThisFrame
             || Mouse.current.leftButton.wasPressedThisFrame
-            || (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame);
+            || (Gamepad.current != null && Gamepad.current.buttonEast.wasPressedThisFrame);
 
         if (!confirmPressed) return;
 
