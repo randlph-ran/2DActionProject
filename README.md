@@ -116,7 +116,9 @@
 |11日目|6月22日(月)| 新ステージ追加 |　2-1～Bossマップ構成  | メニュー実装続き |
 |12日目|6月23日(火)| BGM、演出追加 | OpenEndイベント作成、Bossの死亡処理追加、Bossバグ対応と調整|
 |13日目|6月23日(火)| BGM、演出追加 | 回復アイテム実装、Sound実装対応中|
-|14日目|6月24日(火)| BGM、SE、クラッシュアイテム実装 | |
+|14日目|6月24日(水)| BGM、SE実装と調整、アイテムアニメーションとリンク | アニメーションのバグ修正 |
+|15日目|6月25日(木)| バランス調整、BGM各シーンへの実装対応 | SEも調整。メニューレイアウト調整 |
+|16日目|6月26日(金)| シーンつなぎのバグ対応、アイテムドロップの調整、仕様まとめ | SEの残り調整対応|
 ---
 
 以下、旧前半スケジュール
@@ -158,8 +160,9 @@
 | 6/21 | メニュー実装続き | Enemyの地面抜けやPlayerの地面はまりなどのバグ多発の処理 | 6h |
 | 6/22 | メニュー実装続き | 正しく表示されないバグの対応 | 6h |
 | 6/23 | ボス2作成＋シーンつなぎのイベント処理追加 | ボス2がボス1のアニメーションに影響してしまう設定だったのでバグってやり直し中 | 7h |
-| 6/24 | ボス2死亡アクション作成、ボスのバグ修正、メニューレイアウトと操作性修正、サウンド実装対応中 | 7h |
-
+| 6/24 | ボス2死亡アクション作成、ボスのバグ修正、メニューレイアウトと操作性修正、サウンド実装対応中 | ようやく終わりが見えてきた | 7h |
+| 6/25 | メニューレイアウト調整、ストーリイベントの各所対応とサウンド調整 | 見た目の調整に移行 | 6h |
+| 6/26 | 各所バグ対応、資料整理 | 通しプレイによるバグ発見が増えた | 6h |
 
 
 ---
@@ -199,6 +202,8 @@
 | 5/22| MissingReferenceException | TilePalleteへ画像を追加したり削除などをしていたらエラーが出るようになっていたので、古いParetteとLibralyの削除から再起動で修正||
 | 5/22| NullReferenceException: Object reference not set to an instance of an object BossHPUI.Update () (at Assets/Scripts/BossHPUI.cs:30)|Boss用のUIを作成したものの、Prefab化の際にオブジェクトの参照が外れていたため、再度設定して修正。同様にPrefab化の際に参照が外れてエラー出ることが多いので注意する|
 | 6/11 | ArgumentException: The Object you want to instantiate is null. UnityEngine.Object.Instantiate (UnityEngine.Object original, UnityEngine.Vector3 position, UnityEngine.Quaternion rotation) (at <5fbef2e591e14a4c91f3c5e34508b853>:0)|PlayerController|これもPrefabのオブジェクト参照設定漏れ|
+| 6/26 | NullReferenceException: Object reference not set to an instance of an object
+InventoryMenuUI.Update () (at Assets/Scripts/Item/InventoryMenuUI.cs:168)| EnableMenu()内でPlayerのオブジェクトのPlayerInputReaderを探しているが、Scene開始時のFadeControllerが実行された際にまだPlayerオブジェクトが生成されていなかった場合nullになっていたため、PlayerInputReaderがみつからずにエラー表示。不要なタイミングでのエラーなので、一回見つからなければスルーする作りにして対応|
 | ... | ... | ... | ... | ... |
 
 > ※ エラーが出たら記録してください。暫定対応と「後で見直す点」も書いて OK です。
@@ -239,10 +244,10 @@ Assets/
 
 ## 発表内容（予定） <a id="presentation-plan"></a>
 発表用PowerPoint
-https://1drv.ms/p/c/d9d112398efc3fc8/IQCOsYJdyBBtToEDROVBPRd-AYECvFawsTSa7sXpYR45hic?e=U7rsTG
+
 | 項目 | 内容 |
 |------|------|
-| **タイトル** | Mutant&Vaiant(仮)α版​　|
+| **タイトル** | Mutant&Vaiantβ版​　|
 | **ゲーム紹介（30秒）** | |
 | **アピールポイント** | |
 | **頑張った点・工夫した点** | |
