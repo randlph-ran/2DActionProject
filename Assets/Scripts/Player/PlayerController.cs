@@ -724,17 +724,23 @@ public class PlayerController : MonoBehaviour
     // 分身を一定時間でフェードアウトさせて消す
     private IEnumerator FadeOutAfterimage(SpriteRenderer afterimageRenderer)
     {
+        // フェードアウト時間の経過を追跡する変数
         float elapsed = 0f;
+        // 分身の初期色を取得
         Color startColor = afterimageRenderer.color;
 
+        // フェードアウト処理
         while (elapsed < afterimageDuration)
         {
+            // 経過時間を加算
             elapsed += Time.deltaTime;
+            // アルファ値を線形補間で減少させる
             float alpha = Mathf.Lerp(startColor.a, 0f, elapsed / afterimageDuration);
+            // 分身の色を更新
             afterimageRenderer.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
             yield return null;
         }
-
+        // フェードアウト完了後、分身GameObjectを破棄
         Destroy(afterimageRenderer.gameObject);
     }
     // 接地判定

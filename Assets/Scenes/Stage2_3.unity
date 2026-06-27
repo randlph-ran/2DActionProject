@@ -1329,6 +1329,10 @@ PrefabInstance:
       value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 650250953678718662, guid: 1d8dd927d241dac4bb61159a0fb1baca, type: 3}
+      propertyPath: effectScale
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 650250953678718662, guid: 1d8dd927d241dac4bb61159a0fb1baca, type: 3}
       propertyPath: groundLayer.m_Bits
       value: 8
       objectReference: {fileID: 0}
