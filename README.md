@@ -4,6 +4,8 @@
 指導講師：小西秀明（職業訓練校 Unity講座）
 
 ---
+## 仕様書
+[仕様書はこちらから](https://github.com/HiroshiKondo2026/2DActionProject/blob/beta_0.5/%E4%BB%95%E6%A7%98/2DAction_Beta_Spec.md)
 
 ## 目次
 - [制作者情報](#author-info)
@@ -31,7 +33,7 @@
 | **作成日** | 2026/06/09 |
 | **Unity バージョン** | 例：Unity 6（URP） |
 | **プレゼンテーション** |  |
-| **仕様まとめ** | https://github.com/HiroshiKondo2026/2DActionProject/blob/main/%E4%BB%95%E6%A7%98/2DAction_Alpha_Spec.md |
+| **仕様まとめ** | https://github.com/HiroshiKondo2026/2DActionProject/blob/beta_0.5/%E4%BB%95%E6%A7%98/2DAction_Beta_Spec.md |
 ---
 
 ## プロジェクト概要 <a id="project-overview"></a>
