@@ -1,4 +1,5 @@
 # 2Dアクションゲーム β版仕様書
+<img width="2836" height="1504" alt="NewTitle" src="https://github.com/user-attachments/assets/6af23aae-e73a-43e8-84f5-c57fb1ea7772" />
 
 ## 1. この仕様書について
 
@@ -32,6 +33,8 @@ Title
 
 ### Opening / S1Clear / S2Clear（イベントシーン）
 
+<img width="1581" height="876" alt="sample" src="https://github.com/user-attachments/assets/4a7a04f2-07f2-46dd-9d70-247acc41a660" />
+
 -   共通スクリプト（StoryEventScene）で制御
 -   背景1枚絵＋ストーリーテキストのページを1〜9枚まで設定可能
 -   背景BGの明るさをInspectorで調節可能。基本的に明るさを下げてテキストを見やすく表示する
@@ -51,11 +54,17 @@ Title
 
 ### ジャンプ攻撃
 
+<img width="100" height="100" alt="P_JumpAttack4" src="https://github.com/user-attachments/assets/d381a2f4-0747-4763-b715-602ba246d162" />
+
+
 -   ジャンプ中に発動可能。コンボは無く、1発だけの攻撃
 -   ジャンプ攻撃を当てると、EnemyがStun状態に移行する
     -   Stun状態はEnemyを強制的に行動停止させる状態。PlayerのInspectorで調整可能
 
 ### ガード
+
+<img width="100" height="100" alt="Guard1" src="https://github.com/user-attachments/assets/c1ed409b-a81f-4e46-82c5-a3b081ff5fb6" />
+
 
 -   敵からの攻撃を無効化する状態。ガードボタンを押している間発動
 -   Idle状態以外（攻撃中・ジャンプ攻撃中・アイテム使用中）ではガード入力を受け付けない
@@ -65,10 +74,19 @@ Title
 
 -   `ItemType`（Projectile / Recovery / Special）に応じてAnimatorのモーションを分岐可能にする`ItemType`パラメータを追加
 -   アイテムごとに「使用タイムアウト秒数」「空中使用可否」を個別設定可能に変更
+-   投擲アイテム(Projectile)
+    -   Playerが入力する方向(スティックの入力方向)に発射できるように`GetShootDirection`で入力方向を方向ベクトルにしてその方向に発射する
+
+<img width="100" height="100" alt="Item5" src="https://github.com/user-attachments/assets/26829d60-5af5-43ea-930c-2831ef5d9c41" />
+
 -   回復アイテム（Recovery）
     -   使用するとHPを回復（最大HPでキャップ）
     -   回復モーション再生中は他の行動を一切受け付けない（排他制御）
     -   空中では使用不可（地上限定）
+ 
+<img width="100" height="100" alt="Potion05" src="https://github.com/user-attachments/assets/5eb69483-aaf0-4014-9e60-17c814e2f7c7" />
+
+
 -   クラッシュアイテム（Special）
     -   ItemType自体は用意済みだが、スケジュールの都合で未実装
 
@@ -76,15 +94,27 @@ Title
 
 -   PlayerのAttack1～3がEnemyにヒットした際にエフェクトを表示するようにした 
     -   ヒットEffectは各Enemmy毎に設定可能。今回は共通のものを設定している 
-    -   エフェクトの表示場所も`effectPositionOffset`で設定、Inspectorで調整可能。transform.positionと調整位置を足したものが`spawnPosition`になる 
+    -   エフェクトの表示場所も`effectPositionOffset`で設定、Inspectorで調整可能。transform.positionと調整位置を足したものが`spawnPosition`になる
+
+<img width="264" height="269" alt="effect_sample" src="https://github.com/user-attachments/assets/a4f57921-47d8-4c54-a889-30e22f13f379" />
+
+ 
 -   Playerがジャンプしたときに残像エフェクトを表示するようにした
     -   `SpawnAfterimage`でプレイヤーの位置にもう1体Playerの半透明の分身を作成する。
     -   Inspectorで残像の色味`afterimageTintColor`、表示時間`afterimageTintColor`、表示間隔`jumpAfterimageSpawnInterval`の設定可能
 
+<img width="180" height="331" alt="jump_sample" src="https://github.com/user-attachments/assets/087c0916-52e3-40ef-b340-ef0be83b760f" />
+
 
 ------------------------------------------------------------------------
 
-## 4. アイテムデータ仕様（ItemData）
+## 4. メニュー
+
+-   
+
+------------------------------------------------------------------------
+
+## 5. アイテムデータ仕様（ItemData）
 
 -   `Damage`（攻撃力）と`HealAmount`（回復量）を`Value`（効果量）に統合
     -   ItemTypeに応じて呼び出し側で「ダメージ」「回復量」のどちらとして使うかを判定する形に変更
@@ -95,7 +125,7 @@ Title
 
 ------------------------------------------------------------------------
 
-## 5. アイテムドロップ仕様
+## 6. アイテムドロップ仕様
 
 -   Enemy撃破時、設定したアイテムをフィールドにドロップ
 -   ドロップ物（ItemPickup）にPlayerが接触すると取得し、取得時SEを再生
@@ -104,7 +134,7 @@ Title
 
 ------------------------------------------------------------------------
 
-## 6. Enemy仕様（追加・修正）
+## 7. Enemy仕様（追加・修正）
 
 ### SE
 
@@ -120,7 +150,7 @@ Title
 
 ------------------------------------------------------------------------
 
-## 7. サウンド仕様（新規）
+## 8. サウンド仕様（新規）
 
 ### 再生基盤
 
@@ -156,7 +186,7 @@ Title
 
 ------------------------------------------------------------------------
 
-## 8. 操作仕様（修正）
+## 9. 操作仕様（修正）
 
 
 -   ゲームパッド操作追加
@@ -176,14 +206,14 @@ Title
 
 ------------------------------------------------------------------------
 
-## 9. Title仕様（修正）
+## 10. Title仕様（修正）
 
 -   ゲーム開始入力後、即座にSceneを切り替えず、約1秒の間を空けてから次Sceneへ遷移する演出を追加（秒数は調整可能）
 -   多重入力防止（入力後は再度の入力を無視）
 
 ------------------------------------------------------------------------
 
-## 10. β版実装済み機能
+## 11. β版実装済み機能
 
 -   Scene構成追加拡張（Opening/S1Clear/S2Clear追加）
 -   イベントシーン共通スクリプト（複数ページ・SE設定対応）
@@ -201,7 +231,7 @@ Title
 
 ------------------------------------------------------------------------
 
-## 11. β版残課題・既知の未対応事項
+## 12. β版残課題・既知の未対応事項
 
 -   クラッシュアイテム（Special）の演出・効果は未実装
 -   Enemy側の重複Player/Menu破棄に伴う一時的な参照ロスト（再取得処理で保険は入れたが、根本的な多重配置の整理は未対応）
