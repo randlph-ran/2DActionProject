@@ -1,10 +1,11 @@
-// Scene切替に必要
+﻿// Scene切替に必要
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GoalPoint : MonoBehaviour
 {
     // 次に移動するScene名
+    [Tooltip("次に移動するScene名")]
     [SerializeField]
     private string nextSceneName;
 

@@ -1,15 +1,12 @@
-**現在作業中の最新ブランチは "beta_0.5" なのでそちらへブランチ切り替えてReadMEを見てください。**  
+# Unity 個人制作２
 
-↓beta_0.5のリンク 
-
-https://github.com/HiroshiKondo2026/2DActionProject/blob/beta_0.5/README.md
-
-# Unity 個人制作①
 
 **2週間開発プロジェクト — 個人用 README テンプレート**  
 指導講師：小西秀明（職業訓練校 Unity講座）
 
 ---
+## 仕様書
+[仕様書はこちらから](https://github.com/HiroshiKondo2026/2DActionProject/blob/beta_0.5/%E4%BB%95%E6%A7%98/2DAction_Beta_Spec.md)
 
 ## 目次
 - [制作者情報](#author-info)
@@ -34,43 +31,45 @@ https://github.com/HiroshiKondo2026/2DActionProject/blob/beta_0.5/README.md
 | **制作者名** | 近藤博士 |
 | **リポジトリ名** |`2DActionProject` |
 | **GitHub URL** | `https://github.com/HiroshiKondo2026/2DActionProject` |
-| **作成日** | 2026/05/18 |
+| **作成日** | 2026/06/09 |
 | **Unity バージョン** | 例：Unity 6（URP） |
-| **プレゼンテーション** | https://1drv.ms/p/c/d9d112398efc3fc8/IQCOsYJdyBBtToEDROVBPRd-AYECvFawsTSa7sXpYR45hic?e=3HVYOq |
-| **仕様まとめ** | https://github.com/HiroshiKondo2026/2DActionProject/blob/main/%E4%BB%95%E6%A7%98/2DAction_Alpha_Spec.md |
+| **プレゼンテーション** | [PowerPoint](https://1drv.ms/p/c/d9d112398efc3fc8/IQCOsYJdyBBtToEDROVBPRd-Ac48HZlFwGcoBmNoGyVR3as?e=W3lA6E) |
+| **仕様まとめ** | [仕様](https://github.com/HiroshiKondo2026/2DActionProject/blob/beta_0.5/%E4%BB%95%E6%A7%98/2DAction_Beta_Spec.md) |
 ---
 
 ## プロジェクト概要 <a id="project-overview"></a>
 
 | 項目 | 内容 |
 |------|------|
-| **ゲームタイトル** | Mutant&Vaiant(仮)α版 |
+| **ゲームタイトル** | Mutant&Vaiant |
+
 | **一言で説明すると** | 2Dアクションゲーム |
 | **ターゲット** | 同ジャンルを好む人たち |
-| **制作の目的** | 2Dゲームの基礎的な制作工程を学ぶ |
+| **制作の目的** | 2Dアクションゲームらしさを追加して、よりゲーム感を増す |
 | **ゲームの目的** | ステージ奥にいるボスを倒す |
-| **プレイヤー操作** | 例：WASDで移動、Zで攻撃 |
-| **勝利条件** | 例：ボス撃破 |
-| **失敗条件** | 例：HPが0になる |
-| **特徴・工夫点** | 画面のスクロール、障害物や敵を避けつつ倒しつつ進むアクション性 |
+| **プレイヤー操作** | 例：WASD、矢印キー、ゲームパッド左スティックで移動、Z、左クリック、Aボタンで攻撃、スペースキー、右クリック、Bボタンでジャンプ、Vキー、Xボタンでアイテム使用、Bキー、Yボタンでガード |
+| **勝利条件** | Stage2-3にいるボスの撃破 |
+| **失敗条件** | HPが0になる |
+| **特徴・工夫点** | プレイヤー操作性とアニメーションのリンク、敵をガードしつつ、倒して進むアクション性 |
 
 
 ---
 
 ## 完成度レベル（目標） <a id="completion-levels"></a>
-※いったんLevel2までの完成を目標。Level3以下は後半以降にでできるところまでやる。
+前半はLevel3までやった。
 | レベル | 内容 | 達成 |
 |--------|------|------|
 | **Level 0** | マップに足場と階段がありスクロールしながら進行、敵を倒す | [○] |
-| **Level 1** | キャラのアニメーション、エフェクトなどの演出をつける | [△] |
+| **Level 1** | キャラのアニメーションをつける | [△] |
 | **Level 2** | タイトル、エンディング、ポーズ機能の作成 | [△] |
-| **Level 3** | より複雑なマップと敵がいるステージ2、3制作 | [] |
-| **Level 4** | ショップとアイテムと装備とメニューUI実装 | [] |
-| **Level 5** | ステージをなるべく多く作る | [] |
-| **Level 6** | Playerのスペシャル技を作成 | [ ] |
+　ここまでαで完了
+ 　↓以下後半β用
+ | レベル | 内容 | 達成 |
+| **Level 3** | Playerの攻撃調整、アイテム攻撃、スペシャル技、エフェクトSEの作成 | [△] |
+| **Level 4** | アイテムとメニュー実装 | [〇] |
+| **Level 5** | Enemyの調整、追加 | [〇] |
+| **Level 6** | より複雑なマップと敵がいるステージ2制作 | [〇] |
 
-
-> ※ ゲーム内容に合わせて Level 0〜2 の定義を書き換えてください。
 
 ---
 
@@ -83,13 +82,13 @@ https://github.com/HiroshiKondo2026/2DActionProject/blob/beta_0.5/README.md
 - [x] PlayerController（移動・入力）
 - [x] Trigger / Collider
 - [x] UI（Canvas, Button, TextMeshPro）
-- [ ] ScriptableObject / JSONデータ
-- [ ] アニメーション / DOTween
-- [ ] サウンド（BGM・SE）
+- [x] ScriptableObject / JSONデータ
+- [x] アニメーション / DOTween
+- [x] サウンド（BGM・SE）
 - [ ] NavMesh / AI
 - [x] Timeline / Cinemachine
 - [x] 物理（Rigidbody / CharacterController 等）
-- [ ] その他（　　　　　　　　　　　　　　　　　　　　）
+- [×] その他（　VFXPACK_IMPACT_WALLCOEUR_FreeVersion(エフェクト用)　）
 
 ---
 
@@ -104,8 +103,29 @@ https://github.com/HiroshiKondo2026/2DActionProject/blob/beta_0.5/README.md
 
 ---
 
-## 進行スケジュール（目安） <a id="schedule"></a>
+## 後半進行スケジュール（目安） <a id="schedule"></a>
 
+| 日 | 日付（例） | 内容 | 主な成果物 | 進捗 |
+|----|-----------|------|------------|------|
+|1日目|6月9日（月）|	Player3連コンボの調整	| Enemyを浮かせる処理追加		| Playerの基本攻撃自体は完了 |
+|2日目|6月10日（火）|	ジャンプ攻撃、吹き飛ばしスタン攻撃作成	| ジャンプからの攻撃、Enemyへのスタン効果		| いったんスタン周りは実装終わり |
+|3日目|6月11日(水)| 就職活動日| 作業無し |  |
+|4日目|6月12日(木)| | ガード,パリィ実装　→　飛び道具の作成 | 先に飛び道具の作成をしないと問題が出そうなので | Playerから飛び道具が飛ぶところまで作成 |
+|5日目|6月13日(金)| 就職支援| 作業無し |  |
+|6日目|6月15日(月)| ガード,パリィ実装 ⇒　パリィβではオミット | ガード処理の対応(パリィも後々入れやすい構造で作成) |  ガード処理までは追加、アニメーション対応中 ||
+|7日目|6月1⑥日(火)| 各エフェクト、SE追加 | Player攻撃でのエフェクト追加 | Enemyの吹き飛び処理が変だったのを修正 | Player側の各アクションのアニメーション遷移がおかしくなってたのも修正済|
+|8日目|6月1⑦日(水)| アイテム実装、メニュー追加 |　回復、ナイフ、クラッシュ  | アイテム作成中・Enemyバグ修正 |
+|9日目|6月18日(木)| Enemyバグ修正、新規Enemy追加 |　AI修正  | アイテム実装対応中 |
+|10日目|6月19日(金)| Boss改善 |　Bossバグ修正、新規Bossと行動追加  | Enemyバグ対応中 |
+|11日目|6月22日(月)| 新ステージ追加 |　2-1～Bossマップ構成  | メニュー実装続き |
+|12日目|6月23日(火)| BGM、演出追加 | OpenEndイベント作成、Bossの死亡処理追加、Bossバグ対応と調整|
+|13日目|6月23日(火)| BGM、演出追加 | 回復アイテム実装、Sound実装対応中|
+|14日目|6月24日(水)| BGM、SE実装と調整、アイテムアニメーションとリンク | アニメーションのバグ修正 |
+|15日目|6月25日(木)| バランス調整、BGM各シーンへの実装対応 | SEも調整。メニューレイアウト調整 |
+|16日目|6月26日(金)| シーンつなぎのバグ対応、アイテムドロップの調整、仕様まとめ | SEの残り調整対応|
+---
+
+以下、旧前半スケジュール
 | 日 | 日付（例） | 内容 | 主な成果物 | 進捗 |
 |----|-----------|------|------------|------|
 |1日目|5月18日（月）|	企画概要、仕様のまとめ、Unityの基本対応とGit作成	| 		| 仕様作成～Playerの仮配置まで |
@@ -129,12 +149,33 @@ https://github.com/HiroshiKondo2026/2DActionProject/blob/beta_0.5/README.md
 |19日目||6月05日（水）|	β版準備| | β用ブランチ作成、InputSystem更新 |
 
 
-> ※ ゲーム規模に合わせて行の追加・削除をして構いません。
 
 ---
 
 ## 進捗メモ <a id="progress-notes"></a>
-**第1回発表(α版実装完了)までの作業合計時間：69時間**
+
+| 日付 | 作業内容 | 備考 | 作業時間（任意） |
+|------|-----------|------|------------------|
+| 6/8 | Playerの3連攻撃中にPlayerを前進させる ||| 7h |
+| 6/9 | Playerのジャンプ攻撃 | 吹き飛ばしによるスタン効果の作成。やっぱりアニメの状態遷移が関わるところはバグが出やすい | 7h |
+| 6/11 | ガード・パリィ→飛び道具の作成に変更 | 飛び道具のItemData作成対応 | 7h |
+| 6/15 | ガード実装対応 →パリィはオミット | アイテム使用アニメーション追加、ガード処理追加対応 | 7h |
+| 6/16 | ガードアニメ追加、各エフェクト追加 | Playerアクションの遷移のバグ修正＋エフェクト追加＋エフェクト追加 | 7h |
+| 6/17 | Enemyバグ修正、アイテム実装対応 | アイテム実装とメニュー表示対応中 | 7h |
+| 6/18 | アイテム実装対応 | アイテム発射、ドロップ作成 | 6h |
+| 6/19 | Playerバグ対応 | アイテム発射のバグ対応 | 6h |
+| 6/21 | メニュー実装続き | Enemyの地面抜けやPlayerの地面はまりなどのバグ多発の処理 | 6h |
+| 6/22 | メニュー実装続き | 正しく表示されないバグの対応 | 6h |
+| 6/23 | ボス2作成＋シーンつなぎのイベント処理追加 | ボス2がボス1のアニメーションに影響してしまう設定だったのでバグってやり直し中 | 7h |
+| 6/24 | ボス2死亡アクション作成、ボスのバグ修正、メニューレイアウトと操作性修正、サウンド実装対応中 | ようやく終わりが見えてきた | 7h |
+| 6/25 | メニューレイアウト調整、ストーリイベントの各所対応とサウンド調整 | 見た目の調整に移行 | 6h |
+| 6/26 | 各所バグ対応、資料整理 | 通しプレイによるバグ発見が増えた | 6h |
+
+
+---
+以下、前半進捗メモ
+
+
 | 日付 | 作業内容 | 備考 | 作業時間（任意） |
 |------|-----------|------|------------------|
 | 5/18 | 企画概要、仕様のまとめ、Unityの基本対応とGit作成 | 一通り完了してPC操作実装に取り掛かり中 | 6h |
@@ -158,13 +199,20 @@ https://github.com/HiroshiKondo2026/2DActionProject/blob/beta_0.5/README.md
 ---
 
 ## エラーログ <a id="error-log"></a>
+| 日付 | エラー内容 | 発生箇所 | 解決方法 | 備考 |
+|------|-----------|----------|----------|------|
 
+---
+前半のエラー
 | 日付 | エラー内容 | 発生箇所 | 解決方法 | 備考 |
 |------|-----------|----------|----------|------|
 | 5/21 | Asset 'PlayerAnimator': Transition 'Player_Attack1 -> Play_Idle' in state 'Player_Attack1' doesn't have an Exit Time or any condition, transition will be ignored UnityEditor.EditorApplication:Internal_RestoreLastOpenedScenes () | Animator | Attack1からIdleに戻る場合の条件指定ミスだったのでHasExitTimeの設定削除 | |
 | 5/21| Player' AnimationEvent has no function name specified!| Animator | Timelineに余計なAnimationEventの指定が入っていたので削除した||
 | 5/22| MissingReferenceException | TilePalleteへ画像を追加したり削除などをしていたらエラーが出るようになっていたので、古いParetteとLibralyの削除から再起動で修正||
 | 5/22| NullReferenceException: Object reference not set to an instance of an object BossHPUI.Update () (at Assets/Scripts/BossHPUI.cs:30)|Boss用のUIを作成したものの、Prefab化の際にオブジェクトの参照が外れていたため、再度設定して修正。同様にPrefab化の際に参照が外れてエラー出ることが多いので注意する|
+| 6/11 | ArgumentException: The Object you want to instantiate is null. UnityEngine.Object.Instantiate (UnityEngine.Object original, UnityEngine.Vector3 position, UnityEngine.Quaternion rotation) (at <5fbef2e591e14a4c91f3c5e34508b853>:0)|PlayerController|これもPrefabのオブジェクト参照設定漏れ|
+| 6/26 | NullReferenceException: Object reference not set to an instance of an object
+InventoryMenuUI.Update () (at Assets/Scripts/Item/InventoryMenuUI.cs:168)| EnableMenu()内でPlayerのオブジェクトのPlayerInputReaderを探しているが、Scene開始時のFadeControllerが実行された際にまだPlayerオブジェクトが生成されていなかった場合nullになっていたため、PlayerInputReaderがみつからずにエラー表示。不要なタイミングでのエラーなので、一回見つからなければスルーする作りにして対応|
 | ... | ... | ... | ... | ... |
 
 > ※ エラーが出たら記録してください。暫定対応と「後で見直す点」も書いて OK です。
@@ -190,6 +238,7 @@ Assets/
 ├─ Animations
 ├─ Font
 ├─ Image
+├─ Item
 ├─ Scripts/
 ├─ Prefabs/
 ├─ Scenes/
@@ -197,17 +246,17 @@ Assets/
 ├─ TextMeshPro
 ├─ TilePalette
 ├─ Tiles
-└─ 
+└─ VFXPACK_IMPACT_WALLCOEUR_FreeVersion
 ```
 
 ---
 
 ## 発表内容（予定） <a id="presentation-plan"></a>
 発表用PowerPoint
-https://1drv.ms/p/c/d9d112398efc3fc8/IQCOsYJdyBBtToEDROVBPRd-AYECvFawsTSa7sXpYR45hic?e=U7rsTG
+
 | 項目 | 内容 |
 |------|------|
-| **タイトル** | Mutant&Vaiant(仮)α版​　|
+| **タイトル** | Mutant&Vaiantβ版​　|
 | **ゲーム紹介（30秒）** | |
 | **アピールポイント** | |
 | **頑張った点・工夫した点** | |

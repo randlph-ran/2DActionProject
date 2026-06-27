@@ -19,8 +19,8 @@ TagManager:
   - OneWayGround
   - Wall
   - EnemyProjectile
-  - 
-  - 
+  - PlayerProjectile
+  - EnemyTouch
   - 
   - 
   - 

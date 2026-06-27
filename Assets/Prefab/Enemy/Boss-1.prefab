@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 2177962240194680311}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: -0.3, z: 0}
+  m_LocalPosition: {x: 1.239, y: -0.563, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -56,12 +56,103 @@ Transform:
   m_GameObject: {fileID: 2428110606810519369}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.944, y: -0.264, z: 0}
+  m_LocalPosition: {x: 0.944, y: -0.195, z: 0}
   m_LocalScale: {x: 0.24000001, y: 0.24000001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7320070065001925756}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4487437923491201004
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2256171981328520481}
+  - component: {fileID: 5802625811761134466}
+  - component: {fileID: 6856695902083798216}
+  m_Layer: 6
+  m_Name: TouchDamage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2256171981328520481
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4487437923491201004}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7320070065001925756}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &5802625811761134466
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4487437923491201004}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: -0.0792433, y: -0.18159992}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.9773374, y: 1.3631997}
+  m_EdgeRadius: 0
+--- !u!114 &6856695902083798216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4487437923491201004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a47e5a458f7b17d449313f27c15d7598, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyTouchDamage
 --- !u!1 &5678617171179878673
 GameObject:
   m_ObjectHideFlags: 0
@@ -87,7 +178,7 @@ Transform:
   m_GameObject: {fileID: 5678617171179878673}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.751, y: -0.606, z: 0}
+  m_LocalPosition: {x: 1.18, y: -0.88, z: 0}
   m_LocalScale: {x: 0.24000001, y: 0.24000001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -118,7 +209,7 @@ Transform:
   m_GameObject: {fileID: 6098234922932202328}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: -0.07542, z: 0}
+  m_LocalPosition: {x: 1.265, y: -0.3, z: 0}
   m_LocalScale: {x: 0.24000001, y: 0.24000001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -149,7 +240,7 @@ Transform:
   m_GameObject: {fileID: 9086023751660112129}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.7, y: -0.7, z: 0}
+  m_LocalPosition: {x: -0.788, y: -0.95, z: 0}
   m_LocalScale: {x: 0.24, y: 0.24, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -195,6 +286,7 @@ Transform:
   - {fileID: 1499674319430875639}
   - {fileID: 7851631338989123890}
   - {fileID: 8538087602332882741}
+  - {fileID: 2256171981328520481}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5506972699479269963
@@ -247,7 +339,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -2240994688644343673, guid: bafe71c65de3d1241803165df70a6df6, type: 3}
-  m_Color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -317,7 +409,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.11010575, y: -0.057637513}
+  m_Offset: {x: 0.09085083, y: -0.24603361}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5270262, y: 0.5679455}
@@ -327,8 +419,8 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.2146235, y: 1.4725686}
-  m_EdgeRadius: 0
+  m_Size: {x: 1.5198152, y: 1.0631657}
+  m_EdgeRadius: 0.3
 --- !u!114 &2438158073428606219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -341,8 +433,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e7dde973ce39949add6cf0c888ae3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  maxHP: 8
+  maxHP: 40
   knockbackForce: 2
+  weightLevel: 2
+  weight0Multiplier: 1
+  weight1Multiplier: 0.5
+  weight2Multiplier: 0
+  landingCheck: {fileID: 0}
+  landingCheckRadius: 0.15
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  attack1EffectPrefab: {fileID: 3042519775331041172, guid: 841004c4c6a39e244abe2257394de913, type: 3}
+  attack2EffectPrefab: {fileID: 3042519775331041172, guid: 841004c4c6a39e244abe2257394de913, type: 3}
+  attack3EffectPrefab: {fileID: 4306488877223958017, guid: ecb38e0319a6ad44cbca52d7b5add7a6, type: 3}
+  jumpAttackEffectPrefab: {fileID: 1226031520979461127, guid: 9c692d73cd82e0d409bec909e987a5b8, type: 3}
+  itemEffectPrefab: {fileID: 467751860875805754, guid: 7c6d9bb9c8994364dbe5ba2e32dd4d13, type: 3}
+  dropItem: {fileID: 0}
+  dropCount: 0
+  itemPickupPrefab: {fileID: 0}
+  damageSE: {fileID: 8300000, guid: 89eb45c4476e74c489ea9c2b6cf77d83, type: 3}
+  dieSE: {fileID: 8300000, guid: fc1a782a025fa494baca2e26e2b1a16e, type: 3}
+  isBoss: 1
+  nextSceneOnDeath: S1Clear
+  deathAnimationDuration: 5
 --- !u!114 &4435916279548751840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -355,32 +469,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0100deae85b36cb458b71ae9d104b181, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
-  moveSpeed: 1
-  chaseDistance: 5
-  meleeAttackDistance: 6
+  moveSpeed: 2
+  meleeAttackSE: {fileID: 8300000, guid: 4dcd0a8c73b123f4eac7b18a05237755, type: 3}
+  rangedAttackSE: {fileID: 8300000, guid: 180a1632e6adb32448b81c6f047a268f, type: 3}
+  chaseDistance: 10
+  chaseHeight: 5
+  meleeAttackDistance: 5
   canShoot: 1
-  rangedAttackDistance: 12
-  rangedAttackCooldown: 2.5
+  rangedAttackDistance: 15
+  rangedAttackCooldown: 2
+  projectilePrefab: {fileID: 4541354297831035424, guid: 2caac582ad8794d42a32f53bc18eca73, type: 3}
+  firePoint: {fileID: 1587529983598547597}
   attackCooldown: 2
   attackPoint: {fileID: 8977949324638530059}
   attackRadius: 4
   playerLayer:
     serializedVersion: 2
     m_Bits: 128
+  attackDamage: 10
+  knockbackForce: 20
   wallCheck: {fileID: 1499674319430875639}
   groundCheck: {fileID: 7851631338989123890}
   checkDistance: 1.5
   groundLayer:
     serializedVersion: 2
-    m_Bits: 8
-  attackDamage: 3
-  knockbackForce: 8
+    m_Bits: 264
   weightLevel: 2
-  projectilePrefab: {fileID: -5110534461669590181, guid: 2caac582ad8794d42a32f53bc18eca73, type: 3}
-  firePoint: {fileID: 1587529983598547597}
   retreatDuration: 1.5
   retreatSpeed: 3
-  retreatGroundCheck: {fileID: 0}
+  retreatGroundCheck: {fileID: 8538087602332882741}
+  stunLevel: 2
 --- !u!95 &5000552218476298777
 Animator:
   serializedVersion: 7
