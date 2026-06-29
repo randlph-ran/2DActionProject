@@ -296,8 +296,14 @@ Title
 ## 11. 外部データ取り込み
 	-   Player,Enemy,Item,Storyの各種要素(変数)を外部のデータ(csv)で管轄して読み込めるようにする
 	-   HP,各種効果値,所持SEや画像情報などを設定可能に
-	-   Storyは、テキスト内にタグを仕込み、それを読み込むと演出が発生できるようにする
-
+	-   StoryScript
+        -   使用する`StoryScene名` `ElementNo.`とその要素全般、テキスト内容、BG、BGの明るさ、フェード時間、入力待ち時間、遷移先シーン名、BGM,SE名
+    -   PlayerData
+        -   Attack毎の攻撃力、ノックバック力、スタン時間、Attack用SEファイル名
+    -   EnemyData
+        -   HP、行動パターン、攻撃力、ノックバック力、ドロップアイテム、ボスフラグ、NextScene、被ダメージSEファイル名
+    -   ItemData
+        -   名前、タイプ、効果値、所持上限、アイコン画像名
 ------------------------------------------------------------------------
 
 ## 12. セーブロード
@@ -306,8 +312,3 @@ Title
     -   ロードはTitleSceneとGameOverSceneで表示
     	-   TitleSceneでは、「NewGame」と「LoadGame」の表示を作り選択させる。「LoadGame」で保存されているデータをロード、Scene頭に飛ばす
     	-   GameOverSceneでは、「Continue」と「Return to Title」の選択を表示。「Continue」でデータロードしてScene頭に飛ばす
-
-
-------------------------------------------------------------------------
-
-
