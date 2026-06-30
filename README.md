@@ -33,7 +33,7 @@
 | **GitHub URL** | `https://github.com/HiroshiKondo2026/2DActionProject` |
 | **作成日** | 2026/06/09 |
 | **Unity バージョン** | 例：Unity 6（URP） |
-| **プレゼンテーション** | [資料はこちらから](https://1drv.ms/p/c/d9d112398efc3fc8/IQCOsYJdyBBtToEDROVBPRd-Ac48HZlFwGcoBmNoGyVR3as?e=W3lA6E) |
+| **プレゼンテーション** | [このプロジェクトのプレゼンテーション資料はこちらから](https://1drv.ms/p/c/d9d112398efc3fc8/IQCOsYJdyBBtToEDROVBPRd-Ac48HZlFwGcoBmNoGyVR3as?e=W3lA6E) |
 | **仕様まとめ** | [仕様](https://github.com/HiroshiKondo2026/2DActionProject/blob/beta_0.5/%E4%BB%95%E6%A7%98/2DAction_Beta_Spec.md) |
 ---
 
