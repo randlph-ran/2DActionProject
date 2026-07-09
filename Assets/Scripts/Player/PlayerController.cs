@@ -18,9 +18,6 @@ public class PlayerController : MonoBehaviour
     // Rigidbody2D
     private Rigidbody2D rb;
 
-    // SpriteRenderer
-    private SpriteRenderer spriteRenderer;
-
     // PlayerHealth
     private PlayerHealth playerHealth;
 
@@ -364,40 +361,12 @@ public class PlayerController : MonoBehaviour
     private bool previousGuardState;
 
     // =========================
-    // 残像エフェクト設定（ジャンプ・攻撃などPlayerの複数アクションで共用）
+    // 残像エフェクト
     // =========================
-    [Header("残像エフェクト")]
-    // 分身の表示時間（フェードアウトにかかる時間）
-    [Tooltip("分身の表示時間（フェードアウトにかかる時間）")]
-    [SerializeField]
-    private float afterimageDuration = 0.5f;
-
-    // 分身生成時の初期アルファ値
-    [Tooltip("分身生成時の初期アルファ値")]
-    [SerializeField]
-    private float afterimageStartAlpha = 0.5f;
-
-    // 分身の色味（幽体っぽい青白さなどを調整する用。アルファはafterimageStartAlphaで管理）
-    [Tooltip("分身の色味（幽体っぽい青白さなどを調整する用。アルファはafterimageStartAlphaで管理）")]
-    [SerializeField]
-    private Color afterimageTintColor = new Color(0.6f, 0.8f, 1f);
-
-    // ジャンプ軌跡用の分身の生成間隔（接地するまでこの間隔で連続生成する）
-    [Tooltip("ジャンプ軌跡用の分身の生成間隔（接地するまでこの間隔で連続生成する）")]
-    [SerializeField]
-    private float jumpAfterimageSpawnInterval = 0.05f;
-
-    // 軌跡用の分身生成コルーチンが実行中か
-    private bool isJumpAfterimageActive;
-
-    /// <summary>
-    /// ジャンプ攻撃のスタン時間を計算するための、最後にジャンプ攻撃を受けた時間
-    /// ジャンプ中（着地待ち）かどうか。isGroundedではUpdate内でしか更新されないので
-    /// ジャンプ直後の1フレームはまだtrueのままになってしまうので、
-    /// 2段ジャンプ用のResetJumpCountで着地判定をし、
-    /// falseにすることでコルーチンの停止タイミングを正確にする
-    /// </summary>
-    private bool isAirborneFromJump;
+    // ジャンプ軌跡などの残像生成を担当する汎用コンポーネント。
+    // 表示時間・色・生成間隔などの設定はAfterimageSpawner側で行う。
+    // Player以外（飛び道具など）でも同じコンポーネントを使い回せる。
+    private AfterimageSpawner afterimageSpawner;
 
     private void Start()
     {
@@ -423,8 +392,8 @@ public class PlayerController : MonoBehaviour
         // InventoryManager取得
         inventoryManager = GetComponent<InventoryManager>();
 
-        // SpriteRenderer取得　ジャンプエフェクト用に取得
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        // AfterimageSpawner取得（残像エフェクト用）
+        afterimageSpawner = GetComponent<AfterimageSpawner>();
     }
 
     // 毎フレーム実行
@@ -659,90 +628,11 @@ public class PlayerController : MonoBehaviour
         // ジャンプ回数加算
         jumpCount++;
 
-        // ジャンプしたので着地待ち状態にする
-        isAirborneFromJump = true;
-
-        // ジャンプ軌跡用の分身エフェクトを開始（既に実行中なら多重起動しない）
-        if (!isJumpAfterimageActive)
-        {
-            // コルーチン開始
-            StartCoroutine(JumpAfterimageTrailCoroutine());
-        }
+        // ジャンプ軌跡用の残像トレイルを開始する（着地時にStopTrailで停止する）
+        // 多重起動の防止はAfterimageSpawner.StartTrail()側で行うため、ここでは呼ぶだけでよい
+        afterimageSpawner?.StartTrail();
     }
 
-    // 着地するまで一定間隔で分身エフェクトを生成し続ける（2段ジャンプ目もこの中で継続される）
-    private IEnumerator JumpAfterimageTrailCoroutine()
-    {
-        // 分身生成開始フラグON
-        isJumpAfterimageActive = true;
-        // 着地判定するまでループ
-        while (isAirborneFromJump)
-        {
-            // 分身生成
-            SpawnAfterimage();
-            // 指定間隔待機してから次の分身生成へ
-            yield return new WaitForSeconds(jumpAfterimageSpawnInterval);
-        }
-        // 分身生成終了フラグOFF
-        isJumpAfterimageActive = false;
-    }
-
-    // 半透明な分身GameObjectを1個生成する（ジャンプ・攻撃などどのアクションからでも呼べる汎用処理）
-    private void SpawnAfterimage()
-    {
-        // spriteRendererが無ければ終了
-        if (spriteRenderer == null || spriteRenderer.sprite == null)
-        {
-            return;
-        }
-
-        // 分身用GameObjectを生成
-        GameObject afterimage = new GameObject("Afterimage");
-        // 分身の位置と回転をPlayerと同じにする
-        afterimage.transform.SetPositionAndRotation(transform.position, transform.rotation);
-        // 分身のスケールをPlayerと同じにする（向き反転も含めて）
-        afterimage.transform.localScale = transform.localScale;
-
-        // 分身用SpriteRendererを設定（元Playerの見た目を複製）
-        SpriteRenderer afterimageRenderer = afterimage.AddComponent<SpriteRenderer>();
-        // 元のSpriteとMaterialをコピーして、初期アルファ値を設定
-        afterimageRenderer.sprite = spriteRenderer.sprite;
-        // 重要：Materialも共有することで、分身の色を変えてもPlayerの色に影響が出ないようにする
-        afterimageRenderer.sharedMaterial = spriteRenderer.sharedMaterial;
-        // 色味と初期アルファ値を設定
-        afterimageRenderer.color = new Color(afterimageTintColor.r, afterimageTintColor.g, afterimageTintColor.b, afterimageStartAlpha);
-        // 元のSpriteRendererと同じSortingLayerとOrderを設定
-        afterimageRenderer.sortingLayerID = spriteRenderer.sortingLayerID;
-        afterimageRenderer.sortingOrder = spriteRenderer.sortingOrder;
-        // 元のSpriteRendererと同じFlip状態(向き)を設定
-        afterimageRenderer.flipX = spriteRenderer.flipX;
-        afterimageRenderer.flipY = spriteRenderer.flipY;
-        // 分身をフェードアウトさせるコルーチン開始
-        StartCoroutine(FadeOutAfterimage(afterimageRenderer));
-    }
-
-    // 分身を一定時間でフェードアウトさせて消す
-    private IEnumerator FadeOutAfterimage(SpriteRenderer afterimageRenderer)
-    {
-        // フェードアウト時間の経過を追跡する変数
-        float elapsed = 0f;
-        // 分身の初期色を取得
-        Color startColor = afterimageRenderer.color;
-
-        // フェードアウト処理
-        while (elapsed < afterimageDuration)
-        {
-            // 経過時間を加算
-            elapsed += Time.deltaTime;
-            // アルファ値を線形補間で減少させる
-            float alpha = Mathf.Lerp(startColor.a, 0f, elapsed / afterimageDuration);
-            // 分身の色を更新
-            afterimageRenderer.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
-            yield return null;
-        }
-        // フェードアウト完了後、分身GameObjectを破棄
-        Destroy(afterimageRenderer.gameObject);
-    }
     // 接地判定
     private void CheckGround()
     {
@@ -774,7 +664,7 @@ public class PlayerController : MonoBehaviour
         // 空中ジャンプ攻撃使用フラグリセット
         hasUsedJumpAttack = false;
         // 着地したので軌跡エフェクトの生成を停止する
-        isAirborneFromJump = false;
+        afterimageSpawner?.StopTrail();
         // 着地時にジャンプ攻撃状態を強制リセット（AnimationEventが呼ばれなかった場合のフォールバック）
         if (currentState == PlayerState.Attacking || currentState == PlayerState.JumpAttacking)
         {

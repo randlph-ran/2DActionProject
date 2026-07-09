@@ -702,6 +702,7 @@ GameObject:
   - component: {fileID: -7818320735057109993}
   - component: {fileID: -8307775951181623357}
   - component: {fileID: 2104940646498491382}
+  - component: {fileID: -6714994739539851722}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -915,10 +916,6 @@ MonoBehaviour:
   jumpAttackStopTime: 0.3
   jumpAttackStunRate: 1.5
   isGuarding: 0
-  afterimageDuration: 0.5
-  afterimageStartAlpha: 0.3
-  afterimageTintColor: {r: 0.6, g: 0.8, b: 1, a: 1}
-  jumpAfterimageSpawnInterval: 0.125
 --- !u!114 &2237189157722497506
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1012,6 +1009,22 @@ MonoBehaviour:
   - itemData: {fileID: 11400000, guid: 5b8654a461828374b9dc0a1b5d8f5b68, type: 2}
     count: 5
   equippedItem: {fileID: 11400000, guid: 5b638d8243b1ee84c96f0ce020cf2af4, type: 2}
+--- !u!114 &-6714994739539851722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8392564140115359092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69ccda773a7dd6246b009078e67a2531, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AfterimageSpawner
+  duration: 0.5
+  startAlpha: 0.5
+  tintColor: {r: 0.6, g: 0.8, b: 1, a: 1}
+  spawnInterval: 0.05
 --- !u!1 &8622455235830675196
 GameObject:
   m_ObjectHideFlags: 0
