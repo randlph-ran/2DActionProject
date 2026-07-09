@@ -33,17 +33,49 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float moveSpeed = 5f;
 
-    // Player行動状態（Attacking/Shooting/JumpAttackingは互いに排他）
-    private enum PlayerState
-    {
-        Idle,
-        Attacking,
-        Shooting,
-        JumpAttacking
-    }
-
-    // 現在の行動状態
+    // 現在の行動状態（PlayerStateは独立ファイルPlayerState.csに定義）
     private PlayerState currentState = PlayerState.Idle;
+
+    // =========================
+    // コーディネーター公開インターフェース
+    // 分割した各コンポーネント（PlayerItemActionなど）が
+    // 状態と参照をここから取得する。状態と参照の唯一の持ち主はこのPlayerController。
+    // =========================
+
+    /// <summary>現在の行動状態（各コンポーネントから読み書きされる）</summary>
+    public PlayerState CurrentState { get => currentState; set => currentState = value; }
+
+    /// <summary>接地しているか</summary>
+    public bool IsGrounded => isGrounded;
+
+    /// <summary>右向きか</summary>
+    public bool IsFacingRight => isFacingRight;
+
+    /// <summary>Rigidbody2D参照</summary>
+    public Rigidbody2D Rb => rb;
+
+    /// <summary>Animator参照</summary>
+    public Animator PlayerAnimator => animator;
+
+    /// <summary>PlayerInputReader参照</summary>
+    public PlayerInputReader InputReader => inputReader;
+
+    /// <summary>InventoryManager参照</summary>
+    public InventoryManager InventoryManager => inventoryManager;
+
+    /// <summary>PlayerHealth参照</summary>
+    public PlayerHealth Health => playerHealth;
+
+    /// <summary>
+    /// 地上コンボの状態をリセットする。
+    /// 射撃・ジャンプ攻撃などコンボを中断する行動の開始時に呼ぶ。
+    /// </summary>
+    public void ResetComboState()
+    {
+        canNextCombo = false;
+        comboStep = 0;
+        animator.SetInteger("ComboStep", 0);
+    }
 
     // 次コンボへ進めるか
     private bool canNextCombo = false;
@@ -162,22 +194,6 @@ public class PlayerController : MonoBehaviour
 
 
     //==============================
-    // アイテム
-    //==============================
-
-    [Header("アイテム")]
-
-    // 現在装備中のアイテム
-    // InventoryManagerが管理する装備状態をそのまま参照する
-    private ItemData currentItem => inventoryManager != null ? inventoryManager.EquippedItem : null;
-
-    // 次回発射可能時間
-    private float nextShootTime;
-
-    // 発射方向キャッシュ
-    private Vector2 cachedShootDirection;
-
-    //==============================
     // SE
     //==============================
 
@@ -206,14 +222,6 @@ public class PlayerController : MonoBehaviour
     [Tooltip("ジャンプ攻撃のSE")]
     [SerializeField]
     private AudioClip jumpAttackSE;
-
-    [Tooltip("飛び道具発射ボタン入力時のSE")]
-    [SerializeField]
-    private AudioClip projectileSE;
-
-    [Tooltip("回復アイテム使用時のSE（ShootProjectile()のAnimationEventと同フレームで再生）")]
-    [SerializeField]
-    private AudioClip recoverySE;
 
     // =========================
     // 現在使用中の攻撃情報
@@ -368,6 +376,9 @@ public class PlayerController : MonoBehaviour
     // Player以外（飛び道具など）でも同じコンポーネントを使い回せる。
     private AfterimageSpawner afterimageSpawner;
 
+    // アイテム使用・射撃処理を担当するコンポーネント
+    private PlayerItemAction itemAction;
+
     private void Start()
     {
         // 初期向き設定
@@ -394,6 +405,9 @@ public class PlayerController : MonoBehaviour
 
         // AfterimageSpawner取得（残像エフェクト用）
         afterimageSpawner = GetComponent<AfterimageSpawner>();
+
+        // PlayerItemAction取得（アイテム使用・射撃用）
+        itemAction = GetComponent<PlayerItemAction>();
     }
 
     // 毎フレーム実行
@@ -541,7 +555,7 @@ public class PlayerController : MonoBehaviour
         // 同一フレームにAttackとItemが同時入力されても
         // Attack側が先に currentState=JumpAttacking をセットするので
         // CanShoot()のcurrentStateチェックが正しく機能するようになる
-        HandleShootInput();
+        itemAction?.HandleShootInput();
 
     }
 
@@ -1237,301 +1251,6 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Projectileを発射する処理
-    /// </summary>
-    private void ShootProjectile()
-    {
-        Debug.Log($"ShootProjectile呼び出し frame:{Time.frameCount} clip:{animator.GetCurrentAnimatorClipInfo(0)[0].clip.name}");
-        // currentStateがShootingでなければ発射しない
-        // アニメ遷移の巻き込みによる誤発火を防ぐ
-        if (currentState != PlayerState.Shooting) return;
-        if (hasShot) return; // ← 追加：1回押しにつき1発のみ
-        Debug.Log("ShootProjectile");
-
-        if (currentItem == null) return;
-
-        // 回復アイテムならHPを回復して消費するだけで終了（Projectile生成はしない）
-        if (currentItem.ItemType == ItemType.Recovery)
-        {
-            // 回復SE再生（AnimationEventのこのタイミングと同フレームで再生）
-            SoundManager.Instance?.PlaySE(recoverySE);
-            playerHealth.Heal(currentItem.Value);
-            ConsumeItemUse();
-            hasShot = true; // 1回押しにつき1回のみ実行されるようにする
-            return;
-        }
-
-        if (currentItem.ItemType != ItemType.Projectile) return;
-
-        // GetShootDirection() ではなくキャッシュを使う
-        Vector2 direction = cachedShootDirection;
-
-        int dmg = currentItem.Value;
-        float knockback = currentItem.KnockbackPower;
-        float launch = currentItem.LaunchPower;
-
-        Vector3 spawnPos = transform.position + (Vector3)(direction * 0.5f);
-        Projectile proj = Instantiate(
-            currentItem.ProjectilePrefab.GetComponent<Projectile>(),
-            spawnPos,
-            Quaternion.identity
-        );
-        Debug.Log($"Projectile生成 pos:{spawnPos} direction:{direction} instanceID:{proj.GetInstanceID()}");
-        proj.Initialize(direction, dmg, knockback, launch, gameObject);
-        ConsumeItemUse();
-    }
-
-
-
-    // 8方向対応の射撃方向決定処理
-    private Vector2 GetShootDirection()
-    {
-        // 方向ベクトル
-        Vector2 dir = Vector2.zero;
-        // 入力取得
-        Vector2 input = inputReader.MoveInput;
-
-        // 入力がなければ向きで決定
-        if (input == Vector2.zero)
-        {
-            // 右向きなら右、左向きなら左
-            return isFacingRight ? Vector2.right : Vector2.left;
-        }
-
-        // 8方向そのまま正規化
-        dir = new Vector2(input.x, input.y);
-        // 斜めも含めて正規化して返す
-        return dir.normalized;
-    }
-
-    /// <summary>
-    /// アイテム装備
-    /// InventoryManager側の装備状態を更新する
-    /// </summary>
-    public void EquipItem(ItemData item)
-    {
-        // 未指定なら終了
-        if (item == null)
-        {
-            return;
-        }
-        // InventoryManagerへ装備を依頼
-        inventoryManager?.EquipItem(item);
-    }
-
-    /// <summary>
-    /// アイテム解除
-    /// InventoryManager側の装備状態を更新する
-    /// </summary>
-    public void UnequipItem()
-    {
-        // InventoryManagerへ装備解除を依頼
-        inventoryManager?.UnequipItem();
-    }
-
-    /// <summary>
-    /// アイテム使用回数を消費する
-    /// 所持数を1消費し、0になればInventoryManager側で自動的に装備解除される
-    /// </summary>
-    private void ConsumeItemUse()
-    {
-        if (inventoryManager == null)
-        {
-            return;
-        }
-
-        // 装備中アイテムを使用（内部で所持数を1消費する）
-        ItemData usedItem = inventoryManager.UseEquippedItem();
-
-        if (usedItem != null)
-        {
-            Debug.Log("残り所持数：" + inventoryManager.GetItemCount(usedItem));
-        }
-    }
-
-    /// <summary>
-    /// 発射可能か判定
-    /// </summary>
-    /// <summary>
-    /// アイテム使用可能か判定
-    /// </summary>
-    private bool CanShoot()
-    {
-        Debug.Log($"CanShoot呼び出し frame:{Time.frameCount} currentState:{currentState} isGrounded:{isGrounded}");
-
-        // CanShoot()のDebug.Logを以下に変更
-        Debug.Log($"CanShoot確認 frame:{Time.frameCount} - currentState:{currentState} / IsInTransition:{animator.IsInTransition(0)}");
-        // 未装備
-        if (currentItem == null)
-        {
-            return false;
-        }
-
-        // 空中使用不可のアイテムなら、地上にいない場合は使用不可
-        if (!currentItem.CanUseInAir && !isGrounded)
-        {
-            return false;
-        }
-
-        // 攻撃中・アイテム使用中・ジャンプ攻撃中はItem使用不可
-        if (currentState != PlayerState.Idle)
-        {
-            return false;
-        }
-
-        // ノックバック中
-        if (playerHealth.IsKnockback)
-        {
-            return false;
-        }
-
-        // ガード中
-        if (isGuarding)
-        {
-            return false;
-        }
-
-        // Animator遷移中
-        // アニメが切り替わる途中フレームでItem Triggerをセットすると
-        // AnimatorがTriggerを消費できずに残留し、isShooting=trueのまま
-        // EndShoot()が呼ばれない行動不能バグの原因になるため弾く
-        if (animator.IsInTransition(0))
-        {
-            return false;
-        }
-
-        // クールダウン中
-        if (Time.time < nextShootTime)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    /// <summary>
-    /// 射撃入力処理
-    /// </summary>
-    private void HandleShootInput()
-    {
-        if (currentItem == null) return;
-
-        if (currentItem.CanAutoFire)
-        {
-            if (inputReader.ShootHeld && CanShoot())
-            {
-                Debug.Log($"StartShooting呼び出し(AutoFire) frame:{Time.frameCount}");
-                StartShooting();
-            }
-        }
-        else
-        {
-            if (inputReader.ShootPressed && CanShoot())
-            {
-                Debug.Log($"StartShooting呼び出し(Press) frame:{Time.frameCount}");
-                StartShooting();
-            }
-        }
-    }
-
-    // 発射済みフラグ（AnimationEventで発射処理を呼ぶため、1回だけ発射するようにする）
-    private bool hasShot = false;
-
-    /// <summary>
-    /// アイテム使用開始の共通処理
-    /// </summary>
-    private void StartShooting()
-    {
-        hasShot = false; // 発射ボタンを押すたびにリセット
-
-        // 飛び道具なら入力時点でSE再生（命中・不命中は問わない）
-        // 回復はShootProjectile()内のAnimationEventタイミングで別途再生する
-        if (currentItem.ItemType == ItemType.Projectile)
-        {
-            SoundManager.Instance?.PlaySE(projectileSE);
-        }
-
-        // ボタンを押した瞬間の方向を保存
-        cachedShootDirection = GetShootDirection();
-
-        // Animator用の射撃方向 0 = 横
-        int shootDirection = 0;
-
-        // 1 = 上方向
-        if (cachedShootDirection.y > 0.5f)
-        {
-            shootDirection = 1;
-        }
-        // 2 = 下方向
-        else if (cachedShootDirection.y < -0.5f)
-        {
-            shootDirection = 2;
-        }
-
-        // Animatorへ送る
-        animator.SetInteger("ShootDirection", shootDirection);
-
-        // アイテム種別をAnimatorへ送る（0:Projectile, 1:Recovery, 2:Special）
-        animator.SetInteger("ItemType", (int)currentItem.ItemType);
-
-        // 地上コンボ状態を終了
-        canNextCombo = false;
-        comboStep = 0;
-        animator.SetInteger("ComboStep", 0);
-
-        // 残留TriggerをリセットしてからセットすることでAnimator不整合を防ぐ
-        //animator.ResetTrigger("Item");
-        //animator.SetTrigger("Item");
-
-        // 空中発射時は重力と速度を停止し、座標を固定する
-        // 着地と発射アニメ完走のタイミングが競合して
-        // 地上Stateへ誤って引き込まれる不安定挙動を防ぐ
-        isShootGravityFrozen = !isGrounded;
-        if (isShootGravityFrozen)
-        {
-            shootOriginalGravity = rb.gravityScale;
-            rb.gravityScale = 0f;
-            rb.linearVelocity = Vector2.zero;
-        }
-
-        currentState = PlayerState.Shooting;
-        animator.SetBool("isShooting", true);
-        nextShootTime = Time.time + currentItem.Cooldown;
-
-        // Animatorの遷移競合でAnimationEvent(ShootProjectile/EndShoot)が
-        // 発火しなかった場合の保険。一定時間後も発射中のままなら強制終了する
-        if (shootTimeoutCoroutine != null)
-        {
-            StopCoroutine(shootTimeoutCoroutine);
-        }
-        shootTimeoutCoroutine = StartCoroutine(ShootTimeoutCoroutine(currentItem.UseTimeoutDuration));
-    }
-
-    // 空中発射中に停止させた重力の復元用
-    private float shootOriginalGravity;
-
-    // 空中発射時に重力を停止したか
-    private bool isShootGravityFrozen;
-
-    // 発射タイムアウト監視用コルーチン
-    private Coroutine shootTimeoutCoroutine;
-
-
-    // AnimationEventが発火しなかった場合のフォールバック処理
-    // タイムアウト秒数はItemDataごとに設定（アイテムによってアニメーション再生時間が異なるため）
-    private IEnumerator ShootTimeoutCoroutine(float timeoutDuration)
-    {
-        yield return new WaitForSeconds(timeoutDuration);
-
-        // タイムアウトしてもまだ発射中状態が続いていたら強制終了する
-        if (currentState == PlayerState.Shooting)
-        {
-            Debug.LogWarning($"ShootTimeout発火 frame:{Time.frameCount} AnimationEventが来なかったため強制EndShoot");
-            EndShoot();
-        }
-    }
-
-    /// <summary>
     /// 攻撃SE再生（AnimationEventから呼ぶ。各Attackクリップの発生フレームに配置する）
     /// </summary>
     public void PlayAttack1SE() => SoundManager.Instance?.PlaySE(attack1SE);
@@ -1542,36 +1261,6 @@ public class PlayerController : MonoBehaviour
     /// ジャンプ攻撃SE再生（AnimationEventから呼ぶ）
     /// </summary>
     public void PlayJumpAttackSE() => SoundManager.Instance?.PlaySE(jumpAttackSE);
-
-    /// <summary>
-    /// 射撃アニメ終了処理
-    /// AnimationEvent から呼ぶ
-    /// </summary>
-    public void EndShoot()
-    {
-        Debug.Log($"EndShoot呼び出し frame:{Time.frameCount}");
-        currentState = PlayerState.Idle;
-        hasShot = false; // ← 追加：念のためリセット
-        // Triggerが残っていた場合のリセット
-        //animator.ResetTrigger("Item");
-
-        // Animatorを通常状態へ戻す
-        animator.SetBool("isShooting", false);
-
-        // タイムアウト監視を停止する
-        if (shootTimeoutCoroutine != null)
-        {
-            StopCoroutine(shootTimeoutCoroutine);
-            shootTimeoutCoroutine = null;
-        }
-
-        // 空中発射で止めていた重力を復帰する
-        if (isShootGravityFrozen)
-        {
-            rb.gravityScale = shootOriginalGravity;
-            isShootGravityFrozen = false;
-        }
-    }
 
     private void UpdateGuardState()
     {

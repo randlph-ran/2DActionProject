@@ -60,8 +60,12 @@ PlayerController.Update() が各系の Tick を上から順に呼ぶ台本にな
 </ul>
 <ol>
 <li>Effects<br />
-⇒これは別で単独の残像処理クラスとして分ける</li>
-<li>ItemAction</li>
+⇒これは別で単独の残像処理クラスとして分ける<br />
+<strong><span style="color:#FF0000">　⇒済</span></strong></li>
+<li>ItemAction<br />
+⇒PlayerItemAction.cs … 射撃・回復・アイテム消費・クールダウン・空中重力停止を担当<br />
+⇒PlayerState.cs … enumを独立ファイルへ（コーディネーター方式の土台）<br />
+<strong><span style="color:#FF0000">　⇒済</span></strong></li>
 <li>Combat</li>
 <li>Movement</li>
 <li>Controller整理（影響が閉じている塊から）</li>

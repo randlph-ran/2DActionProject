@@ -703,6 +703,7 @@ GameObject:
   - component: {fileID: -8307775951181623357}
   - component: {fileID: 2104940646498491382}
   - component: {fileID: -6714994739539851722}
+  - component: {fileID: 4121560635172032402}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -889,8 +890,6 @@ MonoBehaviour:
   attack2SE: {fileID: 8300000, guid: 1e173c7ac40bfcb44b303080bbfde990, type: 3}
   attack3SE: {fileID: 8300000, guid: fed662953cfe033428dffeab537eab21, type: 3}
   jumpAttackSE: {fileID: 8300000, guid: 4757368ed2f49ee449372daafb4b7af2, type: 3}
-  projectileSE: {fileID: 8300000, guid: 1d9e415de16742744ad9fe0cda160a1f, type: 3}
-  recoverySE: {fileID: 8300000, guid: 27dda3d27168bf84889b19f84fd8db7b, type: 3}
   attackDM: 3
   attack1Knockback: 1.1
   attack2Knockback: 1.5
@@ -1025,6 +1024,20 @@ MonoBehaviour:
   startAlpha: 0.5
   tintColor: {r: 0.6, g: 0.8, b: 1, a: 1}
   spawnInterval: 0.05
+--- !u!114 &4121560635172032402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8392564140115359092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e22b9f5621af464ba7e636507dec713, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerItemAction
+  projectileSE: {fileID: 8300000, guid: 1d9e415de16742744ad9fe0cda160a1f, type: 3}
+  recoverySE: {fileID: 8300000, guid: 27dda3d27168bf84889b19f84fd8db7b, type: 3}
 --- !u!1 &8622455235830675196
 GameObject:
   m_ObjectHideFlags: 0
