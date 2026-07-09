@@ -267,6 +267,7 @@ Assets/
 ## 参考資料 <a id="references"></a>
 
 | サイト名（書籍名） | 内容 | URL |
+|------|------|------|
 |ｘ|ＡＩが提示するbool管理をやめた方がいいという内容|https://x.com/NAITOTokihiro/status/2064178752704467126?s=20|
 | 魔王魂 |SE、BGMの使用| https://maou.audio/ |
 | 効果音ラボ |SEの使用 | https://soundeffect-lab.info/ |
