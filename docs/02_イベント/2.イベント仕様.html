@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>2.イベント仕様</title>
+<style>
+body { margin:0; font-family: 'Yu Gothic UI', 'Meiryo', sans-serif; background:#ffffff; color:#000000; }
+/* 画面上部の帯。全タブ分のボタン(.tab-button)を横並びで表示する */
+.tabbar { background:#2d2d30; padding:8px 8px 0 8px; }
+.tab-button { margin-right:4px; padding:8px 14px; border:none; border-radius:4px 4px 0 0; cursor:pointer; background:#555; color:#fff; font-size:14px; }
+/* 現在選択中のタブのボタンだけ色を変えて強調する。JSのshowTab()がこのクラスを付け外しする */
+.tab-button.active { background:#007acc; }
+/* サイドバーと本文を横並びにする2カラムレイアウト */
+.layout { display:flex; align-items:flex-start; }
+.sidebar { width:220px; flex-shrink:0; border-right:1px solid #ddd; box-sizing:border-box; min-height:100vh; }
+/* 各タブ分のリンク一覧(div)。既定では全て非表示にし、.active が付いているものだけを表示する。
+   これにより「全タブ分のサイドバーを埋め込みつつ、見た目には1つしか出さない」を実現している。
+   paddingとmin-heightをこちら側に持たせることで、タブごとの背景色(インラインスタイル)が
+   サイドバー全体を隙間なく塗りつぶすようにしている */
+.sidebar-list { display:none; padding:12px; box-sizing:border-box; color:#333; }
+.sidebar-list.active { display:block; min-height:100vh; }
+/* リンクの文字色は親(.sidebar-list)の色を継承する。タブごとのインラインスタイルで
+   color を指定した場合、それがそのままリンクの文字色にも反映されるようにするため */
+.sidebar-list a { display:block; padding:6px 4px; color:inherit; text-decoration:none; border-radius:4px; }
+.sidebar-list a:hover { background:rgba(128,128,128,0.15); }
+/* 「今まさに見ているこのページ」へのリンクを、現在地としてハイライトする */
+.sidebar-list a.current { font-weight:bold; color:#007acc; background:#eaf4fc; }
+.content { flex:1; padding:24px; min-width:0; }
+/* 画像がコンテンツ幅からはみ出さないよう自動縮小する（プレビュー/単体HTML出力と同じ考え方） */
+.content img { max-width:100%; height:auto; }
+/* テーブルに罫線を付ける（プレビュー/単体HTML出力と同じ考え方） */
+.content table { border-collapse: collapse; }
+.content th, .content td { border: 1px solid #999; padding: 4px 8px; }
+.content th { background-color: #f0f0f0; }
+</style>
+</head>
+<body>
+<div class="tabbar"><button type="button" data-tab="TOP" data-first-page="../TOP/1.%E6%A6%82%E8%A6%81.html" class="tab-button">TOP</button><button type="button" data-tab="01_基本仕様" data-first-page="../01_%E5%9F%BA%E6%9C%AC%E4%BB%95%E6%A7%98/1.%E6%A6%82%E8%A6%81.html" class="tab-button">01_基本仕様</button><button type="button" data-tab="02_イベント" data-first-page="../02_%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88/1.%E6%A6%82%E8%A6%81.html" class="tab-button active">02_イベント</button><button type="button" data-tab="03_Player" data-first-page="../03_Player/1.%E6%A6%82%E8%A6%81.html" class="tab-button">03_Player</button><button type="button" data-tab="04_Stage" data-first-page="../04_Stage/1.%E6%A6%82%E8%A6%81.html" class="tab-button">04_Stage</button><button type="button" data-tab="05_Enemy" data-first-page="../05_Enemy/1.%E6%A6%82%E8%A6%81.html" class="tab-button">05_Enemy</button><button type="button" data-tab="06_Menu" data-first-page="../06_Menu/1.%E6%A6%82%E8%A6%81.html" class="tab-button">06_Menu</button><button type="button" data-tab="07_Item" data-first-page="../07_Item/1.%E6%A6%82%E8%A6%81.html" class="tab-button">07_Item</button><button type="button" data-tab="08_BGM,SE" data-first-page="../08_BGM%2CSE/1.%E6%A6%82%E8%A6%81.html" class="tab-button">08_BGM,SE</button><button type="button" data-tab="09_その他1" data-first-page="../09_%E3%81%9D%E3%81%AE%E4%BB%961/1.%E6%A6%82%E8%A6%81.html" class="tab-button">09_その他1</button><button type="button" data-tab="99_その他2" data-first-page="../99_%E3%81%9D%E3%81%AE%E4%BB%962/1.%E6%A6%82%E8%A6%81.html" class="tab-button">99_その他2</button></div>
+<div class="layout">
+<div class="sidebar"><div class="sidebar-list" data-tab="TOP"><a href="../TOP/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a><a href="../TOP/2.%E4%BD%9C%E6%A5%AD%E3%83%AA%E3%82%B9%E3%83%88%28%E3%83%A1%E3%83%A2%29.html" class="">2.作業リスト(メモ)</a><a href="../TOP/3.%E4%BD%9C%E6%A5%AD%E5%84%AA%E5%85%88%E5%BA%A6.html" class="">3.作業優先度</a><a href="../TOP/4.PlayerController%E3%83%AA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%AA%E3%83%B3%E3%82%B0.html" class="">4.PlayerControllerリファクタリング</a></div><div class="sidebar-list" data-tab="01_基本仕様"><a href="../01_%E5%9F%BA%E6%9C%AC%E4%BB%95%E6%A7%98/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a><a href="../01_%E5%9F%BA%E6%9C%AC%E4%BB%95%E6%A7%98/2.%E6%96%B9%E9%87%9D.html" class="">2.方針</a><a href="../01_%E5%9F%BA%E6%9C%AC%E4%BB%95%E6%A7%98/3.Scene%E3%83%95%E3%83%AD%E3%83%BC.html" class="">3.Sceneフロー</a><a href="../01_%E5%9F%BA%E6%9C%AC%E4%BB%95%E6%A7%98/4.%E6%93%8D%E4%BD%9C.html" class="">4.操作</a></div><div class="sidebar-list active" data-tab="02_イベント"><a href="../02_%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a><a href="../02_%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88/2.%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E4%BB%95%E6%A7%98.html" class="current">2.イベント仕様</a><a href="../02_%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88/3.TxtData%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88.html" class="">3.TxtDataフォーマット</a></div><div class="sidebar-list" data-tab="03_Player"><a href="../03_Player/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="04_Stage"><a href="../04_Stage/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="05_Enemy"><a href="../05_Enemy/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="06_Menu"><a href="../06_Menu/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="07_Item"><a href="../07_Item/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="08_BGM,SE"><a href="../08_BGM%2CSE/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="09_その他1"><a href="../09_%E3%81%9D%E3%81%AE%E4%BB%961/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="99_その他2"><a href="../99_%E3%81%9D%E3%81%AE%E4%BB%962/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div></div>
+<div class="content"><h1 id="section">イベント仕様</h1>
+<h3 id="section-1">構成</h3>
+<ul>
+<li>共通スクリプト（StoryEventScene）で制御</li>
+<li>背景1枚絵＋ストーリーテキストのページを1〜9枚まで設定可能</li>
+<li>背景BGの明るさをInspectorで調節可能。基本的に明るさを下げてテキストを見やすく表示する</li>
+<li>ページのテキストをフェードインさせながら表示する。フェードインの速度もInspectorで調整可能。</li>
+<li>決定ボタン/Enter/クリックでページ送り、最終ページで次Sceneへ遷移</li>
+<li>ページ送り時・Scene遷移時でそれぞれ別のSEを設定可能</li>
+<li>Scene遷移直前に<code>GameManager.ResetGameState()</code>を呼び、Stage側のフェード演出と整合させる</li>
+</ul>
+<h3 id="stage">各Stage開始時のフェード演出（修正）</h3>
+<ul>
+<li>Stage開始時はStageを黒い板で塞いだ状態でサブタイトルを表示、そこからゲーム画面をフェードインしてスタートする
+<ul>
+<li>フェードイン中に大きなコマ落ちが発生すると、1フレーム目からフェードが進んでしまうのを防ぐため、1フレームあたりの進行量に上限を設定している</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<script>
+// 指定したタブ名に対応するサイドバー・タブボタンだけを active にし、他は非表示/非アクティブにする
+// （段落が1つも無いタブをクリックした場合の、サイドバー表示切り替えのみのフォールバック用）
+function showTab(name) {
+  document.querySelectorAll('.sidebar-list').forEach(function (el) { el.classList.toggle('active', el.getAttribute('data-tab') === name); });
+  document.querySelectorAll('.tab-button').forEach(function (el) { el.classList.toggle('active', el.getAttribute('data-tab') === name); });
+}
+// 各タブボタンのクリックで、そのタブの最初の段落ページへ実際に遷移する。
+// これにより、サイドバーの表示だけでなく右側の本文も正しく切り替わる。
+document.querySelectorAll('.tab-button').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var firstPage = btn.getAttribute('data-first-page');
+    if (firstPage) {
+      window.location.href = firstPage;
+    } else {
+      showTab(btn.getAttribute('data-tab'));
+    }
+  });
+});
+</script>
+</body>
+</html>
