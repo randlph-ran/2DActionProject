@@ -6,7 +6,7 @@
 
 ---
 ## 仕様書
-[仕様書はこちらから](https://github.com/HiroshiKondo2026/2DActionProject/blob/beta_0.5/%E4%BB%95%E6%A7%98/2DAction_Beta_Spec.md)
+[仕様書はこちらから：https://randlph-ran.github.io/2DActionProject/](https://randlph-ran.github.io/2DActionProject/)
 
 ## 目次
 - [制作者情報](#author-info)
