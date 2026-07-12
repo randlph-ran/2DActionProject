@@ -1,6 +1,13 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Playerのコーディネーター。
+/// 状態（行動状態・接地・向き）と各種参照の唯一の持ち主となり、
+/// 分割した各コンポーネント（PlayerCombat / PlayerItemAction / AfterimageSpawner）へ
+/// それらを提供する。移動・ジャンプ・接地判定・向き・ガードはこのクラスが直接担当する。
+/// Update() が各系の処理を順に呼ぶ司令塔（集中制御）。
+/// </summary>
 public class PlayerController : MonoBehaviour
 {
     // PlayerInputReader
@@ -9,11 +16,8 @@ public class PlayerController : MonoBehaviour
     // Animator
     private Animator animator;
 
-    // 攻撃エフェクトPrefab
+    // 攻撃エフェクトPrefab（未使用：将来整理予定）
     [SerializeField] private GameObject slashEffectPrefab;
-
-    // 現在のコンボ段階（1〜3）
-    private int comboStep = 0;
 
     // Rigidbody2D
     private Rigidbody2D rb;
@@ -38,7 +42,7 @@ public class PlayerController : MonoBehaviour
 
     // =========================
     // コーディネーター公開インターフェース
-    // 分割した各コンポーネント（PlayerItemActionなど）が
+    // 分割した各コンポーネント（PlayerCombat / PlayerItemActionなど）が
     // 状態と参照をここから取得する。状態と参照の唯一の持ち主はこのPlayerController。
     // =========================
 
@@ -66,29 +70,21 @@ public class PlayerController : MonoBehaviour
     /// <summary>PlayerHealth参照</summary>
     public PlayerHealth Health => playerHealth;
 
+    /// <summary>現在ガード中か</summary>
+    public bool IsGuarding => isGuarding;
+
     /// <summary>
     /// 地上コンボの状態をリセットする。
     /// 射撃・ジャンプ攻撃などコンボを中断する行動の開始時に呼ぶ。
+    /// 実体はPlayerCombat側にあるため委譲する。
     /// </summary>
-    public void ResetComboState()
-    {
-        canNextCombo = false;
-        comboStep = 0;
-        animator.SetInteger("ComboStep", 0);
-    }
-
-    // 次コンボへ進めるか
-    private bool canNextCombo = false;
-
+    public void ResetComboState() => combat?.ResetComboState();
 
     // ジャンプ力
     [Header("ジャンプ")]
     [Tooltip("ジャンプ力")]
     [SerializeField]
     private float jumpPower = 12f;
-
-    // 空中ジャンプ攻撃使用済みか
-    private bool hasUsedJumpAttack;
 
     // 右向き判定
     private bool isFacingRight = true;
@@ -125,74 +121,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private LayerMask groundLayer;
 
-
-    // =========================
-    // Attack1設定
-    // =========================
-    [Header("攻撃 - Attack1")]
-
-    // Attack1の攻撃位置オフセット
-    [Tooltip("Attack1の攻撃位置オフセット")]
-    [SerializeField]
-    private Vector2 attack1Offset;
-
-    // Attack1の攻撃範囲
-    [Tooltip("Attack1の攻撃範囲")]
-    [SerializeField]
-    private float attack1Radius = 1.0f;
-
-
-    // =========================
-    // Attack2設定
-    // =========================
-    [Header("攻撃 - Attack2")]
-
-    // Attack2の攻撃位置オフセット
-    [Tooltip("Attack2の攻撃位置オフセット")]
-    [SerializeField]
-    private Vector2 attack2Offset;
-
-    // Attack2の攻撃範囲
-    [Tooltip("Attack2の攻撃範囲")]
-    [SerializeField]
-    private float attack2Radius = 1.2f;
-
-
-    // =========================
-    // Attack3設定
-    // =========================
-    [Header("攻撃 - Attack3")]
-
-    // Attack3の攻撃位置オフセット
-    [Tooltip("Attack3の攻撃位置オフセット")]
-    [SerializeField]
-    private Vector2 attack3Offset;
-
-    // Attack3の攻撃範囲
-    [Tooltip("Attack3の攻撃範囲")]
-    [SerializeField]
-    private float attack3Radius = 1.5f;
-
-    // Attack1浮かせ力
-    [Header("攻撃 - 効果")]
-    [Tooltip("Attack1浮かせ力")]
-    [SerializeField]
-    private float attack1LaunchPower = 1.8f;
-
-    // Attack2浮かせ力
-    [Tooltip("Attack2浮かせ力")]
-    [SerializeField]
-    private float attack2LaunchPower = 0f;
-
-    // Attack3浮かせ力
-    [Tooltip("Attack3浮かせ力")]
-    [SerializeField]
-    private float attack3LaunchPower = 0f;
-
-    // 現在の浮かせ力
-    private float currentLaunchPower;
-
-
     //==============================
     // SE
     //==============================
@@ -206,70 +134,6 @@ public class PlayerController : MonoBehaviour
     [Tooltip("ジャンプ時のSE（2段ジャンプも共通）")]
     [SerializeField]
     private AudioClip jumpSE;
-
-    [Tooltip("地上攻撃1段目のSE")]
-    [SerializeField]
-    private AudioClip attack1SE;
-
-    [Tooltip("地上攻撃2段目のSE")]
-    [SerializeField]
-    private AudioClip attack2SE;
-
-    [Tooltip("地上攻撃3段目のSE")]
-    [SerializeField]
-    private AudioClip attack3SE;
-
-    [Tooltip("ジャンプ攻撃のSE")]
-    [SerializeField]
-    private AudioClip jumpAttackSE;
-
-    // =========================
-    // 現在使用中の攻撃情報
-    // =========================
-
-    // 現在の攻撃位置
-    private Vector2 currentAttackOffset;
-
-    // 現在の攻撃範囲
-    private float currentAttackRadius;
-
-    [Header("攻撃 - 共通")]
-    [SerializeField]
-    private int attackDM = 1;
-
-    // Attack1用ノックバック
-    [Tooltip("Attack1用ノックバック")]
-    [SerializeField]
-    private float attack1Knockback = 2f;
-
-    // Attack2用ノックバック
-    [Tooltip("Attack2用ノックバック")]
-    [SerializeField]
-    private float attack2Knockback = 3f;
-
-    // Attack3用ノックバック
-    [Tooltip("Attack3用ノックバック")]
-    [SerializeField]
-    private float attack3Knockback = 8f;
-
-    // 敵Layer
-    [Tooltip("敵Layer")]
-    [SerializeField]
-    private LayerMask enemyLayer;
-
-    // デバッグ用攻撃Gizmo表示フラグ
-    private bool isAttackGizmoVisible = false;
-
-    [Header("デバッグ/表示")]
-    // 攻撃範囲を常時表示するか
-    [Tooltip("攻撃範囲を常時表示するか")]
-    [SerializeField]
-    private bool alwaysShowAttackGizmo = true;
-
-    // Gizmo表示時間
-    [Tooltip("Gizmo表示時間")]
-    [SerializeField]
-    private float attackGizmoDuration = 0.2f;
 
     //Weight負け中移動停止フラグ
     private bool isBlocked;
@@ -285,99 +149,28 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private bool startFacingRight = true;
 
-    [Header("攻撃 - 移動")]
-    // 攻撃中の移動距離(Attack1は多め、Attack3は少なめ)
-    [Tooltip("攻撃中の移動距離(Attack1は多め、Attack3は少なめ)")]
-    [SerializeField] private float attack1MoveDistance = 0.55f;
-    [Tooltip("攻撃中の移動距離(Attack1は多め、Attack3は少なめ)")]
-    [SerializeField] private float attack2MoveDistance = 0.55f;
-    [Tooltip("攻撃中の移動距離(Attack1は多め、Attack3は少なめ)")]
-    [SerializeField] private float attack3MoveDistance = 0.275f;
-
-    // コンボ追尾対象 Attack1の攻撃開始時に設定され、Attack1～3の移動で追尾する
-    private Transform comboTarget;
-
-    // 攻撃中の移動がGround切れで途中終了したときに、攻撃終了まで移動させないようにするフラグ
-    private bool isAttackLocked = false;
-
-    // 攻撃終了後の硬直時間（調整ポイント）
-    [Tooltip("攻撃終了後の硬直時間（調整ポイント）")]
-    [SerializeField] private float attack1EndLock = 0.25f;
-    [Tooltip("攻撃終了後の硬直時間（調整ポイント）")]
-    [SerializeField] private float attack2EndLock = 0.12f;
-    [Tooltip("攻撃終了後の硬直時間（調整ポイント）")]
-    [SerializeField] private float attack3EndLock = 0.25f;
-
-
-    // =========================
-    // JumpAttack設定
-    // =========================
-
-    [Header("ジャンプ攻撃")]
-    // 前方判定
-    [Tooltip("前方判定")]
-    [SerializeField]
-    private Vector2 jumpAttackForwardOffset;
-
-    // 下方向判定
-    [Tooltip("下方向判定")]
-    [SerializeField]
-    private Vector2 jumpAttackDownOffset;
-
-    // 判定半径
-    [Tooltip("判定半径")]
-    [SerializeField]
-    private float jumpAttackRadius = 1.0f;
-
-    // ノックバック
-    [Tooltip("ノックバック")]
-    [SerializeField]
-    private float jumpAttackKnockback = 10f;
-
-    // ダメージ
-    [Tooltip("ダメージ")]
-    [SerializeField]
-    private int jumpAttackDamage = 1;
-
-    // ジャンプ攻撃中の移動停止(落下停止)
-    [Tooltip("ジャンプ攻撃中の移動停止(落下停止)")]
-    [SerializeField]
-    private float jumpAttackStopTime = 0.15f;
-
-    // スタン係数
-    // 1.0 = 100%
-    // 2.0 = 200%
-    // 0.5 = 50%
-    [Tooltip("スタン時間")]
-    [SerializeField]
-    private float jumpAttackStunRate = 1.0f;
-
-
     /// <summary>
     /// 現在ガード中か
     /// </summary>
     [SerializeField]
-    [Tooltip("現在ガード状態かどうか（デバッグ確認用）")
-    ]
+    [Tooltip("現在ガード状態かどうか（デバッグ確認用）")]
     private bool isGuarding;
-
-    /// <summary>
-    /// 現在ガード中か
-    /// </summary>
-    public bool IsGuarding => isGuarding;
 
     private bool previousGuardState;
 
     // =========================
-    // 残像エフェクト
+    // 分割コンポーネント参照
     // =========================
+
     // ジャンプ軌跡などの残像生成を担当する汎用コンポーネント。
-    // 表示時間・色・生成間隔などの設定はAfterimageSpawner側で行う。
     // Player以外（飛び道具など）でも同じコンポーネントを使い回せる。
     private AfterimageSpawner afterimageSpawner;
 
     // アイテム使用・射撃処理を担当するコンポーネント
     private PlayerItemAction itemAction;
+
+    // 攻撃処理を担当するコンポーネント
+    private PlayerCombat combat;
 
     private void Start()
     {
@@ -408,6 +201,9 @@ public class PlayerController : MonoBehaviour
 
         // PlayerItemAction取得（アイテム使用・射撃用）
         itemAction = GetComponent<PlayerItemAction>();
+
+        // PlayerCombat取得（攻撃用）
+        combat = GetComponent<PlayerCombat>();
     }
 
     // 毎フレーム実行
@@ -487,49 +283,11 @@ public class PlayerController : MonoBehaviour
             Flip();
         }
 
-        // 攻撃入力
-        if (inputReader.AttackPressed)
+        // 攻撃入力処理（PlayerCombatへ委譲）
+        // trueが返ったら以降の入力処理を打ち切る（元の早期return挙動を維持）
+        if (combat != null && combat.HandleAttackInput())
         {
-            // 空中ならジャンプ攻撃
-            if (!isGrounded)
-            {
-                // ジャンプ攻撃処理
-                HandleJumpAttack();
-                return;
-            }
-
-            // 地上攻撃が可能か判定
-            if (!CanAttack())
-            {
-                Debug.Log($"[INPUT] CanAttack()がfalseで弾かれた frame:{Time.frameCount}");
-                return;
-            }
-            // 攻撃ロック中なら攻撃できない
-            if (isAttackLocked)
-            {
-                Debug.Log($"[INPUT] isAttackLockedで弾かれた frame:{Time.frameCount}");
-                return;
-            }
-            // 地上なら通常攻撃
-            if (currentState != PlayerState.Attacking)
-            {
-                Debug.Log($"[INPUT] 新規攻撃開始 frame:{Time.frameCount}");
-                // 攻撃処理
-                HandleAttackInput();
-            }
-            // 攻撃中で、次コンボ受付中なら、次のコンボへ進める
-            else if (canNextCombo)
-            {
-                Debug.Log($"[INPUT] コンボ継続 frame:{Time.frameCount}");
-                // 攻撃処理
-                HandleAttackInput();
-            }
-            else
-            {
-                Debug.Log($"[INPUT] 入力は来たが無視された(currentState={currentState}, canNextCombo=false) frame:{Time.frameCount}");
-            }
-            Debug.Log("攻撃開始");
-            Debug.Log("現在コンボ段数：" + comboStep);
+            return;
         }
 
         // ジャンプ入力
@@ -547,16 +305,12 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // 攻撃中の移動処理
-        float direction = isFacingRight ? 1f : -1f;
-
         // アイテム入力処理
         // Attack/JumpAttack入力判定の後に呼ぶことで、
         // 同一フレームにAttackとItemが同時入力されても
         // Attack側が先に currentState=JumpAttacking をセットするので
         // CanShoot()のcurrentStateチェックが正しく機能するようになる
         itemAction?.HandleShootInput();
-
     }
 
     // 物理演算用
@@ -567,7 +321,6 @@ public class PlayerController : MonoBehaviour
         {
             // 完全に停止させるために速度もゼロにする
             rb.linearVelocity = Vector2.zero;
-            // Animatorへ移動状態を送る
             return;
         }
 
@@ -617,7 +370,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // ジャンプ処理    
+    // ジャンプ処理
     private void Jump()
     {
         Debug.Log($"Jump実行  isGrounded:{isGrounded}  jumpCount:{jumpCount}");
@@ -675,8 +428,8 @@ public class PlayerController : MonoBehaviour
     {
         // ジャンプ回数リセット
         jumpCount = 0;
-        // 空中ジャンプ攻撃使用フラグリセット
-        hasUsedJumpAttack = false;
+        // 空中ジャンプ攻撃使用フラグリセット（実体はPlayerCombat側）
+        combat?.ResetJumpAttackState();
         // 着地したので軌跡エフェクトの生成を停止する
         afterimageSpawner?.StopTrail();
         // 着地時にジャンプ攻撃状態を強制リセット（AnimationEventが呼ばれなかった場合のフォールバック）
@@ -737,6 +490,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // 攻撃中の移動開始前に、Groundがあるか確認する（攻撃移動などから呼ばれる地面センシング）
+    public bool HasGroundAhead(float direction)
+    {
+        // GroundCheck位置から、向きに応じた距離だけ先の位置を計算する
+        Vector2 checkPosition = (Vector2)groundCheck.position + Vector2.right * direction * attackMoveGroundCheckDistance;
+
+        // その位置にGroundLayerがあるか確認する
+        return Physics2D.OverlapCircle(checkPosition, groundCheckRadius, groundLayer);
+    }
+
     // Scene上でGroundCheck確認用
     private void OnDrawGizmos()
     {
@@ -746,310 +509,13 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        // Gizmo色
-        Gizmos.color = Color.red;
+        // GroundCheck黄色
+        Gizmos.color = Color.yellow;
 
-        // 向きによって攻撃位置反転
-        Vector2 gizmoPosition = (Vector2)transform.position + new Vector2(currentAttackOffset.x * (isFacingRight ? 1 : -1), currentAttackOffset.y);
-
-        // 攻撃範囲表示
-        Gizmos.DrawWireSphere(gizmoPosition, currentAttackRadius);
-
-        // 攻撃中 or 常時表示
-        if (isAttackGizmoVisible || alwaysShowAttackGizmo)
-        {
-            // 攻撃範囲色
-            Gizmos.color = Color.blue;
-
-            // 攻撃範囲表示
-            Gizmos.DrawWireSphere(
-                gizmoPosition,
-                currentAttackRadius
-            );
-        }
+        // GroundCheck位置から、向きに応じた距離だけ先の位置を計算する
+        Vector2 checkPos = (Vector2)groundCheck.position + Vector2.right * (isFacingRight ? 1 : -1) * attackMoveGroundCheckDistance;
         // GroundCheck位置に円を描く
-        if (groundCheck != null)
-        {
-            // GroundCheck黄色
-            Gizmos.color = Color.yellow;
-
-            // GroundCheck位置から、向きに応じた距離だけ先の位置を計算する
-            Vector2 checkPos = (Vector2)groundCheck.position + Vector2.right * (isFacingRight ? 1 : -1) * attackMoveGroundCheckDistance;
-            // GroundCheck位置に円を描く
-            Gizmos.DrawWireSphere(checkPos, groundCheckRadius);
-        }
-        // ジャンプ攻撃のGizmo表示
-        Gizmos.color = Color.cyan;
-        // 向きによって攻撃位置反転
-        Vector2 forwardPos = (Vector2)transform.position + new Vector2(jumpAttackForwardOffset.x * (isFacingRight ? 1 : -1), jumpAttackForwardOffset.y);
-        // 下方向は向き関係なく一定
-        Vector2 downPos = (Vector2)transform.position + new Vector2(jumpAttackDownOffset.x * (isFacingRight ? 1 : -1), jumpAttackDownOffset.y);
-        // 攻撃範囲表示
-        Gizmos.DrawWireSphere(forwardPos, jumpAttackRadius);
-        Gizmos.DrawWireSphere(downPos, jumpAttackRadius);
-    }
-
-    // 攻撃処理    
-    public void Attack()
-    {
-        Debug.Log("アタック！");
-        // 攻撃Gizmo表示開始
-        StartCoroutine(ShowAttackGizmo());
-
-        // 向きによって攻撃位置反転
-        Vector2 attackPosition = (Vector2)transform.position + new Vector2(currentAttackOffset.x * (isFacingRight ? 1 : -1), currentAttackOffset.y);
-
-        // 攻撃範囲内のEnemy取得
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(
-            attackPosition,
-            currentAttackRadius,
-            enemyLayer
-        );
-
-        // 現在のコンボ用ノックバック
-        float currentKnockback = attack1Knockback;
-
-        // 現在のコンボ用のノックバックと浮かせ力
-        switch (comboStep)
-        {
-            case 1:
-                currentKnockback = attack1Knockback;
-                currentLaunchPower = attack1LaunchPower;
-                break;
-
-            case 2:
-                currentKnockback = attack2Knockback;
-                currentLaunchPower = attack2LaunchPower;
-                break;
-
-            case 3:
-                currentKnockback = attack3Knockback;
-                currentLaunchPower = attack3LaunchPower;
-                break;
-        }
-
-        // Enemy全処理
-        foreach (Collider2D enemy in hitEnemies)
-        {
-            // EnemyHealth取得
-            EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
-
-            // EnemyHealthが存在するなら
-            if (enemyHealth != null)
-            {
-                AttackType attackType = GetCurrentAttackType();
-                enemyHealth.TakeDamage(attackDM, transform, currentKnockback, currentLaunchPower, attackType);
-                Debug.Log(comboStep + "段目の攻撃が敵にヒット！ダメージ：" + attackDM);
-            }
-        }
-        // コンボ段階1の攻撃で、攻撃範囲内に敵がいるなら、コンボ追尾対象を更新する
-        if (comboStep == 1)
-        {
-            UpdateComboTarget(hitEnemies);
-        }
-    }
-
-    // 一定時間だけ攻撃Gizmo表示
-    private System.Collections.IEnumerator ShowAttackGizmo()
-    {
-        // 表示ON
-        isAttackGizmoVisible = true;
-
-        // 指定時間待機
-        yield return new WaitForSeconds(attackGizmoDuration);
-
-        // 表示OFF
-        isAttackGizmoVisible = false;
-    }
-
-    // 空中ジャンプ攻撃処理
-    public void JumpAttack()
-    {
-        // 向きによって攻撃位置反転
-        Vector2 forwardPos = (Vector2)transform.position + new Vector2(jumpAttackForwardOffset.x * (isFacingRight ? 1 : -1), jumpAttackForwardOffset.y);
-
-        // 下方向は向き関係なく一定
-        Vector2 downPos = (Vector2)transform.position + new Vector2(jumpAttackDownOffset.x * (isFacingRight ? 1 : -1), jumpAttackDownOffset.y);
-
-        // 前方と下方向の攻撃範囲内のEnemy取得
-        Collider2D[] forwardHits = Physics2D.OverlapCircleAll(forwardPos, jumpAttackRadius, enemyLayer);
-        Collider2D[] downHits = Physics2D.OverlapCircleAll(downPos, jumpAttackRadius, enemyLayer);
-        // ダメージとノックバックを与える処理
-        DamageEnemies(forwardHits);
-        DamageEnemies(downHits);
-    }
-
-    /// <summary>
-    /// 攻撃入力時の処理
-    /// ・コンボ段階を進める
-    /// ・現在の攻撃範囲を設定する
-    /// ・Animatorへ現在コンボを送る
-    /// ・攻撃状態を開始する
-    /// </summary>
-    private void HandleAttackInput()
-    {
-        // 次コンボ受付を一旦OFF
-        // AnimationEventで再度ONにする=Eventで呼ばれるまでボタン連打でのコンボ暴発防止策
-        canNextCombo = false;
-
-        // コンボ段階を進める
-        comboStep++;
-
-        // 3段目を超えたら1へ戻す
-        if (comboStep > 3)
-        {
-            comboStep = 1;
-        }
-        Debug.Log($"[COMBO] comboStep更新 frame:{Time.frameCount} 新comboStep:{comboStep}");
-        // 現在のコンボ段階に応じて
-        // 攻撃範囲設定を切り替える
-        switch (comboStep)
-        {
-            // =========================
-            // Attack1の時の情報
-            // =========================
-            case 1:
-
-                // Attack1用の攻撃位置を設定
-                currentAttackOffset = attack1Offset;
-
-                // Attack1用の攻撃範囲を設定
-                currentAttackRadius = attack1Radius;
-
-                // 確認用ログ
-                Debug.Log(currentAttackOffset);
-                Debug.Log(currentAttackRadius);
-
-                break;
-
-            // =========================
-            // Attack2の時の情報
-            // =========================
-            case 2:
-
-                // Attack2用の攻撃位置を設定
-                currentAttackOffset = attack2Offset;
-
-                // Attack2用の攻撃範囲を設定
-                currentAttackRadius = attack2Radius;
-
-                // 確認用ログ
-                Debug.Log(currentAttackOffset);
-                Debug.Log(currentAttackRadius);
-
-                break;
-
-            // =========================
-            // Attack3の時の情報
-            // =========================
-            case 3:
-
-                // Attack3用の攻撃位置を設定
-                currentAttackOffset = attack3Offset;
-
-                // Attack3用の攻撃範囲を設定
-                currentAttackRadius = attack3Radius;
-
-                // 確認用ログ
-                Debug.Log(currentAttackOffset);
-                Debug.Log(currentAttackRadius);
-
-                break;
-        }
-
-        // Animatorへ現在のコンボ段階を送る
-        // これによってAttack1～3を切り替える
-        animator.SetInteger("ComboStep", comboStep);
-
-        // Attack開始Trigger
-        // Attack1開始時のみTriggerを送る
-        // Attack2以降はAnimator側の遷移で継続する
-        if (comboStep == 1)
-        {
-            animator.SetTrigger("Attack");
-        }
-
-        // 攻撃中状態ON
-        // 移動停止や向き固定に使用
-        currentState = PlayerState.Attacking;
-    }
-
-    // 空中ジャンプ攻撃処理
-    private void HandleJumpAttack()
-    {
-        // HandleJumpAttack()のDebug.Logも変更
-        Debug.Log($"ジャンプ攻撃 frame:{Time.frameCount}");
-
-        // アイテム使用中はJumpAttack不可
-        // 仕様：Item中 → JumpAttack ×
-        // 先にItem入力があった場合はそちらを優先するため弾く
-        if (currentState == PlayerState.Shooting)
-        {
-            return;
-        }
-
-        // 使用済みなら何もしない
-        if (hasUsedJumpAttack)
-        {
-            return;
-        }
-
-        // 地上コンボを終了
-        canNextCombo = false;
-        comboStep = 0;
-        animator.SetInteger("ComboStep", 0);
-
-        // ジャンプ攻撃状態ON
-        currentState = PlayerState.JumpAttacking;
-        // ジャンプ攻撃使用済みにする
-        hasUsedJumpAttack = true;
-
-        // ジャンプ攻撃Trigger
-        animator.SetTrigger("JumpAttack");
-        // 確認用ログ
-        Debug.Log("ジャンプ攻撃");
-
-        // 落下停止
-        StartCoroutine(JumpAttackStopCoroutine());
-    }
-
-    // 次コンボ入力を許可する
-    // Animation Event から呼ばれる
-    public void EnableNextCombo()
-    {
-        canNextCombo = true;
-        Debug.Log($"[ANIM EVENT] EnableNextCombo発火 frame:{Time.frameCount} comboStep:{comboStep}");
-
-        Debug.Log("次コンボ受付開始");
-    }
-    // 攻撃終了処理
-    // Animation Event から呼ばれる
-    public void EndAttack()
-    {
-        Debug.Log("EndAttack呼ばれた");
-
-        if (animator.IsInTransition(0))
-        {
-            Debug.Log("遷移中なので終了スキップ");
-            return;
-        }
-
-        float lockTime = 0f;
-
-        switch (comboStep)
-        {
-            case 1:
-                lockTime = attack1EndLock;
-                break;
-            case 2:
-                lockTime = attack2EndLock;
-                break;
-            case 3:
-                lockTime = attack3EndLock;
-                break;
-        }
-
-        StartCoroutine(EndAttackRoutine(lockTime));
+        Gizmos.DrawWireSphere(checkPos, groundCheckRadius);
     }
 
     // Enemyとの接触終了
@@ -1082,185 +548,6 @@ public class PlayerController : MonoBehaviour
         // Scale適用
         transform.localScale = scale;
     }
-
-    // 攻撃中の移動を開始する
-    private void StartAttackMove(float distance, float duration)
-    {
-        StartCoroutine(AttackMoveCoroutine(distance, duration));
-    }
-
-    // 攻撃中の移動をコルーチンで処理する
-    private System.Collections.IEnumerator AttackMoveCoroutine(float distance, float duration)
-    {
-        // 移動速度を計算する
-        float moved = 0f;
-        // 向きに応じた移動方向を設定する
-        float direction = isFacingRight ? 1f : -1f;
-        // 攻撃中の移動速度を設定する
-        while (moved < distance)
-        {
-            // Groundがないなら移動終了
-            if (!HasGroundAhead(direction))
-            {
-                yield break;
-            }
-            // 1フレームで移動する距離を計算する
-            float move = (distance / duration) * Time.deltaTime;
-            // Playerを移動させる
-            transform.position += new Vector3(direction * move, 0, 0);
-            // 移動距離を加算する
-            moved += move;
-            // 次のフレームまで待つ
-            yield return null;
-        }
-    }
-
-    // 各攻撃開始時に呼ばれるAnimation Event用のメソッド
-    public void Attack1MoveStart()
-    {
-        StartAttackMove(
-            attack1MoveDistance,
-            0.19f);
-    }
-    // Attack2とAttack3は距離短め、時間も短めにして、素早く動いて攻撃する感じにする
-    public void Attack2MoveStart()
-    {
-        StartAttackMove(
-            attack2MoveDistance,
-            0.10f);
-    }
-    // Attack2とAttack3は距離短め、時間も短めにして、素早く動いて攻撃する感じにする
-    public void Attack3MoveStart()
-    {
-        StartAttackMove(
-            attack3MoveDistance,
-            0.10f);
-    }
-
-    // 攻撃中の移動開始前に、Groundがあるか確認する
-    private bool HasGroundAhead(float direction)
-    {
-        // GroundCheck位置から、向きに応じた距離だけ先の位置を計算する
-        Vector2 checkPosition = (Vector2)groundCheck.position + Vector2.right * direction * attackMoveGroundCheckDistance;
-
-        // その位置にGroundLayerがあるか確認する
-        return Physics2D.OverlapCircle(checkPosition, groundCheckRadius, groundLayer);
-    }
-
-    // コンボ追尾対象を更新する
-    private void UpdateComboTarget(Collider2D[] hitEnemies)
-    {
-        // 攻撃範囲内に敵がいないなら終了
-        if (hitEnemies.Length == 0)
-        {
-            return;
-        }
-
-        // 最も近い敵を探す
-        float nearestDistance = float.MaxValue;
-        // 最も近い敵のTransform
-        Transform nearestEnemy = null;
-
-        // 攻撃範囲内の敵全てを確認する
-        foreach (Collider2D enemy in hitEnemies)
-        {
-            // 敵までの距離を計算してdistanceに代入
-            float distance = Mathf.Abs(enemy.transform.position.x - transform.position.x);
-
-            // 最も近い敵を更新する
-            if (distance < nearestDistance)
-            {
-                // 最も近い敵の距離を更新する
-                nearestDistance = distance;
-                // 最も近い敵のTransformを更新する
-                nearestEnemy = enemy.transform;
-            }
-        }
-        // 追尾対象を最も近い敵にする
-        comboTarget = nearestEnemy;
-    }
-    // コンボ追尾対象に向き直る
-    public void FaceComboTarget()
-    {
-        // 追尾対象がいないなら終了
-        if (comboTarget == null)
-        {
-            return;
-        }
-        // 追尾対象の位置に向き直る
-        FaceEnemy(comboTarget.position);
-    }
-
-    // 攻撃終了処理をコルーチンで行う
-    private IEnumerator EndAttackRoutine(float lockTime)
-    {
-        Debug.Log($"[END] EndAttackRoutine開始 frame:{Time.frameCount} comboStep:{comboStep} lockTime:{lockTime}");
-        // ここで即解除しない
-        yield return new WaitForSeconds(lockTime);
-
-        currentState = PlayerState.Idle;
-        canNextCombo = false;
-
-        comboStep = 0;
-        animator.SetInteger("ComboStep", 0);
-
-        comboTarget = null;
-    }
-    // ジャンプ攻撃終了処理
-    public void EndJumpAttack()
-    {
-        currentState = PlayerState.Idle;
-    }
-
-    // ジャンプ攻撃で敵にダメージを与える処理
-    private void DamageEnemies(Collider2D[] hitEnemies)
-    {
-        // 攻撃範囲内のEnemy全てに処理
-        foreach (Collider2D enemy in hitEnemies)
-        {
-            // EnemyHealth取得
-            EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
-            // EnemyHealthが存在しないなら次の敵へ
-            if (enemyHealth == null) continue;
-            // ダメージとノックバックを与える
-            enemyHealth.TakeDamage(jumpAttackDamage, transform, jumpAttackKnockback, 0f, AttackType.JumpAttack);
-
-            EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
-            // EnemyAIが存在するならスタンを与える
-            if (enemyAI != null)
-            {
-                enemyAI.ApplyStun(jumpAttackStunRate);
-            }
-        }
-    }
-
-    // ジャンプ攻撃中の移動停止処理
-    private IEnumerator JumpAttackStopCoroutine()
-    {
-        // 現在の速度停止
-        rb.linearVelocity = Vector2.zero;
-
-        // 重力無効
-        float originalGravity = rb.gravityScale;
-        rb.gravityScale = 0f;
-
-        yield return new WaitForSeconds(jumpAttackStopTime);
-
-        // 重力復帰
-        rb.gravityScale = originalGravity;
-    }
-
-    /// <summary>
-    /// 攻撃SE再生（AnimationEventから呼ぶ。各Attackクリップの発生フレームに配置する）
-    /// </summary>
-    public void PlayAttack1SE() => SoundManager.Instance?.PlaySE(attack1SE);
-    public void PlayAttack2SE() => SoundManager.Instance?.PlaySE(attack2SE);
-    public void PlayAttack3SE() => SoundManager.Instance?.PlaySE(attack3SE);
-
-    /// <summary>
-    /// ジャンプ攻撃SE再生（AnimationEventから呼ぶ）
-    /// </summary>
-    public void PlayJumpAttackSE() => SoundManager.Instance?.PlaySE(jumpAttackSE);
 
     private void UpdateGuardState()
     {
@@ -1301,37 +588,5 @@ public class PlayerController : MonoBehaviour
         if (isGuarding) return false;
         // それ以外はジャンプできる
         return true;
-    }
-
-    /// <summary>
-    /// 地上攻撃入力を受け付けてよいか判定
-    /// </summary>
-    private bool CanAttack()
-    {
-        // Item使用中なら地上攻撃出せない
-        if (currentState == PlayerState.Shooting) return false;
-        // 空中なら地上攻撃出せない
-        if (!isGrounded) return false;
-        // ジャンプ攻撃中なら地上攻撃出せない
-        if (currentState == PlayerState.JumpAttacking) return false;
-        // ノックバック中なら地上攻撃出せない
-        if (playerHealth.IsKnockback) return false;
-        // ガード中なら地上攻撃出せない
-        if (isGuarding) return false;
-        // それ以外は地上攻撃出せる
-        return true;
-    }
-
-    // comboStepからAttackTypeを判定する
-    private AttackType GetCurrentAttackType()
-    {
-        // comboStepに応じてAttackTypeを返す
-        switch (comboStep)
-        {
-            case 1: return AttackType.Attack1;
-            case 2: return AttackType.Attack2;
-            case 3: return AttackType.Attack3;
-            default: return AttackType.Attack1;
-        }
     }
 }

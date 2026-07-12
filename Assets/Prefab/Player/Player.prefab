@@ -704,6 +704,7 @@ GameObject:
   - component: {fileID: 2104940646498491382}
   - component: {fileID: -6714994739539851722}
   - component: {fileID: 4121560635172032402}
+  - component: {fileID: 2308142165452845797}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -875,45 +876,10 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 264
-  attack1Offset: {x: 1, y: 0}
-  attack1Radius: 1.4
-  attack2Offset: {x: 2, y: 0}
-  attack2Radius: 2.5
-  attack3Offset: {x: 2, y: 0}
-  attack3Radius: 1.8
-  attack1LaunchPower: 9
-  attack2LaunchPower: 5
-  attack3LaunchPower: 1
   footstepSource: {fileID: 555469907032173630}
   jumpSE: {fileID: 8300000, guid: 64ae397ce5d85f648ace248b6fb87ebc, type: 3}
-  attack1SE: {fileID: 8300000, guid: 5cd1212241f2c3c479da3686d36f7010, type: 3}
-  attack2SE: {fileID: 8300000, guid: 1e173c7ac40bfcb44b303080bbfde990, type: 3}
-  attack3SE: {fileID: 8300000, guid: fed662953cfe033428dffeab537eab21, type: 3}
-  jumpAttackSE: {fileID: 8300000, guid: 4757368ed2f49ee449372daafb4b7af2, type: 3}
-  attackDM: 3
-  attack1Knockback: 1.1
-  attack2Knockback: 1.5
-  attack3Knockback: 10
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  alwaysShowAttackGizmo: 1
-  attackGizmoDuration: 0.2
   maxFallSpeed: 10
   startFacingRight: 1
-  attack1MoveDistance: 0.55
-  attack2MoveDistance: 0.55
-  attack3MoveDistance: 0.275
-  attack1EndLock: 0.25
-  attack2EndLock: 0.2
-  attack3EndLock: 0.2
-  jumpAttackForwardOffset: {x: 1.1, y: 0}
-  jumpAttackDownOffset: {x: 0.5, y: -1.3}
-  jumpAttackRadius: 0.7
-  jumpAttackKnockback: 12
-  jumpAttackDamage: 5
-  jumpAttackStopTime: 0.3
-  jumpAttackStunRate: 1.5
   isGuarding: 0
 --- !u!114 &2237189157722497506
 MonoBehaviour:
@@ -1038,6 +1004,53 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerItemAction
   projectileSE: {fileID: 8300000, guid: 1d9e415de16742744ad9fe0cda160a1f, type: 3}
   recoverySE: {fileID: 8300000, guid: 27dda3d27168bf84889b19f84fd8db7b, type: 3}
+--- !u!114 &2308142165452845797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8392564140115359092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8f26717e616a9d4f9b2cd6491b8b312, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
+  attack1Offset: {x: 1, y: 0}
+  attack1Radius: 1.4
+  attack2Offset: {x: 2, y: 0}
+  attack2Radius: 2.5
+  attack3Offset: {x: 2, y: 0}
+  attack3Radius: 1.8
+  attack1LaunchPower: 9
+  attack2LaunchPower: 5
+  attack3LaunchPower: 1
+  attackDM: 3
+  attack1Knockback: 1.1
+  attack2Knockback: 1.5
+  attack3Knockback: 10
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  attack1MoveDistance: 0.55
+  attack2MoveDistance: 0.55
+  attack3MoveDistance: 0.275
+  attack1EndLock: 0.25
+  attack2EndLock: 0.2
+  attack3EndLock: 0.2
+  jumpAttackForwardOffset: {x: 1.1, y: 0}
+  jumpAttackDownOffset: {x: 0.5, y: -1.3}
+  jumpAttackRadius: 0.7
+  jumpAttackKnockback: 12
+  jumpAttackDamage: 5
+  jumpAttackStopTime: 0.3
+  jumpAttackStunRate: 1.5
+  attack1SE: {fileID: 8300000, guid: 5cd1212241f2c3c479da3686d36f7010, type: 3}
+  attack2SE: {fileID: 8300000, guid: 1e173c7ac40bfcb44b303080bbfde990, type: 3}
+  attack3SE: {fileID: 8300000, guid: fed662953cfe033428dffeab537eab21, type: 3}
+  jumpAttackSE: {fileID: 8300000, guid: 4757368ed2f49ee449372daafb4b7af2, type: 3}
+  alwaysShowAttackGizmo: 1
+  attackGizmoDuration: 0.2
 --- !u!1 &8622455235830675196
 GameObject:
   m_ObjectHideFlags: 0

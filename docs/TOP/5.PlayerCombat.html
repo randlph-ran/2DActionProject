@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>5.PlayerCombat</title>
+<style>
+body { margin:0; font-family: 'Yu Gothic UI', 'Meiryo', sans-serif; background:#ffffff; color:#000000; }
+/* 画面上部の帯。全タブ分のボタン(.tab-button)を横並びで表示する */
+.tabbar { background:#2d2d30; padding:8px 8px 0 8px; }
+.tab-button { margin-right:4px; padding:8px 14px; border:none; border-radius:4px 4px 0 0; cursor:pointer; background:#555; color:#fff; font-size:14px; }
+/* 現在選択中のタブのボタンだけ色を変えて強調する。JSのshowTab()がこのクラスを付け外しする */
+.tab-button.active { background:#007acc; }
+/* サイドバーと本文を横並びにする2カラムレイアウト */
+.layout { display:flex; align-items:flex-start; }
+.sidebar { width:220px; flex-shrink:0; border-right:1px solid #ddd; box-sizing:border-box; min-height:100vh; }
+/* 各タブ分のリンク一覧(div)。既定では全て非表示にし、.active が付いているものだけを表示する。
+   これにより「全タブ分のサイドバーを埋め込みつつ、見た目には1つしか出さない」を実現している。
+   paddingとmin-heightをこちら側に持たせることで、タブごとの背景色(インラインスタイル)が
+   サイドバー全体を隙間なく塗りつぶすようにしている */
+.sidebar-list { display:none; padding:12px; box-sizing:border-box; color:#333; }
+.sidebar-list.active { display:block; min-height:100vh; }
+/* リンクの文字色は親(.sidebar-list)の色を継承する。タブごとのインラインスタイルで
+   color を指定した場合、それがそのままリンクの文字色にも反映されるようにするため */
+.sidebar-list a { display:block; padding:6px 4px; color:inherit; text-decoration:none; border-radius:4px; }
+.sidebar-list a:hover { background:rgba(128,128,128,0.15); }
+/* 「今まさに見ているこのページ」へのリンクを、現在地としてハイライトする */
+.sidebar-list a.current { font-weight:bold; color:#007acc; background:#eaf4fc; }
+.content { flex:1; padding:24px; min-width:0; }
+/* 画像がコンテンツ幅からはみ出さないよう自動縮小する（プレビュー/単体HTML出力と同じ考え方） */
+.content img { max-width:100%; height:auto; }
+/* テーブルに罫線を付ける（プレビュー/単体HTML出力と同じ考え方） */
+.content table { border-collapse: collapse; }
+.content th, .content td { border: 1px solid #999; padding: 4px 8px; }
+.content th { background-color: #f0f0f0; }
+pre { position: relative; background-color: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; padding: 14px 12px; overflow-x: auto; } pre code { background: none; border: none; padding: 0; font-family: Consolas, 'Courier New', monospace; font-size: 13px; line-height: 1.5; white-space: pre; } code { font-family: Consolas, 'Courier New', monospace; } :not(pre) > code { background-color: rgba(128,128,128,0.15); padding: 2px 5px; border-radius: 4px; font-size: 0.9em; } .code-copy-button { position: absolute; top: 6px; right: 6px; padding: 2px 8px; font-size: 12px; border: 1px solid #d0d7de; border-radius: 4px; background-color: #ffffff; color: #333333; cursor: pointer; opacity: 0.85; } .code-copy-button:hover { opacity: 1; }</style>
+</head>
+<body>
+<div class="tabbar"><button type="button" data-tab="TOP" data-first-page="../TOP/1.%E6%A6%82%E8%A6%81.html" class="tab-button active">TOP</button><button type="button" data-tab="01_基本仕様" data-first-page="../01_%E5%9F%BA%E6%9C%AC%E4%BB%95%E6%A7%98/1.%E6%A6%82%E8%A6%81.html" class="tab-button">01_基本仕様</button><button type="button" data-tab="02_イベント" data-first-page="../02_%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88/1.%E6%A6%82%E8%A6%81.html" class="tab-button">02_イベント</button><button type="button" data-tab="03_Player" data-first-page="../03_Player/1.%E6%A6%82%E8%A6%81.html" class="tab-button">03_Player</button><button type="button" data-tab="04_Stage" data-first-page="../04_Stage/1.%E6%A6%82%E8%A6%81.html" class="tab-button">04_Stage</button><button type="button" data-tab="05_Enemy" data-first-page="../05_Enemy/1.%E6%A6%82%E8%A6%81.html" class="tab-button">05_Enemy</button><button type="button" data-tab="06_Menu" data-first-page="../06_Menu/1.%E6%A6%82%E8%A6%81.html" class="tab-button">06_Menu</button><button type="button" data-tab="07_Item" data-first-page="../07_Item/1.%E6%A6%82%E8%A6%81.html" class="tab-button">07_Item</button><button type="button" data-tab="08_BGM,SE" data-first-page="../08_BGM%2CSE/1.%E6%A6%82%E8%A6%81.html" class="tab-button">08_BGM,SE</button><button type="button" data-tab="09_その他1" data-first-page="../09_%E3%81%9D%E3%81%AE%E4%BB%961/1.%E6%A6%82%E8%A6%81.html" class="tab-button">09_その他1</button><button type="button" data-tab="99_その他2" data-first-page="../99_%E3%81%9D%E3%81%AE%E4%BB%962/1.%E6%A6%82%E8%A6%81.html" class="tab-button">99_その他2</button></div>
+<div class="layout">
+<div class="sidebar"><div class="sidebar-list active" data-tab="TOP"><a href="../TOP/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a><a href="../TOP/2.%E4%BD%9C%E6%A5%AD%E3%83%AA%E3%82%B9%E3%83%88%28%E3%83%A1%E3%83%A2%29.html" class="">2.作業リスト(メモ)</a><a href="../TOP/3.%E4%BD%9C%E6%A5%AD%E5%84%AA%E5%85%88%E5%BA%A6.html" class="">3.作業優先度</a><a href="../TOP/4.PlayerController%E3%83%AA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%AA%E3%83%B3%E3%82%B0.html" class="">4.PlayerControllerリファクタリング</a><a href="../TOP/5.PlayerCombat.html" class="current">5.PlayerCombat</a></div><div class="sidebar-list" data-tab="01_基本仕様"><a href="../01_%E5%9F%BA%E6%9C%AC%E4%BB%95%E6%A7%98/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a><a href="../01_%E5%9F%BA%E6%9C%AC%E4%BB%95%E6%A7%98/2.%E6%96%B9%E9%87%9D.html" class="">2.方針</a><a href="../01_%E5%9F%BA%E6%9C%AC%E4%BB%95%E6%A7%98/3.Scene%E3%83%95%E3%83%AD%E3%83%BC.html" class="">3.Sceneフロー</a><a href="../01_%E5%9F%BA%E6%9C%AC%E4%BB%95%E6%A7%98/4.%E6%93%8D%E4%BD%9C.html" class="">4.操作</a></div><div class="sidebar-list" data-tab="02_イベント"><a href="../02_%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a><a href="../02_%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88/2.%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E4%BB%95%E6%A7%98.html" class="">2.イベント仕様</a><a href="../02_%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88/3.TxtData%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88.html" class="">3.TxtDataフォーマット</a></div><div class="sidebar-list" data-tab="03_Player"><a href="../03_Player/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="04_Stage"><a href="../04_Stage/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="05_Enemy"><a href="../05_Enemy/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="06_Menu"><a href="../06_Menu/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="07_Item"><a href="../07_Item/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="08_BGM,SE"><a href="../08_BGM%2CSE/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="09_その他1"><a href="../09_%E3%81%9D%E3%81%AE%E4%BB%961/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="99_その他2"><a href="../99_%E3%81%9D%E3%81%AE%E4%BB%962/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div></div>
+<div class="content"><h1 id="playercombat">PlayerCombat</h1>
+<h2 id="playercombat-1">PlayerCombat 分割設計</h2>
+<h2 id="section">概要</h2>
+<p>肥大化した <code>PlayerController</code> から攻撃処理を <code>PlayerCombat</code> として分離した。<br />
+状態と参照は <code>PlayerController</code>（コーディネーター）が一元管理し、各コンポーネントはそこを経由して動作する「司令塔＋委譲」構成をとる。</p>
+<hr />
+<h2 id="section-1">1. 分割基準</h2>
+<p><strong>「攻撃という行動に関わるものは Combat へ、常時必要な土台は Controller に残す」</strong></p>
+<p>判断基準：<strong>「この処理は攻撃をやめたら不要になるか？」</strong></p>
+<table>
+<thead>
+<tr>
+<th>PlayerCombat へ移動</th>
+<th>PlayerController に残留</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>コンボ制御</td>
+<td>移動</td>
+</tr>
+<tr>
+<td>攻撃範囲・判定</td>
+<td>ジャンプ</td>
+</tr>
+<tr>
+<td>ジャンプ攻撃</td>
+<td>接地判定</td>
+</tr>
+<tr>
+<td>攻撃中の前進移動</td>
+<td>向き（Flip / FaceEnemy）</td>
+</tr>
+<tr>
+<td>コンボ追尾</td>
+<td>ガード</td>
+</tr>
+<tr>
+<td>攻撃SE</td>
+<td>状態・参照の保持</td>
+</tr>
+<tr>
+<td>攻撃Gizmo</td>
+<td>地面センシング（HasGroundAhead）</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>例：コンボ段階 → 攻撃しなければ不要 → <strong>Combat</strong></li>
+<li>例：接地判定 → 攻撃してなくても常に必要 → <strong>Controller</strong></li>
+</ul>
+<hr />
+<h2 id="section-2">2. アクションの呼び出し方（3パターン）</h2>
+<p>分割後、Combat のメソッドは 3 つの経路で呼ばれる。</p>
+<h3 id="aupdate">パターンA：Update() からの入力ディスパッチ</h3>
+<p>攻撃ボタンの入力判定を、司令塔 <code>Update()</code> から毎フレーム Combat へ委譲する。</p>
+<pre><code>// PlayerController.Update()
+if (combat != null &amp;&amp; combat.HandleAttackInput())
+{
+    return;  // 攻撃側が「以降の入力を打ち切るべき」と返したらUpdateを抜ける
+}
+</code></pre>
+<p>ポイントは <code>HandleAttackInput()</code> が <strong>bool を返す</strong> こと。</p>
+<p>分割前は Update 内で直接 <code>return;</code> していたが、別クラスに移すと中の <code>return</code> では Update は止まらない。<br />
+そこで「Update を抜けるべきか」を bool で返し、判断を Controller に戻す。</p>
+<pre><code class="language-csharp">// PlayerCombat.HandleAttackInput()
+if (!player.IsGrounded)
+{
+    HandleJumpAttack();
+    return true;   // 「Updateはここで打ち切って」の合図
+}
+// ...
+return false;      // 「続けていい」の合図
+</code></pre>
+<p>これにより「攻撃入力があったフレームはジャンプ・アイテム入力をスキップする」という<br />
+元の早期 return 挙動が完全に保たれる。</p>
+<h3 id="banimation-event">パターンB：Animation Event からの直接呼び出し</h3>
+<p><code>Attack()</code> <code>EndAttack()</code> <code>Attack1MoveStart()</code> などはアニメーションクリップに埋め込まれた<br />
+Animation Event から呼ばれる。</p>
+<blockquote>
+<p><strong>Unity の Animation Event は、メソッド名で「同じ GameObject 上のどのコンポーネントか」を自動で探して呼ぶ。</strong></p>
+</blockquote>
+<p>そのため <code>Attack()</code> を Controller から Combat へ移しても、両者が同じ Player オブジェクトに付いていれば<br />
+Animation 側の再設定なしで自動的に <code>PlayerCombat.Attack()</code> が呼ばれる。</p>
+<pre><code class="language-csharp">// PlayerCombat.cs（publicにしておくことが必須）
+public void Attack() { /* ... */ }        // アニメの「Attack」イベントが自動で見つける
+public void EndAttack() { /* ... */ }
+</code></pre>
+<p>対象メソッド：<code>Attack</code> / <code>EndAttack</code> / <code>EnableNextCombo</code> / <code>Attack1〜3MoveStart</code> /<br />
+<code>FaceComboTarget</code> / <code>JumpAttack</code> / <code>EndJumpAttack</code> / <code>PlayAttack1〜3SE</code> / <code>PlayJumpAttackSE</code></p>
+<h3 id="c">パターンC：コーディネーター経由の委譲</h3>
+<p>Combat の内部処理を他クラスから呼ぶ場合は、Controller を「窓口」にして委譲する。</p>
+<p>例：射撃開始時にコンボ状態をリセットしたい。だがコンボ状態は Combat が持つ。<br />
+PlayerItemAction は Combat を直接知らない → Controller 経由にする。</p>
+<pre><code class="language-csharp">// PlayerItemAction.cs
+player.ResetComboState();   // Controllerに頼む
+
+// PlayerController.cs（窓口として受けて実体へ委譲）
+public void ResetComboState() =&gt; combat?.ResetComboState();
+
+// PlayerCombat.cs（実体）
+public void ResetComboState() { canNextCombo = false; comboStep = 0; /* ... */ }
+</code></pre>
+<p>各コンポーネントは「Combat の存在」を知らずに済み、Controller だけを見ればよい構造になる。<br />
+相互依存が減る。</p>
+<p>同じパターンが着地時にも使われる。</p>
+<pre><code class="language-csharp">// PlayerController.ResetJumpCount()（着地時）
+combat?.ResetJumpAttackState();  // ジャンプ攻撃の使用済みフラグを戻す
+</code></pre>
+<hr />
+<h2 id="combat">3. Combat が状態を読み書きする方法</h2>
+<p>Combat は自分で状態を持たず、Controller（唯一の持ち主）から取得する。</p>
+<pre><code class="language-csharp">// PlayerCombat.cs
+private PlayerController player;
+
+private void Awake()
+{
+    player = GetComponent&lt;PlayerController&gt;();  // 同じGameObjectのControllerを掴む
+}
+
+// 使うときは全部 player. 経由
+if (player.CurrentState != PlayerState.Attacking) { /* ... */ }  // 状態を読む
+player.CurrentState = PlayerState.Attacking;                     // 状態を書く
+player.PlayerAnimator.SetTrigger(&quot;Attack&quot;);                      // Animator参照を借りる
+player.FaceEnemy(comboTarget.position);                          // 向き制御を頼む
+if (!player.HasGroundAhead(direction)) yield break;              // 地面センシングを頼む
+</code></pre>
+<p>これは「currentState はコーディネーターに集約」という方針の実装形。<br />
+Combat が状態のコピーを持たないため「どちらが正しい状態か分からない」バグが起きない。</p>
+<hr />
+<h2 id="section-3">4. 全体の呼び出しフロー</h2>
+<pre><code class="language-text">[毎フレーム]
+PlayerController.Update()  ← 司令塔
+    ├─ CheckGround / UpdateGuardState / Flip      … Controller自身が担当（土台）
+    ├─ combat.HandleAttackInput()  ─┐             … 攻撃入力をCombatへ委譲（パターンA）
+    │      └ 戻り値trueならreturn ─┘
+    ├─ Jump()                                      … Controller自身が担当
+    └─ itemAction.HandleShootInput()               … 射撃入力をItemActionへ委譲
+
+[アニメ再生中の要所]
+Animation Event ──自動でメソッド名検索──▶ PlayerCombat.Attack() など（パターンB）
+
+[他クラスからの依頼]
+PlayerItemAction ──▶ player.ResetComboState() ──委譲──▶ combat.ResetComboState()（パターンC）
+</code></pre>
+<hr />
+<h2 id="section-4">5. コーディネーター公開インターフェース</h2>
+<p>Combat が利用する Controller の公開メンバ。</p>
+<table>
+<thead>
+<tr>
+<th>メンバ</th>
+<th>種別</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CurrentState</code></td>
+<td>get/set</td>
+<td>行動状態の読み書き</td>
+</tr>
+<tr>
+<td><code>IsGrounded</code></td>
+<td>get</td>
+<td>接地判定</td>
+</tr>
+<tr>
+<td><code>IsFacingRight</code></td>
+<td>get</td>
+<td>向き</td>
+</tr>
+<tr>
+<td><code>IsGuarding</code></td>
+<td>get</td>
+<td>ガード状態</td>
+</tr>
+<tr>
+<td><code>Rb</code></td>
+<td>get</td>
+<td>Rigidbody2D参照</td>
+</tr>
+<tr>
+<td><code>PlayerAnimator</code></td>
+<td>get</td>
+<td>Animator参照</td>
+</tr>
+<tr>
+<td><code>Health</code></td>
+<td>get</td>
+<td>PlayerHealth参照（IsKnockback等）</td>
+</tr>
+<tr>
+<td><code>FaceEnemy(pos)</code></td>
+<td>method</td>
+<td>指定方向へ向き直る</td>
+</tr>
+<tr>
+<td><code>HasGroundAhead(dir)</code></td>
+<td>method</td>
+<td>前方の地面有無（攻撃移動用）</td>
+</tr>
+<tr>
+<td><code>ResetComboState()</code></td>
+<td>method</td>
+<td>コンボ状態リセット（Combatへ委譲）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="section-5">6. まとめ</h2>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>変更内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>状態の持ち主</td>
+<td>Controller が唯一の持ち主。Combat は <code>player.</code> 経由で読み書き</td>
+</tr>
+<tr>
+<td>入力の流れ</td>
+<td>Update() が司令塔として各系へ委譲。攻撃は bool 戻り値で早期 return を再現</td>
+</tr>
+<tr>
+<td>Animation Event</td>
+<td>同じ GameObject に乗せることで、コード移動してもアニメ側は無変更で動く</td>
+</tr>
+<tr>
+<td>クラス間の依存</td>
+<td>各コンポーネントは Controller だけを見る。相互依存を作らない（委譲パターン）</td>
+</tr>
+</tbody>
+</table>
+<p>この「司令塔＋委譲」構成により、今後スペシャル技やパリィを追加する際も<br />
+新コンポーネントを1つ作り Update から1行呼ぶだけで組み込める。</p>
+</div>
+</div>
+<script>
+// 指定したタブ名に対応するサイドバー・タブボタンだけを active にし、他は非表示/非アクティブにする
+// （段落が1つも無いタブをクリックした場合の、サイドバー表示切り替えのみのフォールバック用）
+function showTab(name) {
+  document.querySelectorAll('.sidebar-list').forEach(function (el) { el.classList.toggle('active', el.getAttribute('data-tab') === name); });
+  document.querySelectorAll('.tab-button').forEach(function (el) { el.classList.toggle('active', el.getAttribute('data-tab') === name); });
+}
+// 各タブボタンのクリックで、そのタブの最初の段落ページへ実際に遷移する。
+// これにより、サイドバーの表示だけでなく右側の本文も正しく切り替わる。
+document.querySelectorAll('.tab-button').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var firstPage = btn.getAttribute('data-first-page');
+    if (firstPage) {
+      window.location.href = firstPage;
+    } else {
+      showTab(btn.getAttribute('data-tab'));
+    }
+  });
+});
+</script>
+<script>
+document.querySelectorAll('pre').forEach(function (preEl) {
+  var codeEl = preEl.querySelector('code');
+  if (!codeEl) return;
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'code-copy-button';
+  btn.textContent = 'コピー';
+  btn.addEventListener('click', function () {
+    var text = codeEl.textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        btn.textContent = 'コピーしました';
+        setTimeout(function () { btn.textContent = 'コピー'; }, 1500);
+      });
+    }
+  });
+  preEl.appendChild(btn);
+});
+</script>
+</body>
+</html>
