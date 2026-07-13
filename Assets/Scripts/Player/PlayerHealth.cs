@@ -29,11 +29,13 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField]
     private float knockbackPower = 5f;
 
-    // ノックバック中
-    public bool IsKnockback { get; private set; }
+    // ノックバック（＝行動不能）中か。
+    // 状態の実体はPlayerControllerのCurrentState(Knockback)で管理し、ここはその判定を公開するだけ。
+    // 既存の各ゲート（移動・ジャンプ・攻撃前進など）がこのプロパティを参照している。
+    public bool IsKnockback => playerController != null && playerController.CurrentState == PlayerState.Knockback;
 
-    //ノックバックを短時間だけ発生
-    [Tooltip("ノックバックを短時間だけ発生")]
+    //ノックバック速度が乗っている時間（この間だけ吹っ飛び速度が加わる）
+    [Tooltip("ノックバック速度が乗っている時間（この間だけ吹っ飛び速度が加わる）")]
     [SerializeField]
     private float knockbackDuration = 0.15f;
 
@@ -184,37 +186,37 @@ public class PlayerHealth : MonoBehaviour
         Debug.Log("Playerは" + damage + " のダメージを受けた");
         Debug.Log("現在HP: " + currentHP);
 
-        // ノックバック方向計算
-        //normalizedすると 長さ1 になる＝方向の+-が定まる
-        // 敵が左右どちらにいるか判定
-        float direction = Mathf.Sign(transform.position.x - enemyPosition.x);
-
-        // 横方向だけノックバック
-        Vector2 knockbackDirection = new Vector2(direction, 0.2f).normalized;
-
-        // ガード中でなければノックバックを発生させる
-        if (!playerController.IsGuarding)
-        {
-            IsKnockback = true;
-
-            StartCoroutine(KnockbackCoroutine(knockbackDirection, knockbackForce));
-        }
-
-        // ガード中でなければ無敵状態にする
-        if (!playerController.IsGuarding)
-        {
-            StartCoroutine(InvincibleCoroutine());
-        }
-
-        // HP0以下なら死亡
+        // HP0以下なら死亡（ノックバック状態にはせず、そのまま死亡演出へ移る）
         if (currentHP <= 0)
         {
             // Enemy方向へ向き直る
             playerController.FaceEnemy(enemyPosition);
-
             // 死亡処理
             Die(enemyPosition);
+            return;
         }
+
+        // ガード中はノックバック・無敵を発生させない
+        if (playerController.IsGuarding)
+        {
+            return;
+        }
+
+        // 被弾時は敵の方を向く（後方へ吹っ飛ぶリアクションを自然に見せるため。不要なら次の1行を削除）
+        playerController.FaceEnemy(enemyPosition);
+
+        // ノックバック方向計算（normalizeで方向の+-が定まる。横方向中心に少し上向き）
+        float direction = Mathf.Sign(transform.position.x - enemyPosition.x);
+        Vector2 knockbackDirection = new Vector2(direction, 0.2f).normalized;
+
+        // ノックバック速度を与える（物理的な吹っ飛び）
+        StartCoroutine(KnockbackVelocityCoroutine(knockbackDirection, knockbackForce));
+
+        // Knockback状態へ入る（専用アニメ再生＋行動不能。解除はアニメ末尾のEndKnockback / セーフティ）
+        playerController.EnterKnockback();
+
+        // 無敵＋点滅開始
+        StartCoroutine(InvincibleCoroutine());
     }
     // 被ダメージエフェクトをPlayerの位置に出す
     private void SpawnHitEffect()
@@ -300,9 +302,6 @@ public class PlayerHealth : MonoBehaviour
 
         Debug.Log("無敵開始");
 
-        // ノックバック開始
-        IsKnockback = true;
-
         // 経過時間
         float timer = 0f;
 
@@ -354,22 +353,18 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    private IEnumerator KnockbackCoroutine(Vector2 direction, float knockbackForce)
+    // ノックバックの「物理的な吹っ飛び速度」だけを担当するコルーチン。
+    // 行動不能State（Knockback）の開始/終了はPlayerController側が管理する。
+    private IEnumerator KnockbackVelocityCoroutine(Vector2 direction, float knockbackForce)
     {
-        // ノックバック開始
-        IsKnockback = true;
-
-        // ノックバック速度
+        // ノックバック速度を与える
         rb.linearVelocity = direction * knockbackForce;
 
-        // 少しだけ吹っ飛ぶ
+        // 吹っ飛び速度が乗っている時間だけ待つ
         yield return new WaitForSeconds(knockbackDuration);
 
-        // 停止
+        // 速度を止める（以降はKnockback Stateのまま静止。State解除はアニメ末尾のEndKnockbackで行う）
         rb.linearVelocity = Vector2.zero;
-
-        // ノックバック終了
-        IsKnockback = false;
     }
 
     // 死亡時の大きな吹っ飛び処理

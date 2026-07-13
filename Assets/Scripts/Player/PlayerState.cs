@@ -9,5 +9,6 @@ public enum PlayerState
     Idle,
     Attacking,
     Shooting,
-    JumpAttacking
+    JumpAttacking,
+    Knockback
 }

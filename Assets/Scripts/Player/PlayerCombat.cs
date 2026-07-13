@@ -505,6 +505,11 @@ public class PlayerCombat : MonoBehaviour
         // 攻撃中の移動処理
         while (moved < distance)
         {
+            // ノックバック中は前進を中断してノックバックを優先する
+            if (player.Health.IsKnockback)
+            {
+                yield break;
+            }
             // Groundがないなら移動終了（地面センシングはコーディネーターに集約）
             if (!player.HasGroundAhead(direction))
             {

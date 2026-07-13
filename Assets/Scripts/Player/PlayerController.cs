@@ -1,23 +1,24 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 /// <summary>
 /// Playerのコーディネーター。
 /// 状態（行動状態・接地・向き）と各種参照の唯一の持ち主となり、
 /// 分割した各コンポーネント（PlayerCombat / PlayerItemAction / AfterimageSpawner）へ
-/// それらを提供する。移動・ジャンプ・接地判定・向き・ガードはこのクラスが直接担当する。
+/// それらを提供する。移動・ジャンプ・接地判定・向き・ガードはこのクラス自身が担当する。
 /// Update() が各系の処理を順に呼ぶ司令塔（集中制御）。
 /// </summary>
 public class PlayerController : MonoBehaviour
 {
+    //==============================
+    // 参照（Awakeで取得）
+    //==============================
+
     // PlayerInputReader
     private PlayerInputReader inputReader;
 
     // Animator
     private Animator animator;
-
-    // 攻撃エフェクトPrefab（未使用：将来整理予定）
-    [SerializeField] private GameObject slashEffectPrefab;
 
     // Rigidbody2D
     private Rigidbody2D rb;
@@ -28,23 +29,111 @@ public class PlayerController : MonoBehaviour
     // InventoryManager
     private InventoryManager inventoryManager;
 
-    // 左右入力
-    private float moveInput;
+    // 残像生成（ジャンプ軌跡など。Player以外でも使い回せる汎用コンポーネント）
+    private AfterimageSpawner afterimageSpawner;
 
-    // 移動速度
+    // アイテム使用・射撃処理
+    private PlayerItemAction itemAction;
+
+    // 攻撃処理
+    private PlayerCombat combat;
+
+    //==============================
+    // 調整値（Inspector）
+    //==============================
+
     [Header("移動")]
     [Tooltip("移動速度")]
     [SerializeField]
     private float moveSpeed = 5f;
 
+    [Header("ジャンプ")]
+    [Tooltip("ジャンプ力")]
+    [SerializeField]
+    private float jumpPower = 12f;
+
+    [Tooltip("最大ジャンプ回数")]
+    [SerializeField]
+    private int maxJumpCount = 2;
+
+    [Header("接地判定")]
+    [Tooltip("GroundCheck位置")]
+    [SerializeField]
+    private Transform groundCheck;
+
+    [Tooltip("攻撃中の移動用GroundCheck距離")]
+    [SerializeField]
+    private float attackMoveGroundCheckDistance = 0.6f;
+
+    [Tooltip("Ground判定半径")]
+    [SerializeField]
+    private float groundCheckRadius = 0.1f;
+
+    [Tooltip("GroundLayer")]
+    [SerializeField]
+    private LayerMask groundLayer;
+
+    [Header("SE")]
+    [Tooltip("足音ループ再生用AudioSource（Loop=ON, Play On Awake=OFF）")]
+    [SerializeField]
+    private AudioSource footstepSource;
+
+    [Tooltip("ジャンプ時のSE（2段ジャンプも共通）")]
+    [SerializeField]
+    private AudioClip jumpSE;
+
+    [Header("落下/初期設定")]
+    [Tooltip("落下速度上限")]
+    [SerializeField]
+    private float maxFallSpeed = 10f;
+
+    [Tooltip("最初の向き右フラグ")]
+    [SerializeField]
+    private bool startFacingRight = true;
+
+    [Header("ノックバック")]
+    [Tooltip("ノックバックStateのセーフティ解除時間\nAnimation Event(EndKnockback)が来なくてもフリーズしないよう、この時間で強制的にIdleへ戻す。\nノックバックアニメの長さより少し長めに設定する")]
+    [SerializeField]
+    private float knockbackSafetyTime = 1.0f;
+
+    [Header("デバッグ")]
+    [Tooltip("現在ガード状態かどうか（デバッグ確認用）")]
+    [SerializeField]
+    private bool isGuarding;
+
+    //==============================
+    // 実行時の状態
+    //==============================
+
     // 現在の行動状態（PlayerStateは独立ファイルPlayerState.csに定義）
     private PlayerState currentState = PlayerState.Idle;
 
-    // =========================
+    // 左右入力
+    private float moveInput;
+
+    // 右向き判定
+    private bool isFacingRight = true;
+
+    // 接地判定
+    private bool isGrounded;
+
+    // 現在のジャンプ回数
+    private int jumpCount = 0;
+
+    // Weight負け中移動停止フラグ
+    private bool isBlocked;
+
+    // 直前フレームのガード状態（ログ用）
+    private bool previousGuardState;
+
+    // ノックバックStateのセーフティ解除監視コルーチン
+    private Coroutine knockbackTimeoutCoroutine;
+
+    //==============================
     // コーディネーター公開インターフェース
     // 分割した各コンポーネント（PlayerCombat / PlayerItemActionなど）が
     // 状態と参照をここから取得する。状態と参照の唯一の持ち主はこのPlayerController。
-    // =========================
+    //==============================
 
     /// <summary>現在の行動状態（各コンポーネントから読み書きされる）</summary>
     public PlayerState CurrentState { get => currentState; set => currentState = value; }
@@ -54,6 +143,9 @@ public class PlayerController : MonoBehaviour
 
     /// <summary>右向きか</summary>
     public bool IsFacingRight => isFacingRight;
+
+    /// <summary>現在ガード中か</summary>
+    public bool IsGuarding => isGuarding;
 
     /// <summary>Rigidbody2D参照</summary>
     public Rigidbody2D Rb => rb;
@@ -70,9 +162,6 @@ public class PlayerController : MonoBehaviour
     /// <summary>PlayerHealth参照</summary>
     public PlayerHealth Health => playerHealth;
 
-    /// <summary>現在ガード中か</summary>
-    public bool IsGuarding => isGuarding;
-
     /// <summary>
     /// 地上コンボの状態をリセットする。
     /// 射撃・ジャンプ攻撃などコンボを中断する行動の開始時に呼ぶ。
@@ -80,97 +169,82 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void ResetComboState() => combat?.ResetComboState();
 
-    // ジャンプ力
-    [Header("ジャンプ")]
-    [Tooltip("ジャンプ力")]
-    [SerializeField]
-    private float jumpPower = 12f;
+    /// <summary>
+    /// ノックバック状態へ入る（PlayerHealthの被弾処理から呼ばれる）。
+    /// 行動状態をKnockbackにし、専用アニメを再生する。
+    /// この状態の間は移動・ジャンプ・攻撃などPlayerの行動が全て無効になる
+    /// （各ゲートが Health.IsKnockback = CurrentState==Knockback を見ているため）。
+    /// </summary>
+    public void EnterKnockback()
+    {
+        currentState = PlayerState.Knockback;
 
-    // 右向き判定
-    private bool isFacingRight = true;
+        // 進行中の攻撃コンボを中断する
+        combat?.ResetComboState();
 
-    // 接地判定
-    private bool isGrounded;
+        // ノックバックアニメ再生
+        animator.SetTrigger("Knockback");
 
-    // 現在のジャンプ回数
-    private int jumpCount = 0;
-
-    // 最大ジャンプ回数
-    [Tooltip("最大ジャンプ回数")]
-    [SerializeField]
-    private int maxJumpCount = 2;
-
-    // GroundCheck位置
-    [Header("接地判定")]
-    [Tooltip("GroundCheck位置")]
-    [SerializeField]
-    private Transform groundCheck;
-
-    // 攻撃中の移動用GroundCheck距離
-    [Tooltip("攻撃中の移動用GroundCheck距離")]
-    [SerializeField]
-    private float attackMoveGroundCheckDistance = 0.6f;
-
-    // Ground判定半径
-    [Tooltip("Ground判定半径")]
-    [SerializeField]
-    private float groundCheckRadius = 0.1f;
-
-    // GroundLayer
-    [Tooltip("GroundLayer")]
-    [SerializeField]
-    private LayerMask groundLayer;
-
-    //==============================
-    // SE
-    //==============================
-
-    [Header("SE")]
-
-    [Tooltip("足音ループ再生用AudioSource（Loop=ON, Play On Awake=OFF）")]
-    [SerializeField]
-    private AudioSource footstepSource;
-
-    [Tooltip("ジャンプ時のSE（2段ジャンプも共通）")]
-    [SerializeField]
-    private AudioClip jumpSE;
-
-    //Weight負け中移動停止フラグ
-    private bool isBlocked;
-
-    [Header("落下/初期設定")]
-    // 落下速度上限
-    [Tooltip("落下速度上限")]
-    [SerializeField]
-    private float maxFallSpeed = 10f;
-
-    // 最初の向き右フラグ
-    [Tooltip("最初の向き右フラグ")]
-    [SerializeField]
-    private bool startFacingRight = true;
+        // セーフティ：Animation Event(EndKnockback)が来なくてもフリーズしないよう監視を開始する
+        if (knockbackTimeoutCoroutine != null)
+        {
+            StopCoroutine(knockbackTimeoutCoroutine);
+        }
+        knockbackTimeoutCoroutine = StartCoroutine(KnockbackSafetyTimeout());
+    }
 
     /// <summary>
-    /// 現在ガード中か
+    /// ノックバック状態を終了してIdleへ戻す。
+    /// ノックバックアニメ末尾の Animation Event から呼ばれる。
     /// </summary>
-    [SerializeField]
-    [Tooltip("現在ガード状態かどうか（デバッグ確認用）")]
-    private bool isGuarding;
+    public void EndKnockback()
+    {
+        // 既にKnockback以外へ遷移していれば何もしない（多重呼び出し対策）
+        if (currentState == PlayerState.Knockback)
+        {
+            currentState = PlayerState.Idle;
+        }
 
-    private bool previousGuardState;
+        // セーフティ監視を停止
+        if (knockbackTimeoutCoroutine != null)
+        {
+            StopCoroutine(knockbackTimeoutCoroutine);
+            knockbackTimeoutCoroutine = null;
+        }
+    }
 
-    // =========================
-    // 分割コンポーネント参照
-    // =========================
+    // Animation Event(EndKnockback)が発火しなかった場合のフォールバック
+    private IEnumerator KnockbackSafetyTimeout()
+    {
+        yield return new WaitForSeconds(knockbackSafetyTime);
 
-    // ジャンプ軌跡などの残像生成を担当する汎用コンポーネント。
-    // Player以外（飛び道具など）でも同じコンポーネントを使い回せる。
-    private AfterimageSpawner afterimageSpawner;
+        // まだKnockbackのままなら強制的にIdleへ戻す
+        if (currentState == PlayerState.Knockback)
+        {
+            Debug.LogWarning("[Knockback] Animation EventのEndKnockbackが来なかったため強制解除しました");
+            currentState = PlayerState.Idle;
+        }
+        knockbackTimeoutCoroutine = null;
+    }
 
-    // アイテム使用・射撃処理を担当するコンポーネント
-    private PlayerItemAction itemAction;
+    //==============================
+    // Unityライフサイクル
+    //==============================
 
-    // 攻撃処理を担当するコンポーネント
-    private PlayerCombat combat;
+    // ゲーム開始時に最初に呼ばれる
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        playerHealth = GetComponent<PlayerHealth>();
+        animator = GetComponent<Animator>();
+        inputReader = GetComponent<PlayerInputReader>();
+        inventoryManager = GetComponent<InventoryManager>();
+
+        // 分割コンポーネント（同一GameObject上）
+        afterimageSpawner = GetComponent<AfterimageSpawner>();
+        itemAction = GetComponent<PlayerItemAction>();
+        combat = GetComponent<PlayerCombat>();
+    }
 
     private void Start()
     {
@@ -178,112 +252,42 @@ public class PlayerController : MonoBehaviour
         InitFacingDirection();
     }
 
-    // ゲーム開始時に最初に呼ばれる
-    private void Awake()
-    {
-        // Rigidbody2D取得
-        rb = GetComponent<Rigidbody2D>();
-
-        // PlayerHealth取得
-        playerHealth = GetComponent<PlayerHealth>();
-
-        //Animator取得
-        animator = GetComponent<Animator>();
-
-        // PlayerInputReader取得
-        inputReader = GetComponent<PlayerInputReader>();
-
-        // InventoryManager取得
-        inventoryManager = GetComponent<InventoryManager>();
-
-        // AfterimageSpawner取得（残像エフェクト用）
-        afterimageSpawner = GetComponent<AfterimageSpawner>();
-
-        // PlayerItemAction取得（アイテム使用・射撃用）
-        itemAction = GetComponent<PlayerItemAction>();
-
-        // PlayerCombat取得（攻撃用）
-        combat = GetComponent<PlayerCombat>();
-    }
-
-    // 毎フレーム実行
-    // 入力取得を行う
+    // 毎フレームの司令塔。各系の処理を上から順に呼ぶ
     private void Update()
     {
-        // ゲーム開始前の処理
+        // ゲーム開始前：接地判定だけ更新し、Animatorを停止状態にする
         if (!GameManager.IsGameStarted)
         {
-            // 接地判定だけ更新
             CheckGround();
-
-            // 接地状態をAnimatorへ送る
             animator.SetBool("isGrounded", isGrounded);
-
-            // ゲーム開始前は移動停止
             animator.SetBool("isRunning", false);
-            // ゲーム開始前に落下速度を0にする(開始演出時の落下アニメループ防止)
+            // 開始演出時の落下アニメループ防止のため落下速度を0にする
             animator.SetFloat("verticalSpeed", 0);
-
             return;
         }
 
-        // 左右入力
+        // 入力・接地・ガード状態の更新
         moveInput = inputReader.MoveInput.x;
-
-        // 接地判定
         CheckGround();
-        // ガード状態更新
         UpdateGuardState();
 
-        // Animatorへガード状態を送る
-        animator.SetBool("isGuarding", isGuarding);
+        // 移動状態を判定してAnimatorと足音へ反映
+        // ノックバック中は走りアニメを混入させない（専用のノックバックアニメを優先する）
+        bool isRunning = Mathf.Abs(moveInput) > 0.1f && !isGuarding && currentState != PlayerState.Knockback;
+        UpdateAnimatorParams(isRunning);
+        UpdateFootstep(isRunning);
 
-        // 移動状態は、左右入力があるかつガードしていないとき
-        bool isRunning = Mathf.Abs(moveInput) > 0.1f && !isGuarding;
+        // 行動不能条件（ノックバック中・ガード中は以降の入力を受け付けない）
+        if (playerHealth.IsKnockback) return;
+        if (isGuarding) return;
 
-        // Animatorへ移動状態を送る
-        animator.SetBool("isRunning", isRunning);
-
-        // 足音制御：Idle状態（実際に自由に動けている状態）かつ接地中かつ移動入力があるときだけ再生
-        // currentStateを見ることで、攻撃中などで横移動が止まっているのに足音だけ鳴り続ける矛盾を防ぐ
-        bool shouldPlayFootstep = currentState == PlayerState.Idle && isGrounded && isRunning;
-
-        if (footstepSource != null)
-        {
-            if (shouldPlayFootstep && !footstepSource.isPlaying)
-            {
-                footstepSource.Play();
-            }
-            else if (!shouldPlayFootstep && footstepSource.isPlaying)
-            {
-                footstepSource.Stop();
-            }
-        }
-
-        // 接地状態をAnimatorへ送る
-        animator.SetBool("isGrounded", isGrounded);
-
-        // 縦速度をAnimatorへ送る
-        animator.SetFloat("verticalSpeed", rb.linearVelocity.y);
-
-        // ノックバック中はジャンプ操作禁止
-        if (playerHealth.IsKnockback)
-        {
-            return;
-        }
-        // ガード中は操作不可
-        if (isGuarding)
-        {
-            return;
-        }
-
-        // 攻撃中、アイテム中は向き固定
+        // 攻撃中・アイテム中は向き固定。Idle時のみ入力方向へ向く
         if (currentState == PlayerState.Idle)
         {
             Flip();
         }
 
-        // 攻撃入力処理（PlayerCombatへ委譲）
+        // 攻撃入力（PlayerCombatへ委譲）
         // trueが返ったら以降の入力処理を打ち切る（元の早期return挙動を維持）
         if (combat != null && combat.HandleAttackInput())
         {
@@ -291,21 +295,9 @@ public class PlayerController : MonoBehaviour
         }
 
         // ジャンプ入力
-        // 攻撃中・アイテム使用中・ガード中はジャンプできない
-        if (CanJump())
-        {
-            // ジャンプ入力
-            if (inputReader.JumpPressed)
-            {
-                // ジャンプカウントが最大未満なら2段ジャンプする
-                if (jumpCount < maxJumpCount)
-                {
-                    Jump();
-                }
-            }
-        }
+        HandleJumpInput();
 
-        // アイテム入力処理
+        // アイテム入力（PlayerItemActionへ委譲）
         // Attack/JumpAttack入力判定の後に呼ぶことで、
         // 同一フレームにAttackとItemが同時入力されても
         // Attack側が先に currentState=JumpAttacking をセットするので
@@ -313,60 +305,97 @@ public class PlayerController : MonoBehaviour
         itemAction?.HandleShootInput();
     }
 
-    // 物理演算用
+    // 物理演算用。横移動と落下速度制限を担当する
     private void FixedUpdate()
     {
-        // ゲーム開始前は移動停止
+        // ゲーム開始前は完全停止
         if (!GameManager.IsGameStarted)
         {
-            // 完全に停止させるために速度もゼロにする
             rb.linearVelocity = Vector2.zero;
             return;
         }
 
-        // ノックバック中は移動停止
+        // ノックバック中は横速度を上書きしない（ノックバックの勢いを保つため、ここでは何もしない）
         if (playerHealth.IsKnockback)
         {
             return;
         }
 
-        // 攻撃中、アイテム中は横移動停止
-        if (currentState == PlayerState.Attacking || currentState == PlayerState.JumpAttacking || currentState == PlayerState.Shooting)
+        // 攻撃/アイテム中・ガード中・Weight負け中は横移動を止めて終了
+        if (ShouldStopHorizontalMove())
         {
-            // 横移動停止
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
-
-            return;
-        }
-
-        // ガード中は移動停止
-        if (isGuarding)
-        {
-            rb.linearVelocity =
-                new Vector2(0, rb.linearVelocity.y);
-
-            return;
-        }
-
-
-        //Weight負け中は移動停止
-        if (isBlocked)
-        {
-            // 横移動停止
-            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
-
             return;
         }
 
         // 左右移動
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
-
-        // 落下速度制限　落下距離が長くなると速くなりすぎるのを防止するため
+        // 落下速度制限（落下距離が長くなると速くなりすぎるのを防止する）
         if (rb.linearVelocity.y < -maxFallSpeed)
         {
-            rb.linearVelocity =
-                new Vector2(rb.linearVelocity.x, -maxFallSpeed);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, -maxFallSpeed);
+        }
+    }
+
+    // 横移動を停止すべき状態か（攻撃/アイテム中・ガード中・Weight負け中）。
+    // ※ノックバックは含めない（勢いを保つためFixedUpdate側で個別にreturnしている）
+    private bool ShouldStopHorizontalMove()
+    {
+        if (currentState == PlayerState.Attacking
+            || currentState == PlayerState.JumpAttacking
+            || currentState == PlayerState.Shooting) return true;
+        if (isGuarding) return true;
+        if (isBlocked) return true;
+        return false;
+    }
+
+    //==============================
+    // Animator / 足音
+    //==============================
+
+    // 移動・接地・ガード・縦速度をAnimatorへ反映する
+    private void UpdateAnimatorParams(bool isRunning)
+    {
+        animator.SetBool("isGuarding", isGuarding);
+        animator.SetBool("isRunning", isRunning);
+        animator.SetBool("isGrounded", isGrounded);
+        animator.SetFloat("verticalSpeed", rb.linearVelocity.y);
+    }
+
+    // 足音制御：Idle状態かつ接地中かつ移動入力があるときだけ再生する。
+    // currentStateを見ることで、攻撃中などで横移動が止まっているのに足音だけ鳴り続ける矛盾を防ぐ
+    private void UpdateFootstep(bool isRunning)
+    {
+        if (footstepSource == null) return;
+
+        bool shouldPlay = currentState == PlayerState.Idle && isGrounded && isRunning;
+
+        if (shouldPlay && !footstepSource.isPlaying)
+        {
+            footstepSource.Play();
+        }
+        else if (!shouldPlay && footstepSource.isPlaying)
+        {
+            footstepSource.Stop();
+        }
+    }
+
+    //==============================
+    // ジャンプ
+    //==============================
+
+    // ジャンプ入力の受付
+    private void HandleJumpInput()
+    {
+        // 攻撃中・アイテム使用中・ガード中はジャンプできない
+        if (!CanJump()) return;
+        // ジャンプ入力が無ければ終了
+        if (!inputReader.JumpPressed) return;
+        // ジャンプカウントが最大未満なら（2段）ジャンプする
+        if (jumpCount < maxJumpCount)
+        {
+            Jump();
         }
     }
 
@@ -380,16 +409,11 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        Debug.Log("ジャンプ入力したよ");
-
         // ジャンプSE再生（2段ジャンプも同じSEで共通）
         SoundManager.Instance?.PlaySE(jumpSE);
 
-        // Y方向速度リセット
-        // 落下中でも一定ジャンプ力になる
+        // Y方向速度をリセットしてからジャンプ力を加える（落下中でも一定のジャンプ力になる）
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
-
-        // ジャンプ力を加える
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpPower);
 
         // ジャンプ回数加算
@@ -400,13 +424,29 @@ public class PlayerController : MonoBehaviour
         afterimageSpawner?.StartTrail();
     }
 
+    // ジャンプ入力を受け付けてよいか判定
+    private bool CanJump()
+    {
+        // Attack中・Projectile使用中・ジャンプ攻撃中ならジャンプできない
+        if (currentState != PlayerState.Idle) return false;
+        // ノックバック中ならジャンプできない
+        if (playerHealth.IsKnockback) return false;
+        // ガード中ならジャンプできない
+        if (isGuarding) return false;
+        // それ以外はジャンプできる
+        return true;
+    }
+
+    //==============================
+    // 接地判定
+    //==============================
+
     // 接地判定
     private void CheckGround()
     {
-        // 接地判定
         bool wasGrounded = isGrounded;
 
-        //GroundCheck位置をPCの足元中心から円を作って、その円の範囲にGroundLayerが触れているか調べている
+        // GroundCheck位置を中心にした円がGroundLayerに触れているかを調べる
         isGrounded = Physics2D.OverlapCircle(
             groundCheck.position,
             groundCheckRadius,
@@ -418,12 +458,10 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Grounded");
             ResetJumpCount();
-            Debug.Log(jumpCount);//リセット処理入ったかの確認
         }
-
     }
 
-    // ジャンプ回数リセット
+    // 着地時の各種リセット
     private void ResetJumpCount()
     {
         // ジャンプ回数リセット
@@ -439,7 +477,21 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // キャラクターの向きを変更する
+    // 前方に地面があるか確認する（攻撃移動などから呼ばれる地面センシング）
+    public bool HasGroundAhead(float direction)
+    {
+        // GroundCheck位置から、向きに応じた距離だけ先の位置を計算する
+        Vector2 checkPosition = (Vector2)groundCheck.position + Vector2.right * direction * attackMoveGroundCheckDistance;
+
+        // その位置にGroundLayerがあるか確認する
+        return Physics2D.OverlapCircle(checkPosition, groundCheckRadius, groundLayer);
+    }
+
+    //==============================
+    // 向き
+    //==============================
+
+    // 入力方向に応じて向きを変更する
     private void Flip()
     {
         // 左入力時、右向きなら反転
@@ -447,7 +499,6 @@ public class PlayerController : MonoBehaviour
         {
             Turn();
         }
-
         // 右入力時、左向きなら反転
         else if (moveInput > 0 && !isFacingRight)
         {
@@ -461,93 +512,44 @@ public class PlayerController : MonoBehaviour
         // 向き状態反転
         isFacingRight = !isFacingRight;
 
-        // 現在Scale取得
+        // ScaleのXを反転して適用する
         Vector3 scale = transform.localScale;
-
-        // X方向反転
         scale.x *= -1;
-
-        // Scale適用
         transform.localScale = scale;
     }
 
-    // Enemy方向へ向き直る
+    // 指定位置の方向へ向き直る（Enemy追尾・被弾時などから呼ばれる）
     public void FaceEnemy(Vector2 enemyPosition)
     {
-        // Enemyが右側にいるか
+        // 対象が右側にいるか
         bool enemyIsRight = enemyPosition.x > transform.position.x;
 
-        // Enemyが右にいて、現在左向きなら反転
+        // 右にいて左向きなら反転
         if (enemyIsRight && !isFacingRight)
         {
             Turn();
         }
-
-        // Enemyが左にいて、現在右向きなら反転
+        // 左にいて右向きなら反転
         else if (!enemyIsRight && isFacingRight)
         {
             Turn();
         }
     }
 
-    // 攻撃中の移動開始前に、Groundがあるか確認する（攻撃移動などから呼ばれる地面センシング）
-    public bool HasGroundAhead(float direction)
-    {
-        // GroundCheck位置から、向きに応じた距離だけ先の位置を計算する
-        Vector2 checkPosition = (Vector2)groundCheck.position + Vector2.right * direction * attackMoveGroundCheckDistance;
-
-        // その位置にGroundLayerがあるか確認する
-        return Physics2D.OverlapCircle(checkPosition, groundCheckRadius, groundLayer);
-    }
-
-    // Scene上でGroundCheck確認用
-    private void OnDrawGizmos()
-    {
-        // GroundCheck未設定なら終了
-        if (groundCheck == null)
-        {
-            return;
-        }
-
-        // GroundCheck黄色
-        Gizmos.color = Color.yellow;
-
-        // GroundCheck位置から、向きに応じた距離だけ先の位置を計算する
-        Vector2 checkPos = (Vector2)groundCheck.position + Vector2.right * (isFacingRight ? 1 : -1) * attackMoveGroundCheckDistance;
-        // GroundCheck位置に円を描く
-        Gizmos.DrawWireSphere(checkPos, groundCheckRadius);
-    }
-
-    // Enemyとの接触終了
-    public void SetBlocked(bool blocked)
-    {
-        // 重量1のEnemyと接触終了したら、移動停止解除
-        isBlocked = blocked;
-    }
-
     // シーンごとの初期向きを設定する
     private void InitFacingDirection()
     {
-        // 最初の向き設定
         isFacingRight = startFacingRight;
-        // 現在のScale取得
-        Vector3 scale = transform.localScale;
 
-        // 右向きスタート
-        if (startFacingRight)
-        {
-            // ScaleのXを正にする
-            scale.x = Mathf.Abs(scale.x);
-        }
-        // 左向きスタート
-        else
-        {
-            // ScaleのXを負にする
-            scale.x = -Mathf.Abs(scale.x);
-        }
-        // Scale適用
+        // 初期向きに合わせてScaleのX符号を決める
+        Vector3 scale = transform.localScale;
+        scale.x = startFacingRight ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
         transform.localScale = scale;
     }
+
+    //==============================
+    // ガード
+    //==============================
 
     private void UpdateGuardState()
     {
@@ -575,18 +577,28 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// ジャンプ入力を受け付けてよいか判定
-    /// </summary>
-    private bool CanJump()
+    //==============================
+    // その他
+    //==============================
+
+    // Weight負け（重量1のEnemyとの接触）中の移動停止フラグを設定する
+    public void SetBlocked(bool blocked)
     {
-        // Attack中・Projectile使用中・ジャンプ攻撃中ならジャンプできない
-        if (currentState != PlayerState.Idle) return false;
-        // ノックバック中ならジャンプできない
-        if (playerHealth.IsKnockback) return false;
-        // ガード中ならジャンプできない
-        if (isGuarding) return false;
-        // それ以外はジャンプできる
-        return true;
+        isBlocked = blocked;
+    }
+
+    // Scene上でGroundCheck位置を確認するためのGizmo
+    private void OnDrawGizmos()
+    {
+        if (groundCheck == null)
+        {
+            return;
+        }
+
+        Gizmos.color = Color.yellow;
+
+        // GroundCheck位置から、向きに応じた距離だけ先の位置に円を描く
+        Vector2 checkPos = (Vector2)groundCheck.position + Vector2.right * (isFacingRight ? 1 : -1) * attackMoveGroundCheckDistance;
+        Gizmos.DrawWireSphere(checkPos, groundCheckRadius);
     }
 }

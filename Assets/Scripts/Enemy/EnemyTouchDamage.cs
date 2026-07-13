@@ -1,12 +1,12 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnemyTouchDamage : MonoBehaviour
 {
     // 接触ダメージ共通値
     private const int TOUCH_DAMAGE = 1;
 
-    // 接触ノックバック共通値
-    private const float TOUCH_KNOCKBACK = 2.5f;
+    // 接触ノックバック共通値（EnemyAttack等と手応えを揃えるため強めに設定）
+    private const float TOUCH_KNOCKBACK = 10f;
 
     // EnemyAI取得
     private EnemyAI enemyAI;
