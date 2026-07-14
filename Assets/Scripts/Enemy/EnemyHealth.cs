@@ -48,6 +48,15 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     // 打ち上げ中か
     public bool IsLaunched { get; private set; }
 
+    // 打ち上げを開始した時刻（セーフティ解除の計測用）
+    private float launchStartTime;
+
+    // 打ち上げ状態の最大継続時間（セーフティ）
+    // 地面以外（Playerの上など）に乗って着地判定できない場合でも、この時間で強制解除する
+    [Tooltip("打ち上げ状態の最大継続時間（秒）\n地面を検知できずIsLaunchedがハマるのを防ぐ保険。着地アニメより十分長く設定する")]
+    [SerializeField]
+    private float maxLaunchTime = 2f;
+
     // 死亡中か
     private bool isDead;
 
@@ -253,6 +262,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         {
             // 打ち上げ状態に切替
             IsLaunched = true;
+            // 打ち上げ開始時刻を記録（セーフティ解除の計測用）
+            launchStartTime = Time.time;
             // 打ち上げ力を加える
             rb.AddForce(Vector2.up * finalLaunchPower, ForceMode2D.Impulse);
         }
@@ -471,6 +482,15 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         {
             return;
         }
+
+        // セーフティ：地面を検知できないまま一定時間経過したら強制解除する
+        // （Playerの上に乗るなどgroundLayer以外に着地したときにIsLaunchedがハマるのを防ぐ）
+        if (Time.time - launchStartTime >= maxLaunchTime)
+        {
+            IsLaunched = false;
+            return;
+        }
+
         // 着地判定
         bool isGrounded =
             Physics2D.OverlapCircle(

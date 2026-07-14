@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>7.外部データ参照</title>
+<style>
+body { margin:0; font-family: 'Yu Gothic UI', 'Meiryo', sans-serif; background:#ffffff; color:#000000; }
+/* 画面上部の帯。全タブ分のボタン(.tab-button)を横並びで表示する */
+.tabbar { background:#2d2d30; padding:8px 8px 0 8px; }
+.tab-button { margin-right:4px; padding:8px 14px; border:none; border-radius:4px 4px 0 0; cursor:pointer; background:#555; color:#fff; font-size:14px; }
+/* 現在選択中のタブのボタンだけ色を変えて強調する。JSのshowTab()がこのクラスを付け外しする */
+.tab-button.active { background:#007acc; }
+/* サイドバーと本文を横並びにする2カラムレイアウト */
+.layout { display:flex; align-items:flex-start; }
+.sidebar { width:220px; flex-shrink:0; border-right:1px solid #ddd; box-sizing:border-box; min-height:100vh; }
+/* 各タブ分のリンク一覧(div)。既定では全て非表示にし、.active が付いているものだけを表示する。
+   これにより「全タブ分のサイドバーを埋め込みつつ、見た目には1つしか出さない」を実現している。
+   paddingとmin-heightをこちら側に持たせることで、タブごとの背景色(インラインスタイル)が
+   サイドバー全体を隙間なく塗りつぶすようにしている */
+.sidebar-list { display:none; padding:12px; box-sizing:border-box; color:#333; }
+.sidebar-list.active { display:block; min-height:100vh; }
+/* リンクの文字色は親(.sidebar-list)の色を継承する。タブごとのインラインスタイルで
+   color を指定した場合、それがそのままリンクの文字色にも反映されるようにするため */
+.sidebar-list a { display:block; padding:6px 4px; color:inherit; text-decoration:none; border-radius:4px; }
+.sidebar-list a:hover { background:rgba(128,128,128,0.15); }
+/* 「今まさに見ているこのページ」へのリンクを、現在地としてハイライトする */
+.sidebar-list a.current { font-weight:bold; color:#007acc; background:#eaf4fc; }
+.content { flex:1; padding:24px; min-width:0; }
+/* 画像がコンテンツ幅からはみ出さないよう自動縮小する（プレビュー/単体HTML出力と同じ考え方） */
+.content img { max-width:100%; height:auto; }
+/* テーブルに罫線を付ける（プレビュー/単体HTML出力と同じ考え方） */
+.content table { border-collapse: collapse; }
+.content th, .content td { border: 1px solid #999; padding: 4px 8px; }
+.content th { background-color: #f0f0f0; }
+pre { position: relative; background-color: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; padding: 14px 12px; overflow-x: auto; } pre code { background: none; border: none; padding: 0; font-family: Consolas, 'Courier New', monospace; font-size: 13px; line-height: 1.5; white-space: pre; } code { font-family: Consolas, 'Courier New', monospace; } :not(pre) > code { background-color: rgba(128,128,128,0.15); padding: 2px 5px; border-radius: 4px; font-size: 0.9em; } .code-copy-button { position: absolute; top: 6px; right: 6px; padding: 2px 8px; font-size: 12px; border: 1px solid #d0d7de; border-radius: 4px; background-color: #ffffff; color: #333333; cursor: pointer; opacity: 0.85; } .code-copy-button:hover { opacity: 1; }</style>
+</head>
+<body>
+<div class="tabbar"><button type="button" data-tab="TOP" data-first-page="../TOP/1.%E6%A6%82%E8%A6%81.html" class="tab-button active">TOP</button><button type="button" data-tab="01_基本仕様" data-first-page="../01_%E5%9F%BA%E6%9C%AC%E4%BB%95%E6%A7%98/1.%E6%A6%82%E8%A6%81.html" class="tab-button">01_基本仕様</button><button type="button" data-tab="02_イベント" data-first-page="../02_%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88/1.%E6%A6%82%E8%A6%81.html" class="tab-button">02_イベント</button><button type="button" data-tab="03_Player" data-first-page="../03_Player/1.%E6%A6%82%E8%A6%81.html" class="tab-button">03_Player</button><button type="button" data-tab="04_Stage" data-first-page="../04_Stage/1.%E6%A6%82%E8%A6%81.html" class="tab-button">04_Stage</button><button type="button" data-tab="05_Enemy" data-first-page="../05_Enemy/1.%E6%A6%82%E8%A6%81.html" class="tab-button">05_Enemy</button><button type="button" data-tab="06_Menu" data-first-page="../06_Menu/1.%E6%A6%82%E8%A6%81.html" class="tab-button">06_Menu</button><button type="button" data-tab="07_Item" data-first-page="../07_Item/1.%E6%A6%82%E8%A6%81.html" class="tab-button">07_Item</button><button type="button" data-tab="08_BGM,SE" data-first-page="../08_BGM%2CSE/1.%E6%A6%82%E8%A6%81.html" class="tab-button">08_BGM,SE</button><button type="button" data-tab="09_その他1" data-first-page="../09_%E3%81%9D%E3%81%AE%E4%BB%961/1.%E6%A6%82%E8%A6%81.html" class="tab-button">09_その他1</button><button type="button" data-tab="99_その他2" data-first-page="../99_%E3%81%9D%E3%81%AE%E4%BB%962/1.%E6%A6%82%E8%A6%81.html" class="tab-button">99_その他2</button></div>
+<div class="layout">
+<div class="sidebar"><div class="sidebar-list active" data-tab="TOP"><a href="../TOP/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a><a href="../TOP/2.%E4%BD%9C%E6%A5%AD%E3%83%AA%E3%82%B9%E3%83%88%28%E3%83%A1%E3%83%A2%29.html" class="">2.作業リスト(メモ)</a><a href="../TOP/3.%E4%BD%9C%E6%A5%AD%E5%84%AA%E5%85%88%E5%BA%A6.html" class="">3.作業優先度</a><a href="../TOP/4.PlayerController%E3%83%AA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%AA%E3%83%B3%E3%82%B0.html" class="">4.PlayerControllerリファクタリング</a><a href="../TOP/5.PlayerCombat.html" class="">5.PlayerCombat</a><a href="../TOP/6.PlayerController%E6%A9%9F%E8%83%BD%E5%88%86%E5%89%B2%E4%BB%95%E4%B8%8A%E3%81%92.html" class="">6.PlayerController機能分割仕上げ</a><a href="../TOP/7.%E5%A4%96%E9%83%A8%E3%83%87%E3%83%BC%E3%82%BF%E5%8F%82%E7%85%A7.html" class="current">7.外部データ参照</a></div><div class="sidebar-list" data-tab="01_基本仕様"><a href="../01_%E5%9F%BA%E6%9C%AC%E4%BB%95%E6%A7%98/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a><a href="../01_%E5%9F%BA%E6%9C%AC%E4%BB%95%E6%A7%98/2.%E6%96%B9%E9%87%9D.html" class="">2.方針</a><a href="../01_%E5%9F%BA%E6%9C%AC%E4%BB%95%E6%A7%98/3.Scene%E3%83%95%E3%83%AD%E3%83%BC.html" class="">3.Sceneフロー</a><a href="../01_%E5%9F%BA%E6%9C%AC%E4%BB%95%E6%A7%98/4.%E6%93%8D%E4%BD%9C.html" class="">4.操作</a></div><div class="sidebar-list" data-tab="02_イベント"><a href="../02_%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a><a href="../02_%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88/2.%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E4%BB%95%E6%A7%98.html" class="">2.イベント仕様</a><a href="../02_%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88/3.TxtData%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88.html" class="">3.TxtDataフォーマット</a></div><div class="sidebar-list" data-tab="03_Player"><a href="../03_Player/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="04_Stage"><a href="../04_Stage/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="05_Enemy"><a href="../05_Enemy/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="06_Menu"><a href="../06_Menu/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="07_Item"><a href="../07_Item/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="08_BGM,SE"><a href="../08_BGM%2CSE/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="09_その他1"><a href="../09_%E3%81%9D%E3%81%AE%E4%BB%961/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div><div class="sidebar-list" data-tab="99_その他2"><a href="../99_%E3%81%9D%E3%81%AE%E4%BB%962/1.%E6%A6%82%E8%A6%81.html" class="">1.概要</a></div></div>
+<div class="content"><h1 id="section">外部データ参照 ＋ セーブ/ロード</h1>
+<p>Enemy / Player / Item のCSVデータ参照、ストーリーテキストの外部参照、セーブ/ロード対応の<br />
+「やること」と「対応順番」のたたき台。</p>
+<hr />
+<h2 id="section-1">全体の順番（推奨）</h2>
+<pre><code class="language-text">Phase A: 基盤づくり
+   └ CSV読み込みの共通仕組み（フォーマット決定 ＋ 共通ローダー）
+
+Phase B: 各データのCSV化（影響が小さい順）
+   1. ItemData    ← 独立度が高く一番安全。仕組みの検証台に最適
+   2. EnemyData   ← 種類ごとに独立。項目数は多いが影響は閉じている
+   3. PlayerData  ← Controller/Combat/Healthに跨る。最後に回す
+
+Phase C: ストーリーテキストの外部参照（独立。B と並行でも可）
+
+Phase D: セーブ/ロード（B の Player/Item 構造が固まってから）
+</code></pre>
+<hr />
+<h2 id="phase">各Phaseの中身</h2>
+<h3 id="phase-a">Phase A：基盤</h3>
+<ul>
+<li>CSVの置き場所を決める（<code>Resources/</code> か <code>StreamingAssets/</code> か）</li>
+<li>共通のCSVパーサ/ローダーを1つ作る（各データで使い回す）</li>
+<li>「CSV → ScriptableObject / 構造体」への流し込み方針を決める</li>
+</ul>
+<h3 id="phase-bcsv1-2-3">Phase B：CSV化（1 → 2 → 3 の順）</h3>
+<ul>
+<li>各Dataの現状 <code>SerializeField</code> のうち、外部化する項目を洗い出す</li>
+<li>ItemDataで仕組みを確立 → Enemy → Player へ展開</li>
+<li>Playerは分割済みの各コンポーネント（Controller / Combat / ItemAction / Health）参照に注意して最後に</li>
+</ul>
+<h3 id="phase-c">Phase C：ストーリーテキスト外部参照</h3>
+<ul>
+<li>Inspector直書き → テキスト/CSVからの読み込みに差し替え</li>
+<li>※将来のイベントタグ・タイプライター表示の前段になる（今回はデータ化のみ）</li>
+</ul>
+<h3 id="phase-d">Phase D：セーブ/ロード</h3>
+<ul>
+<li>セーブ対象を確定（HP・所持品・進行度など）</li>
+<li>保存形式（JSON等）と保存先を決定</li>
+<li><code>GameData</code> の既存構造を土台に拡張</li>
+</ul>
+<hr />
+<h2 id="section-2">最初に決めるべきこと（次回冒頭で相談）</h2>
+<ol>
+<li>データ形式：<strong>CSV</strong> 前提でよいか（JSON / ScriptableObject 併用の可否）</li>
+<li>CSVの置き場所：<code>Resources</code> / <code>StreamingAssets</code>（実行後に差し替えたいかで変わる）</li>
+<li>セーブ形式：PlayerPrefs か ファイル(JSON) か</li>
+</ol>
+<hr />
+<h2 id="section-3">この順番の理由</h2>
+<ul>
+<li><strong>後戻りの大きいPlayerを最後に</strong>、検証しやすいItemを最初に</li>
+<li><strong>セーブ/ロードはデータ構造が固まってから</strong>（先にやると二度手間）</li>
+<li>ストーリーテキストは独立しているので、詰まったら差し込める緩衝材</li>
+</ul>
+<hr />
+<h2 id="section-4">補足：これまでの到達点（前提メモ）</h2>
+<ul>
+<li>PlayerControllerのリファクタリング（Effects / ItemAction / Combat / コーディネーター仕上げ）完了</li>
+<li>ノックバックのState化（PlayerState.Knockback）完了</li>
+<li>関連ドキュメント：
+<ul>
+<li><code>仕様/PlayerCombat_分割設計.md</code></li>
+<li><code>仕様/PlayerController_コーディネーター仕上げ.md</code></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<script>
+// 指定したタブ名に対応するサイドバー・タブボタンだけを active にし、他は非表示/非アクティブにする
+// （段落が1つも無いタブをクリックした場合の、サイドバー表示切り替えのみのフォールバック用）
+function showTab(name) {
+  document.querySelectorAll('.sidebar-list').forEach(function (el) { el.classList.toggle('active', el.getAttribute('data-tab') === name); });
+  document.querySelectorAll('.tab-button').forEach(function (el) { el.classList.toggle('active', el.getAttribute('data-tab') === name); });
+}
+// 各タブボタンのクリックで、そのタブの最初の段落ページへ実際に遷移する。
+// これにより、サイドバーの表示だけでなく右側の本文も正しく切り替わる。
+document.querySelectorAll('.tab-button').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var firstPage = btn.getAttribute('data-first-page');
+    if (firstPage) {
+      window.location.href = firstPage;
+    } else {
+      showTab(btn.getAttribute('data-tab'));
+    }
+  });
+});
+</script>
+<script>
+document.querySelectorAll('pre').forEach(function (preEl) {
+  var codeEl = preEl.querySelector('code');
+  if (!codeEl) return;
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'code-copy-button';
+  btn.textContent = 'コピー';
+  btn.addEventListener('click', function () {
+    copyTextToClipboard(codeEl.textContent, btn);
+  });
+  preEl.appendChild(btn);
+});
+
+function copyTextToClipboard(text, btn) {
+  function showCopied() {
+    btn.textContent = 'コピーしました';
+    setTimeout(function () { btn.textContent = 'コピー'; }, 1500);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(showCopied).catch(function () {
+      fallbackCopyToClipboard(text, showCopied);
+    });
+  } else {
+    fallbackCopyToClipboard(text, showCopied);
+  }
+}
+
+function fallbackCopyToClipboard(text, onSuccess) {
+  var textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.style.position = 'fixed';
+  textarea.style.left = '-9999px';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  try {
+    document.execCommand('copy');
+    onSuccess();
+  } catch (e) {
+    // コピーに失敗した場合は何もしない
+  }
+  document.body.removeChild(textarea);
+}
+</script>
+</body>
+</html>

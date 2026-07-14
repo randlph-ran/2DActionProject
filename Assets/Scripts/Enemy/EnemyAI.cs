@@ -654,6 +654,14 @@ public class EnemyAI : MonoBehaviour
     // Animation Eventから呼ばれる
     public void DealDamage()
     {
+        // 攻撃がキャンセル済み・被弾リアクション中はダメージを出さない
+        // Playerのコンボで攻撃を中断（CancelAttackでisAttacking=false）されても、
+        // 再生中の攻撃アニメのDealDamageイベントは発火してしまうため、ここで弾く
+        if (!isAttacking || enemyHealth.IsKnockback || enemyHealth.IsLaunched || isStunned)
+        {
+            return;
+        }
+
         // 攻撃範囲内のPlayer取得
         Collider2D[] hitPlayers = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, playerLayer);
 

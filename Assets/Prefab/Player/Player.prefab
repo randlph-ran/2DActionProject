@@ -879,7 +879,7 @@ MonoBehaviour:
   jumpSE: {fileID: 8300000, guid: 64ae397ce5d85f648ace248b6fb87ebc, type: 3}
   maxFallSpeed: 10
   startFacingRight: 1
-  knockbackSafetyTime: 0.75
+  knockbackSafetyTime: 2
   isGuarding: 0
 --- !u!114 &2237189157722497506
 MonoBehaviour:
@@ -896,7 +896,7 @@ MonoBehaviour:
   maxHP: 100
   invincibleTime: 1
   knockbackPower: 10
-  knockbackDuration: 0.15
+  knockbackDuration: 0.2
   blinkInterval: 0.05
   fallDeathY: -10
   hpText: {fileID: 7617102172825309749}
@@ -986,10 +986,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69ccda773a7dd6246b009078e67a2531, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AfterimageSpawner
-  duration: 0.5
+  duration: 0.4
   startAlpha: 0.5
   tintColor: {r: 0.6, g: 0.8, b: 1, a: 1}
-  spawnInterval: 0.05
+  spawnInterval: 0.08
 --- !u!114 &4121560635172032402
 MonoBehaviour:
   m_ObjectHideFlags: 0
