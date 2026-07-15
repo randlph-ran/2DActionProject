@@ -6,12 +6,33 @@
 public class ItemData : ScriptableObject
 {
     //==============================
+    // データ参照
+    //==============================
+
+    [Header("データ参照")]
+
+    [Tooltip("StreamingAssets/item.csv と紐づけるID\n空欄の場合はアセット名がIDとして使われる")]
+    [SerializeField]
+    private string id;
+
+    /// <summary>
+    /// CSVと紐づけるID（空欄ならアセット名を使う）
+    /// </summary>
+    public string Id => string.IsNullOrEmpty(id) ? name : id;
+
+    /// <summary>
+    /// CSVから読み込んだデータ。
+    /// CSVが無い/該当IDの行が無い場合は null になり、各プロパティはInspector値へフォールバックする。
+    /// </summary>
+    private ItemStats Stats => ItemDatabase.GetStats(Id);
+
+    //==============================
     // 基本情報
     //==============================
 
     [Header("基本情報")]
 
-    [Tooltip("アイテム名")]
+    [Tooltip("アイテム名\n※item.csvに値があればそちらが優先される")]
     [SerializeField]
     private string itemName;
 
@@ -108,12 +129,16 @@ public class ItemData : ScriptableObject
 
     //==============================
     // 公開プロパティ
+    //
+    // 「Stats?.xxx ?? インスペクタ値」の形になっている項目はCSV対応済み。
+    // CSVに値があればCSV値、無ければ（CSV未読込・行が無い・列が空欄）Inspector値が使われる。
+    // 画像/SE/Prefab などのアセット参照と itemType はCSVでは扱わず、常にInspector値を使う。
     //==============================
 
-    public string ItemName => itemName;
+    public string ItemName => Stats?.itemName ?? itemName;
     public Sprite ItemIcon => itemIcon;
     public ItemType ItemType => itemType;
-    public string Description => description;
+    public string Description => Stats?.description ?? description;
     /// <summary>
     /// 取得時に再生するSE
     /// </summary>
@@ -122,36 +147,36 @@ public class ItemData : ScriptableObject
     /// <summary>
     /// -1で無限使用
     /// </summary>
-    public int MaxUseCount => maxUseCount;
+    public int MaxUseCount => Stats?.maxUseCount ?? maxUseCount;
     /// <summary>
     /// 再使用までの待機時間
     /// </summary>
-    public float Cooldown => cooldown;
+    public float Cooldown => Stats?.cooldown ?? cooldown;
     /// <summary>
     /// ボタン長押しで連射するか
     /// </summary>
-    public bool CanAutoFire => canAutoFire;
+    public bool CanAutoFire => Stats?.canAutoFire ?? canAutoFire;
     /// <summary>
     /// 空中で使用可能か
     /// </summary>
-    public bool CanUseInAir => canUseInAir;
+    public bool CanUseInAir => Stats?.canUseInAir ?? canUseInAir;
     /// <summary>
     /// 使用アニメーションのタイムアウト秒数
     /// </summary>
-    public float UseTimeoutDuration => useTimeoutDuration;
+    public float UseTimeoutDuration => Stats?.useTimeoutDuration ?? useTimeoutDuration;
 
     /// <summary>
     /// アイテムが及ぼす効果の大きさ（Projectile:ダメージ / Recovery:回復量）
     /// </summary>
-    public int Value => value;
+    public int Value => Stats?.value ?? value;
     /// <summary>
     /// ノックバック強さ
     /// </summary>
-    public float KnockbackPower => knockbackPower;
+    public float KnockbackPower => Stats?.knockbackPower ?? knockbackPower;
     /// <summary>
     /// 打ち上げ強さ
     /// </summary>
-    public float LaunchPower => launchPower;
+    public float LaunchPower => Stats?.launchPower ?? launchPower;
 
     /// <summary>
     /// 
@@ -170,7 +195,7 @@ public class ItemData : ScriptableObject
     /// <summary>
     /// 発動前のチャージ時間
     /// </summary>
-    public float ChargeTime => chargeTime;
+    public float ChargeTime => Stats?.chargeTime ?? chargeTime;
     /// <summary>
     /// Crash演出Prefab
     /// </summary>

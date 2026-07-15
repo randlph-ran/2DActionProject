@@ -1,0 +1,11 @@
+﻿# アイテムデータ,,,,,,,,,,,
+# id … ItemDataアセット名（またはItemDataのidに設定した文字列）と一致させる,,,,,,,,,,,
+# 列を空欄にすると、その項目だけItemDataのInspector値がそのまま使われる,,,,,,,,,,,
+# 画像/SE/Prefab などのアセット参照はCSVでは扱わず、Inspector側で設定する,,,,,,,,,,,
+# description内の \n は改行に変換される（セル内で実際に改行しないこと）,,,,,,,,,,,
+# 【列順の方針】文字数の多い項目（descriptionなど）は表を見づらくするため一番後ろに置く,,,,,,,,,,,
+# 列は名前で読まれるため、並び順を変えてもコード側の変更は不要,,,,,,,,,,,
+# このファイルはUTF-8 with BOM。Excelで保存するときは必ず「CSV UTF-8(コンマ区切り)」を選ぶこと,,,,,,,,,,,
+id,itemName,maxUseCount,cooldown,canAutoFire,canUseInAir,useTimeoutDuration,value,knockbackPower,launchPower,chargeTime,description
+Knife,ナイフ,-1,0.5,FALSE,TRUE,0.5,5,5,0,1,洞窟で拾った　ナイフ\n魔力のようなものが　付与されていて\n投げると驚くほど　まっすぐ飛んでいく
+Potion,ポーション,1,2,FALSE,FALSE,2,40,0,0,1,どこにでも売られている　回復薬\n飲むと　魔力効果によって\n少しだけ　傷が治る
