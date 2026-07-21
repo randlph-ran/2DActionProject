@@ -1,0 +1,14 @@
+﻿# Enemyデータ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# id … enemy.csv と紐づけるID。EnemyHealthのenemyId（空欄ならオブジェクト名）と一致させる,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# 空欄の列は、その項目だけプレハブのInspector値が使われる（フォールバック）,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# dropItemId … ドロップするItemDataのID（Resources/Item/配下のItemData.Id）。空欄ならInspectorのdropItem,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# SE/エフェクトPrefab/攻撃判定位置(Transform)/Layer などのアセット・シーン参照はCSVでは扱わない,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# boolは true/false。列は名前で読まれるので並び順は自由,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+# UTF-8 with BOM。Excelでは「CSV UTF-8(コンマ区切り)」で保存すること,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+id,enemyName,maxHP,moveSpeed,chaseDistance,chaseHeight,meleeAttackDistance,canShoot,rangedAttackDistance,rangedAttackCooldown,attackCooldown,attackRadius,attackDamage,knockbackForce,checkDistance,retreatDuration,retreatSpeed,stunLevel,weightLevel,weight0Multiplier,weight1Multiplier,weight2Multiplier,landingCheckRadius,maxLaunchTime,effectScale,dropCount,dropItemId,isBoss,deathAnimationDuration,nextSceneOnDeath
+Enemy,,4,2,5,2,1.5,,6,2,2,0.4,1,5,0.3,1,1,1,1,1,0.5,0,0.15,2,,,,,,
+TankEnemy,,8,1,5,2,1.5,,6,2,2,0.8,1,5,0.3,1,1,1,1,1,0.5,0,0.15,2,,,,,,
+FastEnemy,,10,4,5,2,1,FALSE,0.5,1.5,2.5,0.7,7,8,1,4,3,1,0,1,0.5,0,0.15,2,1,5,Knife,FALSE,2,
+Boss-1,,100,3,10,5,5,TRUE,15,1,2,4,10,20,1.5,1.5,3,2,2,1,0.5,0,0.15,2,,0,,TRUE,5,S1Clear
+CryEnemy,,20,1,5,2,2,,0.5,1.5,2,1.4,10,12,1,1,3,2,0,1,0.5,0,0.15,2,1,,,,,
+Boss-2,,130,2,8,5,15,TRUE,20,1,2,8,15,20,1.5,1.5,3,2,2,1,0.5,0,0.15,2,,0,,TRUE,5,ClearScene

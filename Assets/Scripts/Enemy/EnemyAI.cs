@@ -162,20 +162,6 @@ public class EnemyAI : MonoBehaviour
     [SerializeField]
     private LayerMask groundLayer;
 
-    // =========================
-    // 重量設定
-    // 0 = 軽量
-    // 1 = 同格
-    // 2 = 重量級
-    // =========================
-    [Header("重量設定")]
-
-    [Tooltip("重さレベル\n0:軽量 1:同格 2:重量級\nノックバック攻撃を受けたときの吹き飛びやすさに影響")]
-    [SerializeField]
-    private int weightLevel = 0;
-
-    // 外部取得用
-    public int WeightLevel => weightLevel;
 
     // =========================
     // 後退行動設定
@@ -241,8 +227,41 @@ public class EnemyAI : MonoBehaviour
         // Animator取得
         animator = GetComponent<Animator>();
 
-        // 距離設定の矛盾チェック
+        // CSVデータを反映（IDはEnemyHealthが持つものを共用する）
+        ApplyCsvStats();
+
+        // 距離設定の矛盾チェック（CSV反映後の最終値でチェックする）
         ValidateDistanceSettings();
+    }
+
+    // enemy.csv の値を各フィールドへ反映する。
+    // CSVに値がある項目だけ上書きし、無い項目はInspector値のまま残す（フォールバック）。
+    private void ApplyCsvStats()
+    {
+        // IDはEnemyHealth側で一元管理しているのでそこから取得する
+        string id = enemyHealth != null ? enemyHealth.EnemyId : name;
+
+        EnemyStats s = EnemyDatabase.GetStats(id);
+        if (s == null)
+        {
+            return;
+        }
+
+        if (s.moveSpeed.HasValue) moveSpeed = s.moveSpeed.Value;
+        if (s.chaseDistance.HasValue) chaseDistance = s.chaseDistance.Value;
+        if (s.chaseHeight.HasValue) chaseHeight = s.chaseHeight.Value;
+        if (s.meleeAttackDistance.HasValue) meleeAttackDistance = s.meleeAttackDistance.Value;
+        if (s.canShoot.HasValue) canShoot = s.canShoot.Value;
+        if (s.rangedAttackDistance.HasValue) rangedAttackDistance = s.rangedAttackDistance.Value;
+        if (s.rangedAttackCooldown.HasValue) rangedAttackCooldown = s.rangedAttackCooldown.Value;
+        if (s.attackCooldown.HasValue) attackCooldown = s.attackCooldown.Value;
+        if (s.attackRadius.HasValue) attackRadius = s.attackRadius.Value;
+        if (s.attackDamage.HasValue) attackDamage = s.attackDamage.Value;
+        if (s.knockbackForce.HasValue) knockbackForce = s.knockbackForce.Value;
+        if (s.checkDistance.HasValue) checkDistance = s.checkDistance.Value;
+        if (s.retreatDuration.HasValue) retreatDuration = s.retreatDuration.Value;
+        if (s.retreatSpeed.HasValue) retreatSpeed = s.retreatSpeed.Value;
+        if (s.stunLevel.HasValue) stunLevel = s.stunLevel.Value;
     }
 
     /// <summary>

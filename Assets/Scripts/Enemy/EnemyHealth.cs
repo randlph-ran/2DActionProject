@@ -6,17 +6,25 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class EnemyHealth : MonoBehaviour, IDamageable
 {
+    [Header("データ参照")]
+
+    // CSV(enemy.csv)と紐づけるID。同じEnemyのAI/Healthが同じIDで同じ行を読む
+    [Tooltip("enemy.csv と紐づけるID\n空欄の場合はプレハブ/オブジェクト名がIDとして使われる")]
+    [SerializeField]
+    private string enemyId;
+
+    /// <summary>
+    /// CSVと紐づけるID（空欄ならオブジェクト名を使う）。
+    /// EnemyAIもこのIDを参照して同じ行を読む。
+    /// </summary>
+    public string EnemyId => string.IsNullOrEmpty(enemyId) ? name : enemyId;
+
     [Header("基本設定")]
 
     // 最大HP
-    [Tooltip("最大HP")]
+    [Tooltip("最大HP\n※enemy.csvに値があればそちらが優先される")]
     [SerializeField]
     private int maxHP = 10;
-
-    // ノックバック力
-    [Tooltip("ノックバック力\n被弾時に左右へ吹き飛ばす力")]
-    [SerializeField]
-    private float knockbackForce = 8f;
 
     // 現在HP
     private int currentHP;
@@ -152,8 +160,51 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     // Animator参照（ボス死亡演出用）
     private Animator animator;
 
+    // enemy.csv の値を各フィールドへ反映する。
+    // CSVに値がある項目だけ上書きし、無い項目はInspector値のまま残す（フォールバック）。
+    private void ApplyCsvStats()
+    {
+        EnemyStats s = EnemyDatabase.GetStats(EnemyId);
+        if (s == null)
+        {
+            return;
+        }
+
+        if (s.maxHP.HasValue) maxHP = s.maxHP.Value;
+        if (s.weightLevel.HasValue) weightLevel = s.weightLevel.Value;
+        if (s.weight0Multiplier.HasValue) weight0Multiplier = s.weight0Multiplier.Value;
+        if (s.weight1Multiplier.HasValue) weight1Multiplier = s.weight1Multiplier.Value;
+        if (s.weight2Multiplier.HasValue) weight2Multiplier = s.weight2Multiplier.Value;
+        if (s.landingCheckRadius.HasValue) landingCheckRadius = s.landingCheckRadius.Value;
+        if (s.maxLaunchTime.HasValue) maxLaunchTime = s.maxLaunchTime.Value;
+        if (s.effectScale.HasValue) effectScale = s.effectScale.Value;
+        if (s.dropCount.HasValue) dropCount = s.dropCount.Value;
+
+        // ドロップアイテムはIDからItemDataアセットを解決して上書きする。
+        // 見つからない場合はInspectorのdropItemをそのまま使う（フォールバック）。
+        if (!string.IsNullOrEmpty(s.dropItemId))
+        {
+            ItemData resolved = ItemAssetDatabase.GetItem(s.dropItemId);
+            if (resolved != null)
+            {
+                dropItem = resolved;
+            }
+            else
+            {
+                Debug.LogWarning($"[EnemyHealth] {EnemyId}: dropItemId '{s.dropItemId}' に一致するItemDataが見つかりません。InspectorのdropItemを使用します");
+            }
+        }
+
+        if (s.isBoss.HasValue) isBoss = s.isBoss.Value;
+        if (s.nextSceneOnDeath != null) nextSceneOnDeath = s.nextSceneOnDeath;
+        if (s.deathAnimationDuration.HasValue) deathAnimationDuration = s.deathAnimationDuration.Value;
+    }
+
     private void Awake()
     {
+        // CSVデータを反映（currentHP初期化より前に行い、maxHPをCSV値にしておく）
+        ApplyCsvStats();
+
         // 初期HP設定
         currentHP = maxHP;
 
